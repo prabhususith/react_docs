@@ -1,0 +1,500 @@
+<!-- ============================================================
+     CHAPTER 19: Testing Strategies — Jasmine/Karma/Jest vs Vitest
+     Science Experiment Analogy 🔬🧪
+     ============================================================ -->
+<div class="page chapter-page" id="chapter-19">
+
+  <!-- Chapter Header -->
+  <div class="chapter-header" style="background: linear-gradient(135deg, #2e7d32 0%, #1565c0 100%);">
+    <div class="chapter-badge">19</div>
+    <div class="chapter-header-content">
+      <div class="chapter-unit-label">UNIT 4 · THE ROSETTA STONE</div>
+      <h1 class="chapter-title">Testing Strategies</h1>
+      <h2 class="chapter-subtitle">🔬 The Science Laboratory: TestBed vs Vitest &amp; React Testing Library</h2>
+      <div class="learning-objectives">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Master the testing pyramid: unit tests, integration tests, and end-to-end (E2E) verification</li>
+          <li>Compare Angular's TestBed / Jasmine / Jest runner with modern Vitest &amp; React Testing Library</li>
+          <li>Write robust, user-centric component tests that verify real DOM behaviors rather than implementation details</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opening Story -->
+  <div class="chapter-opening">
+    <div class="callout fun-fact">
+      <span class="callout-icon">🧪</span>
+      <div class="callout-body">
+        <h4>Welcome to the High-Tech Safety Laboratory! 🔬🥼</h4>
+        <p>Before NASA launches a rocket to Mars, they don't simply cross their fingers, turn the ignition key, and hope for the best. Every sensor, thruster valve, and computer chip is tested inside a controlled pressure chamber under extreme heat, freezing cold, and cosmic radiation. That is what software testing is: your personal safety laboratory where you prove your code works before real users ever touch it!</p>
+
+        <p>🅰️ <strong>Dr. Angular's Cleanroom Laboratory (TestBed)</strong> is a massive sterile facility with clean airlocks. To test a single door handle, you must assemble a full test rig: initialize the <strong>TestBed</strong>, register mock plumbing services, provide dummy modules, compile components asynchronously, and call <code>fixture.detectChanges()</code> every time you press a button. It is rigorous, highly formal, and isolates every single gear in your enterprise clockwork. 🥽📋</p>
+
+        <p>⚛️ <strong>Dr. React's Rapid Prototyping Lab (Vitest + React Testing Library)</strong> believes in testing what the astronaut actually sees and touches! Instead of peering inside the wires with a magnifying glass, RTL sits in the pilot seat and asks: <em>"Can I find a button that says 'Launch Rocket'? When I click it, does the dashboard say 'Ignition Successful'?"</em> Paired with <strong>Vitest</strong> running on top of Vite's native ES modules, hundreds of test suites execute in milliseconds with zero browser startup overhead! ⚡🚀</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Picture SVG -->
+  <div class="svg-container">
+    <h3>🗺️ The Big Picture — Test Runner &amp; Harness Architecture</h3>
+    <svg viewBox="0 0 940 450" width="100%" style="max-width:940px; border:2px solid #e0e0e0; border-radius:12px; background:#fafafa;">
+      <defs>
+        <marker id="arrow-green-19" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#2e7d32"/>
+        </marker>
+        <marker id="arrow-blue-19" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#1565c0"/>
+        </marker>
+      </defs>
+
+      <!-- Angular Left Side -->
+      <rect x="25" y="20" width="425" height="410" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="237" y="52" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="17" fill="#1b5e20">🅰️ Angular TestBed &amp; ComponentFixture</text>
+
+      <rect x="55" y="75" width="365" height="48" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="237" y="98" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#1b5e20">1. TestBed.configureTestingModule()</text>
+      <text x="237" y="114" text-anchor="middle" font-size="11" font-family="Nunito" fill="#2e7d32">Declare components, mocks &amp; providers</text>
+
+      <line x1="237" y1="123" x2="237" y2="153" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrow-green-19)"/>
+
+      <rect x="55" y="155" width="365" height="48" rx="8" fill="#a5d6a7" stroke="#2e7d32"/>
+      <text x="237" y="178" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="800" fill="#1b5e20">2. fixture = TestBed.createComponent()</text>
+      <text x="237" y="194" text-anchor="middle" font-size="11" font-family="Nunito" fill="#1b5e20">Instantiates component instance &amp; debugElement</text>
+
+      <line x1="237" y1="203" x2="237" y2="233" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrow-green-19)"/>
+
+      <rect x="55" y="235" width="365" height="52" rx="8" fill="#81c784" stroke="#1b5e20"/>
+      <text x="237" y="258" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="800" fill="#ffffff">3. fixture.detectChanges() 🔄</text>
+      <text x="237" y="276" text-anchor="middle" font-size="11" font-family="Nunito" fill="#e8f5e9">Manual change detection trigger after state changes</text>
+
+      <line x1="237" y1="287" x2="237" y2="317" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrow-green-19)"/>
+
+      <rect x="55" y="319" width="365" height="52" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="237" y="342" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#1b5e20">4. expect(el.textContent).toContain('Success')</text>
+      <text x="237" y="360" text-anchor="middle" font-size="11" font-family="Nunito" fill="#2e7d32">Assert via Jasmine / Jest matchers</text>
+
+      <text x="237" y="415" text-anchor="middle" font-size="11" font-family="Nunito" fill="#1b5e20">Complete Dependency Injection Isolation · Strict Fixtures</text>
+
+      <!-- React Right Side -->
+      <rect x="490" y="20" width="425" height="410" rx="14" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+      <text x="702" y="52" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="17" fill="#0d47a1">⚛️ React Testing Library + Vitest</text>
+
+      <rect x="520" y="75" width="365" height="48" rx="8" fill="#bbdefb" stroke="#1565c0"/>
+      <text x="702" y="98" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#0d47a1">1. render(&lt;LaunchConsole /&gt;)</text>
+      <text x="702" y="114" text-anchor="middle" font-size="11" font-family="Nunito" fill="#1565c0">Mounts directly into jsdom container</text>
+
+      <line x1="702" y1="123" x2="702" y2="153" stroke="#1565c0" stroke-width="2" marker-end="url(#arrow-blue-19)"/>
+
+      <rect x="520" y="155" width="365" height="48" rx="8" fill="#90caf9" stroke="#1565c0"/>
+      <text x="702" y="178" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="800" fill="#0d47a1">2. screen.getByRole('button', { name })</text>
+      <text x="702" y="194" text-anchor="middle" font-size="11" font-family="Nunito" fill="#0d47a1">Accessibility-first user queries (ARIA roles)</text>
+
+      <line x1="702" y1="203" x2="702" y2="233" stroke="#1565c0" stroke-width="2" marker-end="url(#arrow-blue-19)"/>
+
+      <rect x="520" y="235" width="365" height="52" rx="8" fill="#42a5f5" stroke="#0d47a1"/>
+      <text x="702" y="258" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="800" fill="#ffffff">3. await userEvent.click(button) 🖱️</text>
+      <text x="702" y="276" text-anchor="middle" font-size="11" font-family="Nunito" fill="#e3f2fd">Real simulated user gestures with full event bubbling</text>
+
+      <line x1="702" y1="287" x2="702" y2="317" stroke="#1565c0" stroke-width="2" marker-end="url(#arrow-blue-19)"/>
+
+      <rect x="520" y="319" width="365" height="52" rx="8" fill="#bbdefb" stroke="#1565c0"/>
+      <text x="702" y="342" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#0d47a1">4. expect(screen.getByText(...)).toBeVisible()</text>
+      <text x="702" y="360" text-anchor="middle" font-size="11" font-family="Nunito" fill="#1565c0">jest-dom / vitest matchers checking visible UI</text>
+
+      <text x="702" y="415" text-anchor="middle" font-size="11" font-family="Nunito" fill="#0d47a1">Zero Implementation Coupling · 10x Faster Vite Runner</text>
+    </svg>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="comparison-table-wrapper">
+    <h3>🔬 Component Test Suite Side-by-Side</h3>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular: CounterComponent.spec.ts (TestBed)</th>
+          <th class="react-col">⚛️ React: Counter.test.tsx (Vitest + RTL)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">counter.component.spec.ts</div>
+              <pre><code><span class="kw">import</span> { ComponentFixture, TestBed } <span class="kw">from</span> <span class="str">'@angular/core/testing'</span>;
+<span class="kw">import</span> { CounterComponent } <span class="kw">from</span> <span class="str">'./counter.component'</span>;
+<span class="kw">import</span> { By } <span class="kw">from</span> <span class="str">'@angular/platform-browser'</span>;
+
+<span class="fn">describe</span>(<span class="str">'CounterComponent'</span>, () =&gt; {
+  <span class="kw">let</span> component: <span class="fn">CounterComponent</span>;
+  <span class="kw">let</span> fixture: <span class="fn">ComponentFixture</span>&lt;<span class="fn">CounterComponent</span>&gt;;
+
+  <span class="fn">beforeEach</span>(<span class="kw">async</span> () =&gt; {
+    <span class="kw">await</span> TestBed.<span class="fn">configureTestingModule</span>({
+      imports: [CounterComponent] <span class="cmt">// Standalone component</span>
+    }).<span class="fn">compileComponents</span>();
+
+    fixture = TestBed.<span class="fn">createComponent</span>(CounterComponent);
+    component = fixture.componentInstance;
+    fixture.<span class="fn">detectChanges</span>(); <span class="cmt">// Initial change detection!</span>
+  });
+
+  <span class="fn">it</span>(<span class="str">'should display initial count of 0'</span>, () =&gt; {
+    <span class="kw">const</span> h1 = fixture.debugElement.<span class="fn">query</span>(By.<span class="fn">css</span>(<span class="str">'h1'</span>));
+    <span class="fn">expect</span>(h1.nativeElement.textContent).<span class="fn">toContain</span>(<span class="str">'Count: 0'</span>);
+  });
+
+  <span class="fn">it</span>(<span class="str">'should increment count on button click'</span>, () =&gt; {
+    <span class="kw">const</span> button = fixture.debugElement.<span class="fn">query</span>(By.<span class="fn">css</span>(<span class="str">'button'</span>));
+    button.nativeElement.<span class="fn">click</span>();
+
+    <span class="cmt">// Critical: Angular tests must manually trigger change detection!</span>
+    fixture.<span class="fn">detectChanges</span>();
+
+    <span class="kw">const</span> h1 = fixture.debugElement.<span class="fn">query</span>(By.<span class="fn">css</span>(<span class="str">'h1'</span>));
+    <span class="fn">expect</span>(h1.nativeElement.textContent).<span class="fn">toContain</span>(<span class="str">'Count: 1'</span>);
+  });
+});</code></pre>
+            </div>
+            <div class="code-block angular">
+              <div class="code-label">Mocking a Dependency in Angular</div>
+              <pre><code><span class="kw">const</span> mockAuthService = {
+  isLoggedIn: jasmine.<span class="fn">createSpy</span>().<span class="fn">and</span>.<span class="fn">returnValue</span>(<span class="kw">true</span>)
+};
+
+TestBed.<span class="fn">configureTestingModule</span>({
+  providers: [
+    { provide: AuthService, useValue: mockAuthService }
+  ]
+});</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">Counter.test.tsx</div>
+              <pre><code><span class="kw">import</span> { describe, it, expect } <span class="kw">from</span> <span class="str">'vitest'</span>;
+<span class="kw">import</span> { render, screen } <span class="kw">from</span> <span class="str">'@testing-library/react'</span>;
+<span class="kw">import</span> userEvent <span class="kw">from</span> <span class="str">'@testing-library/user-event'</span>;
+<span class="kw">import</span> { Counter } <span class="kw">from</span> <span class="str">'./Counter'</span>;
+
+<span class="fn">describe</span>(<span class="str">'Counter'</span>, () =&gt; {
+  <span class="fn">it</span>(<span class="str">'should display initial count of 0'</span>, () =&gt; {
+    <span class="fn">render</span>(&lt;<span class="fn">Counter</span> /&gt;);
+    <span class="fn">expect</span>(screen.<span class="fn">getByRole</span>(<span class="str">'heading'</span>, { level: <span class="num">1</span> }))
+      .<span class="fn">toHaveTextContent</span>(<span class="str">'Count: 0'</span>);
+  });
+
+  <span class="fn">it</span>(<span class="str">'should increment count on button click'</span>, <span class="kw">async</span> () =&gt; {
+    <span class="kw">const</span> user = userEvent.<span class="fn">setup</span>();
+    <span class="fn">render</span>(&lt;<span class="fn">Counter</span> /&gt;);
+
+    <span class="kw">const</span> button = screen.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">/increment/i</span> });
+    <span class="kw">await</span> user.<span class="fn">click</span>(button);
+
+    <span class="cmt">// React state automatically re-renders without manual triggers!</span>
+    <span class="fn">expect</span>(screen.<span class="fn">getByRole</span>(<span class="str">'heading'</span>, { level: <span class="num">1</span> }))
+      .<span class="fn">toHaveTextContent</span>(<span class="str">'Count: 1'</span>);
+  });
+});</code></pre>
+            </div>
+            <div class="code-block react">
+              <div class="code-label">Mocking a Dependency in Vitest</div>
+              <pre><code><span class="kw">import</span> { vi } <span class="kw">from</span> <span class="str">'vitest'</span>;
+
+<span class="cmt">// Automatically mocks API module calls</span>
+vi.<span class="fn">mock</span>(<span class="str">'./api'</span>, () =&gt; ({
+  fetchUserData: vi.<span class="fn">fn</span>().<span class="fn">mockResolvedValue</span>({ name: <span class="str">'Alice'</span> })
+}));</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Testing Philosophy Comparison -->
+  <div class="callout fun-fact">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <h4>The Guiding Golden Rule of Testing</h4>
+      <blockquote>
+        <em>"The more your tests resemble the way your software is used, the more confidence they can give you."</em> — Kent C. Dodds
+      </blockquote>
+      <p>In older Angular testing setups with Karma and Jasmine, tests frequently checked private component variables (<code>expect(component.isOpen).toBeTrue()</code>). If you refactored the variable name to <code>isExpanded</code>, your test broke even though the modal opened perfectly for users! Modern testing in both Angular (with <code>@testing-library/angular</code>) and React focuses strictly on user-observable outputs (screen text, buttons, ARIA labels).</p>
+    </div>
+  </div>
+
+  <!-- Kid Explains It -->
+  <div class="callout kid-note">
+    <span class="callout-icon">🧒</span>
+    <div class="callout-body">
+      <h4>Kid Explains It! 🎮</h4>
+      <p>Testing your app is like testing a toy race car before your birthday party! You push the horn button to see if it honks, and roll it down a ramp to see if the wheels turn straight. <strong>Angular's TestBed</strong> is like taking the toy apart with screwdrivers and testing each battery in a machine. <strong>React's Testing Library</strong> is like playing with the toy normally as a kid — if you press the turbo button and it zooms across the carpet, it gets an A+! 🏎️🧪</p>
+    </div>
+  </div>
+
+  <!-- Pro Deep Dive -->
+  <div class="callout pro-tip">
+    <span class="callout-icon">🔬</span>
+    <div class="callout-body">
+      <h4>Pro Deep Dive 🧠</h4>
+      <p><strong>Karma Deprecation &amp; The Rise of Jest / Vitest:</strong> Karma launched a real headless Chrome browser for every test execution run, making test suites notoriously slow in enterprise CI/CD pipelines (taking 15–30 minutes for 1,000 tests). In Angular 16+, the CLI team deprecated Karma and added experimental Jest and Web Test Runner support. React projects have largely migrated from Jest to <strong>Vitest</strong>: Vitest reuses Vite's dev server pipeline and esbuild transform cache, dropping execution times for 1,000 tests from 45 seconds down to 2.4 seconds.</p>
+
+      <p><strong>Async Testing Gotchas (fakeAsync vs waitFor):</strong> In Angular, timer-based code (like a 500ms debounce) is tested using <code>fakeAsync</code> and <code>tick(500)</code>, which allows stepping through virtual time synchronously. In React Testing Library, asynchronous DOM changes (like waiting for an API response to render) are handled via <code>await waitFor(() =&gt; expect(...))</code> or <code>await screen.findByText('Loaded')</code>.</p>
+
+      <p><strong>Mock Service Worker (MSW):</strong> Modern testing best practice for both Angular and React avoids mocking <code>HttpClient</code> or <code>fetch</code> directly with spies. Instead, engineers use <strong>MSW</strong> to intercept network requests at the browser/Node network level. This ensures your components make real HTTP calls against realistic simulated API contracts without fragile mock objects.</p>
+    </div>
+  </div>
+
+  <!-- Real-world Scenario -->
+  <div class="callout real-world">
+    <span class="callout-icon">🌍</span>
+    <div class="callout-body">
+      <h4>Real-World Scenario: Async Login Form Authentication Test 🔐</h4>
+      <p>Testing an email + password form where clicking "Submit" calls a backend API and redirects the user.</p>
+      <ul>
+        <li><strong>Angular Approach:</strong> Configure <code>HttpTestingController</code> via <code>provideHttpClientTesting()</code>. Enter values into input fields using <code>input.dispatchEvent(new Event('input'))</code>. Click submit. Use <code>httpMock.expectOne('/api/login').flush({ token: 'xyz' })</code>. Assert that the Router spy was called with <code>['/dashboard']</code>.</li>
+        <li><strong>React Approach:</strong> Render <code>&lt;LoginForm /&gt;</code> wrapped in memory router. Use <code>userEvent.type(screen.getByLabelText(/email/i), 'alice@nasa.gov')</code>. Click <code>screen.getByRole('button', { name: /login/i })</code>. Assert <code>await screen.findByText(/welcome back, alice/i)</code> appears on screen. Zero internal wiring inspected! 🎯</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- When to Use -->
+  <div class="when-to-use-grid">
+    <div class="when-angular">
+      <h4>🅰️ Angular Testing Best Practices</h4>
+      <ul>
+        <li>Use <code>TestBed.inject()</code> to easily retrieve real or mocked dependency-injected services</li>
+        <li>Use <code>provideHttpClientTesting()</code> to test mock HTTP requests without real network calls</li>
+        <li>Adopt <code>@testing-library/angular</code> to write accessibility-driven tests</li>
+        <li>Use <code>fakeAsync</code> and <code>tick()</code> to test complex RxJS timer streams cleanly</li>
+      </ul>
+    </div>
+    <div class="when-react">
+      <h4>⚛️ React Testing Best Practices</h4>
+      <ul>
+        <li>Pair Vitest with React Testing Library for lightning-fast test execution</li>
+        <li>Always prefer <code>userEvent</code> over low-level <code>fireEvent</code> for realistic typing and clicks</li>
+        <li>Query by accessibility roles first (<code>getByRole</code>), labels second (<code>getByLabelText</code>)</li>
+        <li>Use MSW (Mock Service Worker) for network mocking instead of spying on fetch</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Cheatsheet -->
+  <div class="cheatsheet-card">
+    <h3>📋 Chapter 19 Cheatsheet — Testing</h3>
+    <div class="cheatsheet-grid">
+      <div class="cheat-item"><code>TestBed.configureTestingModule()</code> — Angular: Set up component test sandbox</div>
+      <div class="cheat-item"><code>fixture.detectChanges()</code> — Angular: Manually trigger change detection</div>
+      <div class="cheat-item"><code>HttpTestingController</code> — Angular: Verify &amp; flush mock HTTP requests</div>
+      <div class="cheat-item"><code>render(&lt;Component /&gt;)</code> — RTL: Mount component into jsdom</div>
+      <div class="cheat-item"><code>screen.getByRole('button')</code> — RTL: Accessibility-first query</div>
+      <div class="cheat-item"><code>userEvent.click()</code> — RTL: Simulate real user click with focus events</div>
+      <div class="cheat-item"><code>screen.findByText()</code> — RTL: Async query waiting up to 1000ms</div>
+      <div class="cheat-item"><code>vi.fn() / vi.mock()</code> — Vitest: Mock functions and modules</div>
+    </div>
+  </div>
+
+  <!-- Testing Logic: Angular Service vs React Custom Hook -->
+  <div class="callout definition">
+    <span class="callout-icon">🧪</span>
+    <div class="callout-body">
+      <h4>Unit Testing Logic: Testing an Angular Service vs Testing a React Custom Hook</h4>
+      <p>How do you isolate and test business logic outside of visual HTML rendering?</p>
+    </div>
+  </div>
+
+  <div class="comparison-table-wrapper">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular: TestBed.inject(CartService)</th>
+          <th class="react-col">⚛️ React: renderHook(() =&gt; useCart())</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">cart.service.spec.ts</div>
+              <pre><code><span class="kw">import</span> { TestBed } <span class="kw">from</span> <span class="str">'@angular/core/testing'</span>;
+<span class="kw">import</span> { CartService } <span class="kw">from</span> <span class="str">'./cart.service'</span>;
+
+<span class="fn">describe</span>(<span class="str">'CartService (Unit Test)'</span>, () =&gt; {
+  <span class="kw">let</span> service: <span class="fn">CartService</span>;
+
+  <span class="fn">beforeEach</span>(() =&gt; {
+    TestBed.<span class="fn">configureTestingModule</span>({
+      providers: [CartService]
+    });
+    service = TestBed.<span class="fn">inject</span>(CartService);
+  });
+
+  <span class="fn">it</span>(<span class="str">'should add item to cart and update total'</span>, () =&gt; {
+    <span class="fn">expect</span>(service.<span class="fn">items</span>().length).<span class="fn">toBe</span>(<span class="num">0</span>);
+
+    service.<span class="fn">addItem</span>({ id: <span class="str">'p1'</span>, name: <span class="str">'Margherita'</span>, price: <span class="num">12</span> });
+
+    <span class="fn">expect</span>(service.<span class="fn">items</span>().length).<span class="fn">toBe</span>(<span class="num">1</span>);
+    <span class="fn">expect</span>(service.<span class="fn">total</span>()).<span class="fn">toBe</span>(<span class="num">12</span>);
+  });
+
+  <span class="fn">it</span>(<span class="str">'should clear cart contents'</span>, () =&gt; {
+    service.<span class="fn">addItem</span>({ id: <span class="str">'p1'</span>, name: <span class="str">'Margherita'</span>, price: <span class="num">12</span> });
+    service.<span class="fn">clear</span>();
+    <span class="fn">expect</span>(service.<span class="fn">items</span>().length).<span class="fn">toBe</span>(<span class="num">0</span>);
+  });
+});</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">useCart.test.ts</div>
+              <pre><code><span class="kw">import</span> { describe, it, expect } <span class="kw">from</span> <span class="str">'vitest'</span>;
+<span class="kw">import</span> { renderHook, act } <span class="kw">from</span> <span class="str">'@testing-library/react'</span>;
+<span class="kw">import</span> { useCart } <span class="kw">from</span> <span class="str">'./useCart'</span>;
+
+<span class="fn">describe</span>(<span class="str">'useCart Hook (Unit Test)'</span>, () =&gt; {
+  <span class="fn">it</span>(<span class="str">'should add item to cart and update total'</span>, () =&gt; {
+    <span class="kw">const</span> { result } = <span class="fn">renderHook</span>(() =&gt; <span class="fn">useCart</span>());
+
+    <span class="fn">expect</span>(result.current.items.length).<span class="fn">toBe</span>(<span class="num">0</span>);
+
+    <span class="cmt">// State updates inside hooks must be wrapped in act()</span>
+    <span class="fn">act</span>(() =&gt; {
+      result.current.<span class="fn">addItem</span>({ id: <span class="str">'p1'</span>, name: <span class="str">'Margherita'</span>, price: <span class="num">12</span> });
+    });
+
+    <span class="fn">expect</span>(result.current.items.length).<span class="fn">toBe</span>(<span class="num">1</span>);
+    <span class="fn">expect</span>(result.current.total).<span class="fn">toBe</span>(<span class="num">12</span>);
+  });
+
+  <span class="fn">it</span>(<span class="str">'should clear cart contents'</span>, () =&gt; {
+    <span class="kw">const</span> { result } = <span class="fn">renderHook</span>(() =&gt; <span class="fn">useCart</span>());
+    <span class="fn">act</span>(() =&gt; {
+      result.current.<span class="fn">addItem</span>({ id: <span class="str">'p1'</span>, name: <span class="str">'Margherita'</span>, price: <span class="num">12</span> });
+      result.current.<span class="fn">clear</span>();
+    });
+    <span class="fn">expect</span>(result.current.items.length).<span class="fn">toBe</span>(<span class="num">0</span>);
+  });
+});</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- End-to-End Testing with Playwright -->
+  <div class="callout real-world">
+    <span class="callout-icon">🎭</span>
+    <div class="callout-body">
+      <h4>The Apex of the Pyramid: Playwright End-to-End (E2E) Testing</h4>
+      <p>Whether your frontend is Angular or React, modern enterprise applications run end-to-end tests against real browsers using <strong>Playwright</strong>. Playwright interacts with real chromium, firefox, and webkit engines, completely agnostic of which framework rendered the DOM!</p>
+      <div class="code-block" style="margin-top:10px;">
+        <div class="code-label">checkout.e2e.spec.ts (Universal Playwright Test)</div>
+        <pre><code><span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="fn">test</span>(<span class="str">'customer can complete pizza checkout flow'</span>, <span class="kw">async</span> ({ page }) =&gt; {
+  <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'http://localhost:3000/menu'</span>);
+
+  <span class="cmt">// 1. Click Add to Cart button</span>
+  <span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">/add pepperoni/i</span> }).<span class="fn">click</span>();
+
+  <span class="cmt">// 2. Verify badge updates in navigation bar</span>
+  <span class="kw">const</span> cartBadge = page.<span class="fn">getByTestId</span>(<span class="str">'cart-count-badge'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(cartBadge).<span class="fn">toHaveText</span>(<span class="str">'1'</span>);
+
+  <span class="cmt">// 3. Navigate to checkout and submit order</span>
+  <span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'link'</span>, { name: <span class="str">/checkout/i</span> }).<span class="fn">click</span>();
+  <span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">/full name/i</span>).<span class="fn">fill</span>(<span class="str">'Prof. Alex Rivera'</span>);
+  <span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">/place order/i</span> }).<span class="fn">click</span>();
+
+  <span class="cmt">// 4. Verify confirmation banner</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByText</span>(<span class="str">/order confirmed! pizza is baking/i</span>)).<span class="fn">toBeVisible</span>();
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Automated Accessibility (a11y) Testing -->
+  <div class="callout definition">
+    <span class="callout-icon">♿</span>
+    <div class="callout-body">
+      <h4>Automated Accessibility (a11y) Testing with axe-core</h4>
+      <p>A science lab tests for safety; web developers test for accessibility to ensure every user, including those using screen readers, can use the application.</p>
+    </div>
+  </div>
+
+  <div class="comparison-table-wrapper">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular: axe-core / jasmine-axe</th>
+          <th class="react-col">⚛️ React: jest-axe / vitest-axe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">modal.a11y.spec.ts</div>
+              <pre><code><span class="kw">import</span> { axe, toHaveNoViolations } <span class="kw">from</span> <span class="str">'jasmine-axe'</span>;
+<span class="kw">import</span> { TestBed } <span class="kw">from</span> <span class="str">'@angular/core/testing'</span>;
+<span class="kw">import</span> { ModalComponent } <span class="kw">from</span> <span class="str">'./modal.component'</span>;
+
+<span class="fn">it</span>(<span class="str">'should have zero accessibility violations'</span>, <span class="kw">async</span> () =&gt; {
+  <span class="kw">const</span> fixture = TestBed.<span class="fn">createComponent</span>(ModalComponent);
+  fixture.<span class="fn">detectChanges</span>();
+
+  <span class="kw">const</span> results = <span class="kw">await</span> <span class="fn">axe</span>(fixture.nativeElement);
+  <span class="fn">expect</span>(results).<span class="fn">toHaveNoViolations</span>();
+});</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">Modal.a11y.test.tsx</div>
+              <pre><code><span class="kw">import</span> { axe, toHaveNoViolations } <span class="kw">from</span> <span class="str">'jest-axe'</span>;
+<span class="kw">import</span> { render } <span class="kw">from</span> <span class="str">'@testing-library/react'</span>;
+<span class="kw">import</span> { Modal } <span class="kw">from</span> <span class="str">'./Modal'</span>;
+
+<span class="fn">it</span>(<span class="str">'should have zero accessibility violations'</span>, <span class="kw">async</span> () =&gt; {
+  <span class="kw">const</span> { container } = <span class="fn">render</span>(&lt;<span class="fn">Modal</span> title=<span class="str">"Confirm Order"</span> /&gt;);
+
+  <span class="kw">const</span> results = <span class="kw">await</span> <span class="fn">axe</span>(container);
+  <span class="fn">expect</span>(results).<span class="fn">toHaveNoViolations</span>();
+});</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quiz -->
+  <div class="callout quiz-box">
+    <span class="callout-icon">🧠</span>
+    <div class="callout-body">
+      <h4>Quiz Time! 🎯</h4>
+      <ol>
+        <li>Why must you call <code>fixture.detectChanges()</code> in Angular tests after triggering an action?
+          <details><summary>Answer</summary>Angular tests do not run Zone.js change detection continuously. You must manually call <code>fixture.detectChanges()</code> to inform Angular to evaluate template bindings and update the test DOM.</details>
+        </li>
+        <li>Why is <code>userEvent</code> preferred over <code>fireEvent</code> in React Testing Library?
+          <details><summary>Answer</summary><code>fireEvent</code> only dispatches a raw DOM event. <code>userEvent</code> accurately simulates full browser behavior (e.g. hovering, focusing, key down, key press, text input, key up, and blur events).</details>
+        </li>
+        <li>What is the advantage of using <code>screen.getByRole()</code> over CSS selectors like <code>fixture.debugElement.query(By.css('.btn-submit'))</code>?
+          <details><summary>Answer</summary>Querying by ARIA role tests your application the way assistive technologies (and users) experience it, making your test resilient against CSS class refactors while encouraging accessible HTML.</details>
+        </li>
+        <li>Why is Vitest faster than traditional Karma or Jest runners?
+          <details><summary>Answer</summary>Vitest reuses Vite's pipeline with esbuild and worker threads. It doesn't transform unchanged files and executes in-memory without starting a heavy headless browser.</details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,473 @@
+<!-- ============================================================
+     CHAPTER 14: Forms — Angular FormGroup vs React Hook Form
+     Recipe Book Analogy 🍳
+     ============================================================ -->
+<div class="page chapter-page" id="chapter-14">
+
+  <!-- Chapter Header -->
+  <div class="chapter-header" style="background: linear-gradient(135deg, #e65100 0%, #c62828 100%);">
+    <div class="chapter-badge">14</div>
+    <div class="chapter-header-content">
+      <div class="chapter-unit-label">UNIT 4 · THE ROSETTA STONE</div>
+      <h1 class="chapter-title">Forms</h1>
+      <h2 class="chapter-subtitle">🍳 FormGroup vs React Hook Form — The Recipe Book Showdown</h2>
+      <div class="learning-objectives">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Understand Angular's template-driven AND reactive forms approaches</li>
+          <li>Build forms with React Hook Form and contrast with Angular FormGroup/FormControl</li>
+          <li>Handle validation, error messages, and form submission in both frameworks</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opening Story -->
+  <div class="chapter-opening">
+    <div class="callout fun-fact">
+      <span class="callout-icon">🧑‍🍳</span>
+      <div class="callout-body">
+        <h4>Welcome to the World's Most Competitive Kitchen! 🏆</h4>
+        <p>Picture a bakery competition. Two master bakers must each create the perfect customer order form.
+        Every customer fills in: their name, email, cake flavour, number of candles (must be 1–99),
+        and a special message. If anything's wrong — an empty field, an invalid email — the baker must
+        politely tell the customer what to fix BEFORE accepting the order.</p>
+
+        <p>🅰️ <strong>Chef Angular</strong> is very organised. He has a physical recipe binder —
+        a <strong>FormGroup</strong>. Inside are labelled recipe cards for each field —
+        <strong>FormControls</strong>. Every card has rules printed on it: "Required! Must be a valid
+        email! Minimum 2 characters!" Chef Angular checks every card the moment a customer writes
+        something, and can read the entire order's status at once from the binder. Very structured!
+        Great for enormous orders with 50 fields. 📋</p>
+
+        <p>⚛️ <strong>Chef React</strong> uses a sleek digital tablet. He installs the
+        <strong>React Hook Form</strong> app — it's lightning fast because it barely re-renders anything.
+        It watches the form through <em>uncontrolled inputs</em> and only reads values when it needs them.
+        Validating? Run the rules on submit or on blur. 100 fields? Still blazing fast. The tablet
+        connects to any UI library — MUI, Chakra, shadcn. Total freedom! 📱</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Picture SVG -->
+  <div class="svg-container">
+    <h3>🗺️ The Big Picture — Forms Architecture</h3>
+    <svg viewBox="0 0 920 400" width="100%" style="max-width:920px; border:2px solid #e0e0e0; border-radius:12px; background:#fafafa;">
+      <!-- Angular side -->
+      <rect x="20" y="20" width="410" height="360" rx="14" fill="#fff8e1" stroke="#e65100" stroke-width="2"/>
+      <text x="225" y="52" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="17" fill="#e65100">🅰️ Angular Reactive Forms</text>
+
+      <!-- FormGroup box -->
+      <rect x="80" y="68" width="280" height="44" rx="10" fill="#ffcc80" stroke="#e65100" stroke-width="2"/>
+      <text x="220" y="96" text-anchor="middle" font-size="14" font-family="Nunito" font-weight="700" fill="#bf360c">FormGroup 📋</text>
+
+      <!-- FormControls -->
+      <rect x="90" y="128" width="120" height="34" rx="8" fill="#ffe0b2" stroke="#e65100"/>
+      <text x="150" y="150" text-anchor="middle" font-size="12" font-family="Nunito" fill="#bf360c">FormControl: name</text>
+      <rect x="230" y="128" width="120" height="34" rx="8" fill="#ffe0b2" stroke="#e65100"/>
+      <text x="290" y="150" text-anchor="middle" font-size="12" font-family="Nunito" fill="#bf360c">FormControl: email</text>
+
+      <rect x="90" y="176" width="120" height="34" rx="8" fill="#ffe0b2" stroke="#e65100"/>
+      <text x="150" y="198" text-anchor="middle" font-size="12" font-family="Nunito" fill="#bf360c">FormControl: age</text>
+      <rect x="230" y="176" width="120" height="34" rx="8" fill="#ffe0b2" stroke="#e65100"/>
+      <text x="290" y="198" text-anchor="middle" font-size="12" font-family="Nunito" fill="#bf360c">FormControl: msg</text>
+
+      <!-- Validators -->
+      <rect x="80" y="228" width="280" height="34" rx="8" fill="#ffb74d" stroke="#e65100"/>
+      <text x="220" y="250" text-anchor="middle" font-size="12" font-family="Nunito" font-weight="700" fill="#bf360c">Validators.required | email | min | max</text>
+
+      <!-- Status -->
+      <rect x="80" y="278" width="130" height="34" rx="8" fill="#fff3e0" stroke="#e65100"/>
+      <text x="145" y="300" text-anchor="middle" font-size="12" font-family="Nunito" fill="#e65100">form.valid ✅</text>
+      <rect x="228" y="278" width="132" height="34" rx="8" fill="#fff3e0" stroke="#e65100"/>
+      <text x="294" y="300" text-anchor="middle" font-size="12" font-family="Nunito" fill="#e65100">form.value 📦</text>
+
+      <text x="220" y="348" text-anchor="middle" font-size="11" font-family="Nunito" fill="#795548">Also: Template-driven forms with ngModel</text>
+
+      <!-- React side -->
+      <rect x="490" y="20" width="410" height="360" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="695" y="52" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="17" fill="#2e7d32">⚛️ React Hook Form</text>
+
+      <!-- useForm -->
+      <rect x="560" y="68" width="270" height="44" rx="10" fill="#a5d6a7" stroke="#2e7d32" stroke-width="2"/>
+      <text x="695" y="96" text-anchor="middle" font-size="14" font-family="Nunito" font-weight="700" fill="#1b5e20">useForm() hook 🎣</text>
+
+      <!-- register, handleSubmit -->
+      <rect x="560" y="128" width="124" height="34" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="622" y="150" text-anchor="middle" font-size="12" font-family="Nunito" fill="#1b5e20">register()</text>
+      <rect x="706" y="128" width="124" height="34" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="768" y="150" text-anchor="middle" font-size="12" font-family="Nunito" fill="#1b5e20">handleSubmit()</text>
+
+      <rect x="560" y="176" width="124" height="34" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="622" y="198" text-anchor="middle" font-size="12" font-family="Nunito" fill="#1b5e20">formState</text>
+      <rect x="706" y="176" width="124" height="34" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="768" y="198" text-anchor="middle" font-size="12" font-family="Nunito" fill="#1b5e20">watch()</text>
+
+      <!-- Validation -->
+      <rect x="560" y="228" width="270" height="34" rx="8" fill="#66bb6a" stroke="#2e7d32"/>
+      <text x="695" y="250" text-anchor="middle" font-size="12" font-family="Nunito" font-weight="700" fill="#fff">Rules inline or Zod/Yup schema 🛡️</text>
+
+      <!-- Benefits -->
+      <rect x="560" y="278" width="124" height="34" rx="8" fill="#e8f5e9" stroke="#2e7d32"/>
+      <text x="622" y="300" text-anchor="middle" font-size="12" font-family="Nunito" fill="#2e7d32">0 re-renders ⚡</text>
+      <rect x="706" y="278" width="124" height="34" rx="8" fill="#e8f5e9" stroke="#2e7d32"/>
+      <text x="768" y="300" text-anchor="middle" font-size="12" font-family="Nunito" fill="#2e7d32">Native &lt;input&gt; 🎯</text>
+
+      <text x="695" y="348" text-anchor="middle" font-size="11" font-family="Nunito" fill="#37474f">Also: Zod resolver for type-safe validation</text>
+
+      <!-- VS -->
+      <circle cx="455" cy="200" r="30" fill="#ff6f00"/>
+      <text x="455" y="206" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="22" fill="white">VS</text>
+    </svg>
+  </div>
+
+  <!-- Comparison Table with Code -->
+  <div class="comparison-table-wrapper">
+    <h3>📋 Forms Code — Side by Side</h3>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular Reactive Form</th>
+          <th class="react-col">⚛️ React Hook Form</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">Angular — Component (TypeScript)</div>
+              <pre><code><span class="kw">import</span> { Component } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> {
+  FormBuilder, FormGroup, Validators
+} <span class="kw">from</span> <span class="str">'@angular/forms'</span>;
+
+<span class="kw">@Component</span>({
+  selector: <span class="str">'app-order-form'</span>,
+  templateUrl: <span class="str">'./order-form.component.html'</span>
+})
+<span class="kw">export class</span> <span class="fn">OrderFormComponent</span> {
+  orderForm: <span class="fn">FormGroup</span>;
+
+  <span class="fn">constructor</span>(<span class="kw">private</span> fb: <span class="fn">FormBuilder</span>) {
+    <span class="kw">this</span>.orderForm = <span class="kw">this</span>.fb.<span class="fn">group</span>({
+      name: [<span class="str">''</span>, [
+        <span class="fn">Validators</span>.required,
+        <span class="fn">Validators</span>.minLength(<span class="num">2</span>)
+      ]],
+      email: [<span class="str">''</span>, [
+        <span class="fn">Validators</span>.required,
+        <span class="fn">Validators</span>.email
+      ]],
+      candles: [<span class="num">1</span>, [
+        <span class="fn">Validators</span>.min(<span class="num">1</span>),
+        <span class="fn">Validators</span>.max(<span class="num">99</span>)
+      ]],
+      message: [<span class="str">''</span>]
+    });
+  }
+
+  <span class="fn">onSubmit</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.orderForm.valid) {
+      console.<span class="fn">log</span>(<span class="kw">this</span>.orderForm.value);
+    }
+  }
+}</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">React — React Hook Form + Zod</div>
+              <pre><code><span class="kw">import</span> { useForm } <span class="kw">from</span> <span class="str">'react-hook-form'</span>;
+<span class="kw">import</span> { zodResolver } <span class="kw">from</span> <span class="str">'@hookform/resolvers/zod'</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">'zod'</span>;
+
+<span class="kw">const</span> schema = z.<span class="fn">object</span>({
+  name: z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">2</span>, <span class="str">'Min 2 chars'</span>),
+  email: z.<span class="fn">string</span>().<span class="fn">email</span>(<span class="str">'Invalid email'</span>),
+  candles: z.<span class="fn">number</span>().<span class="fn">min</span>(<span class="num">1</span>).<span class="fn">max</span>(<span class="num">99</span>),
+  message: z.<span class="fn">string</span>().<span class="fn">optional</span>()
+});
+
+<span class="kw">export function</span> <span class="fn">OrderForm</span>() {
+  <span class="kw">const</span> {
+    register, handleSubmit,
+    formState: { errors, isSubmitting }
+  } = <span class="fn">useForm</span>({
+    resolver: <span class="fn">zodResolver</span>(schema),
+    defaultValues: { candles: <span class="num">1</span> }
+  });
+
+  <span class="kw">const</span> onSubmit = <span class="kw">async</span> (data) =&gt; {
+    <span class="kw">await</span> <span class="fn">submitOrder</span>(data);
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">form</span> onSubmit={<span class="fn">handleSubmit</span>(onSubmit)}&gt;
+      <span class="cmt">{/* fields below */}</span>
+    &lt;/<span class="kw">form</span>&gt;
+  );
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">Angular — Template (HTML)</div>
+              <pre><code>&lt;<span class="kw">form</span> [formGroup]=<span class="str">"orderForm"</span>
+      (ngSubmit)=<span class="str">"onSubmit()"</span>&gt;
+
+  &lt;<span class="kw">label</span>&gt;Name&lt;/<span class="kw">label</span>&gt;
+  &lt;<span class="kw">input</span> formControlName=<span class="str">"name"</span>&gt;
+  &lt;<span class="kw">div</span> *ngIf=<span class="str">"orderForm.get('name')?.invalid
+              &amp;&amp; orderForm.get('name')?.touched"</span>
+       class=<span class="str">"error"</span>&gt;
+    Name is required (min 2 chars)
+  &lt;/<span class="kw">div</span>&gt;
+
+  &lt;<span class="kw">label</span>&gt;Email&lt;/<span class="kw">label</span>&gt;
+  &lt;<span class="kw">input</span> formControlName=<span class="str">"email"</span>&gt;
+  &lt;<span class="kw">div</span> *ngIf=<span class="str">"orderForm.get('email')?.errors?.['email']"</span>&gt;
+    Invalid email address
+  &lt;/<span class="kw">div</span>&gt;
+
+  &lt;<span class="kw">label</span>&gt;Candles (1-99)&lt;/<span class="kw">label</span>&gt;
+  &lt;<span class="kw">input</span> type=<span class="str">"number"</span> formControlName=<span class="str">"candles"</span>&gt;
+
+  &lt;<span class="kw">button</span> type=<span class="str">"submit"</span>
+          [disabled]=<span class="str">"orderForm.invalid"</span>&gt;
+    Place Order 🎂
+  &lt;/<span class="kw">button</span>&gt;
+&lt;/<span class="kw">form</span>&gt;</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">React — Form JSX</div>
+              <pre><code><span class="kw">return</span> (
+  &lt;<span class="kw">form</span> onSubmit={<span class="fn">handleSubmit</span>(onSubmit)}&gt;
+
+    &lt;<span class="kw">label</span>&gt;Name&lt;/<span class="kw">label</span>&gt;
+    &lt;<span class="kw">input</span> {...<span class="fn">register</span>(<span class="str">'name'</span>)} /&gt;
+    {errors.name &amp;&amp; (
+      &lt;<span class="kw">p</span> className=<span class="str">"error"</span>&gt;
+        {errors.name.message}
+      &lt;/<span class="kw">p</span>&gt;
+    )}
+
+    &lt;<span class="kw">label</span>&gt;Email&lt;/<span class="kw">label</span>&gt;
+    &lt;<span class="kw">input</span> {...<span class="fn">register</span>(<span class="str">'email'</span>)} /&gt;
+    {errors.email &amp;&amp; (
+      &lt;<span class="kw">p</span> className=<span class="str">"error"</span>&gt;
+        {errors.email.message}
+      &lt;/<span class="kw">p</span>&gt;
+    )}
+
+    &lt;<span class="kw">label</span>&gt;Candles (1-99)&lt;/<span class="kw">label</span>&gt;
+    &lt;<span class="kw">input</span> type=<span class="str">"number"</span>
+           {...<span class="fn">register</span>(<span class="str">'candles'</span>,
+             { valueAsNumber: <span class="kw">true</span> })} /&gt;
+
+    &lt;<span class="kw">button</span> type=<span class="str">"submit"</span>
+            disabled={isSubmitting}&gt;
+      Place Order 🎂
+    &lt;/<span class="kw">button</span>&gt;
+  &lt;/<span class="kw">form</span>&gt;
+);</code></pre>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="angular-col">
+            <strong>Template-Driven Forms (simpler API)</strong>
+            <div class="code-block angular">
+              <pre><code><span class="cmt">// No FormBuilder needed!</span>
+<span class="cmt">// Uses two-way binding</span>
+&lt;<span class="kw">form</span> #f=<span class="str">"ngForm"</span> (ngSubmit)=<span class="str">"submit(f)"</span>&gt;
+  &lt;<span class="kw">input</span>
+    name=<span class="str">"email"</span>
+    [(ngModel)]=<span class="str">"user.email"</span>
+    required
+    email
+    #emailField=<span class="str">"ngModel"</span>
+  &gt;
+  &lt;<span class="kw">div</span> *ngIf=<span class="str">"emailField.invalid &amp;&amp;
+              emailField.touched"</span>&gt;
+    Bad email!
+  &lt;/<span class="kw">div</span>&gt;
+&lt;/<span class="kw">form</span>&gt;</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <strong>React — Controller for UI Libraries</strong>
+            <div class="code-block react">
+              <pre><code><span class="cmt">// For custom/third-party inputs</span>
+<span class="cmt">// that don't expose a native ref</span>
+<span class="kw">import</span> { Controller } <span class="kw">from</span> <span class="str">'react-hook-form'</span>;
+
+&lt;<span class="fn">Controller</span>
+  name=<span class="str">"flavour"</span>
+  control={control}
+  render={({ field }) =&gt; (
+    &lt;<span class="fn">Select</span>
+      {...field}
+      options={flavourOptions}
+    /&gt;
+  )}
+/&gt;
+
+<span class="cmt">// Works with: MUI, Chakra, Ant Design,</span>
+<span class="cmt">// Radix UI, shadcn/ui — anything!</span></code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Feature Comparison Checklist -->
+  <div class="comparison-table-wrapper">
+    <h3>🏆 Feature Comparison Checklist</h3>
+    <table class="comparison-table feature-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th class="angular-col">🅰️ Angular</th>
+          <th class="react-col">⚛️ React Hook Form</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Built-in validation</td><td class="angular-col">✅ Validators.*</td><td class="react-col">✅ Inline rules</td></tr>
+        <tr><td>Schema validation</td><td class="angular-col">⚠️ Custom validators</td><td class="react-col">✅ Zod / Yup resolver</td></tr>
+        <tr><td>Re-renders on change</td><td class="angular-col">⚠️ CD triggered</td><td class="react-col">✅ Near zero</td></tr>
+        <tr><td>Type safety</td><td class="angular-col">✅ Typed forms (v14+)</td><td class="react-col">✅ Zod inference</td></tr>
+        <tr><td>Dynamic fields</td><td class="angular-col">✅ FormArray</td><td class="react-col">✅ useFieldArray</td></tr>
+        <tr><td>Multi-step wizard</td><td class="angular-col">✅ Per-step FormGroups</td><td class="react-col">✅ persist across steps</td></tr>
+        <tr><td>UI lib integration</td><td class="angular-col">✅ Works with any</td><td class="react-col">✅ Controller pattern</td></tr>
+        <tr><td>Bundle size</td><td class="angular-col">⚠️ ~20KB (forms module)</td><td class="react-col">✅ ~9KB gzipped</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Kid Explains It -->
+  <div class="callout kid-note">
+    <span class="callout-icon">🧒</span>
+    <div class="callout-body">
+      <h4>Kid Explains It! 🎮</h4>
+      <p>Imagine a paper order form vs a tablet order app. <strong>Angular's FormGroup</strong> is like
+      having a physical folder with one slot per field — name, email, etc. Each slot has rules written on
+      it. The folder tells you immediately if anything's wrong. <strong>React Hook Form</strong> is like
+      a smart tablet that watches you type and only checks the rules when you're done filling a box or hit
+      submit — so it's really fast! Both give you the right answer, but the tablet uses less energy. 📋📱</p>
+    </div>
+  </div>
+
+  <!-- Pro Deep Dive -->
+  <div class="callout pro-tip">
+    <span class="callout-icon">🔬</span>
+    <div class="callout-body">
+      <h4>Pro Deep Dive 🧠</h4>
+      <p><strong>Performance — Controlled vs Uncontrolled:</strong> Angular reactive forms are
+      "controlled" — every keystroke updates the FormControl value and triggers CD. React Hook Form
+      uses <strong>uncontrolled inputs</strong> by default (native <code>ref</code>s, not state),
+      so typing in a field causes <em>zero re-renders</em>. For 50-field forms with real-time validation,
+      React Hook Form is significantly more performant.</p>
+
+      <p><strong>Angular Typed Forms (v14+):</strong>
+      <code>FormGroup&lt;{name: FormControl&lt;string&gt;}&gt;</code> — Full TypeScript inference on
+      <code>form.value</code>. Combined with <code>NonNullableFormBuilder</code>, you get strict null
+      safety. The tradeoff: more verbose type annotations.</p>
+
+      <p><strong>Async Validators:</strong> Both support async validation. Angular:
+      <code>AsyncValidators</code> — returns <code>Observable&lt;ValidationErrors|null&gt;</code>.
+      React Hook Form: <code>validate: async (val) =&gt; await checkUnique(val)</code>. Use
+      debounce to avoid hammering APIs on every keystroke.</p>
+
+      <p><strong>FormArray vs useFieldArray:</strong> Both handle dynamic field arrays (add/remove
+      rows). Angular's <code>FormArray</code> maintains an observable array of FormControls.
+      React Hook Form's <code>useFieldArray</code> provides <code>append, remove, move, insert</code>
+      methods and stable <code>id</code> keys for list reconciliation.</p>
+    </div>
+  </div>
+
+  <!-- Real-world Scenario -->
+  <div class="callout real-world">
+    <span class="callout-icon">🌍</span>
+    <div class="callout-body">
+      <h4>Real-World Scenario: Multi-Step Checkout Form 🛒</h4>
+      <p>An e-commerce checkout: Step 1 (shipping address), Step 2 (payment), Step 3 (review &amp; pay).</p>
+      <ul>
+        <li><strong>Angular approach:</strong> Three FormGroups, one per step. Store in a parent component.
+        Mark each step group as touched on "Next" to show validation errors. Submit master FormGroup
+        with all three nested groups on Step 3.</li>
+        <li><strong>React Hook Form approach:</strong> Single <code>useForm()</code> at the top level
+        with Zod schema covering all fields. Use <code>trigger(['name', 'address'])</code> to validate
+        only Step 1 fields before moving to Step 2. The form remembers all values between steps
+        without re-mounting.</li>
+        <li><strong>Both:</strong> Support <code>defaultValues</code> for pre-filling from saved cart,
+        and <code>reset()</code> to clear the form after successful checkout.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- When to Use -->
+  <div class="when-to-use-grid">
+    <div class="when-angular">
+      <h4>🅰️ Use Angular Forms When…</h4>
+      <ul>
+        <li>You need built-in <code>FormArray</code> with observable reactive streams</li>
+        <li>Your team prefers the structured FormBuilder pattern for large enterprise forms</li>
+        <li>You need Angular Material form field integration out of the box</li>
+        <li>Template-driven forms are good enough for simple, low-field forms</li>
+      </ul>
+    </div>
+    <div class="when-react">
+      <h4>⚛️ Use React Hook Form When…</h4>
+      <ul>
+        <li>Performance matters — many fields, frequent keystroke validation</li>
+        <li>You want Zod/Yup for end-to-end type-safe schema (shared with backend)</li>
+        <li>You need to integrate with any UI component library using Controller</li>
+        <li>You want minimal bundle size for forms functionality (~9KB)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Cheatsheet -->
+  <div class="cheatsheet-card">
+    <h3>📋 Chapter 14 Cheatsheet — Forms</h3>
+    <div class="cheatsheet-grid">
+      <div class="cheat-item"><code>FormBuilder.group()</code> — Create a FormGroup with FormControls</div>
+      <div class="cheat-item"><code>Validators.required | email | min | max</code> — Built-in Angular validators</div>
+      <div class="cheat-item"><code>formControlName</code> — Bind template input to FormControl</div>
+      <div class="cheat-item"><code>form.valid / form.value</code> — Check status and get values</div>
+      <div class="cheat-item"><code>useForm()</code> — React Hook Form setup hook</div>
+      <div class="cheat-item"><code>register()</code> — Attach native input to form</div>
+      <div class="cheat-item"><code>handleSubmit(fn)</code> — Validate then call fn with data</div>
+      <div class="cheat-item"><code>zodResolver(schema)</code> — Use Zod for type-safe validation</div>
+      <div class="cheat-item"><code>Controller</code> — Wrap third-party UI inputs</div>
+      <div class="cheat-item"><code>useFieldArray()</code> — Dynamic add/remove field arrays</div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="callout quiz-box">
+    <span class="callout-icon">🧠</span>
+    <div class="callout-body">
+      <h4>Quiz Time! 🎯</h4>
+      <ol>
+        <li>What is the difference between Angular's template-driven and reactive forms?
+          <details><summary>Answer</summary>Template-driven uses ngModel for two-way binding — simpler but less control. Reactive forms use FormBuilder/FormGroup in the TypeScript class — more explicit, testable, and scalable for complex forms.</details>
+        </li>
+        <li>Why does React Hook Form cause fewer re-renders than a useState-based form?
+          <details><summary>Answer</summary>React Hook Form uses uncontrolled inputs (native refs) by default, so the React component doesn't re-render on every keystroke. Only validation errors and submission trigger re-renders.</details>
+        </li>
+        <li>What is <code>zodResolver</code> and why is it useful?
+          <details><summary>Answer</summary>It connects the Zod schema validation library to React Hook Form. It's useful because you can share the same Zod schema between your frontend form and backend API validation, ensuring type safety throughout.</details>
+        </li>
+        <li>What is <code>FormArray</code> in Angular used for?
+          <details><summary>Answer</summary>It manages a dynamic list of FormControls or FormGroups — like rows in a table that the user can add or remove (e.g., multiple shipping addresses or invoice line items).</details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>

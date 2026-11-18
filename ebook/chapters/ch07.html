@@ -1,0 +1,450 @@
+<!-- ============================================================
+     CHAPTER 7: State — Your App's Memory
+     ============================================================ -->
+<div class="page chapter-header" id="chapter-7">
+  <div class="chapter-number-badge">7</div>
+  <div class="chapter-header-content">
+    <div class="unit-label">UNIT 2 · React 19 — The Modern Way</div>
+    <h1 class="chapter-title">State — Your App's Memory</h1>
+    <p class="chapter-subtitle">How components remember things and react to change</p>
+    <div class="learning-objectives">
+      <h3>🎯 Learning Objectives</h3>
+      <ul>
+        <li>Understand why state exists and how it differs from props</li>
+        <li>Use <code>useState</code> to add memory to components</li>
+        <li>Understand React's re-render cycle</li>
+        <li>Update objects and arrays in state correctly (immutability)</li>
+        <li>Lift state up to share between sibling components</li>
+        <li>Use the functional updater pattern for safe state transitions</li>
+      </ul>
+    </div>
+  </div>
+  <div class="chapter-header-illustration">
+    <svg viewBox="0 0 320 220" width="320" height="220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Brain outline -->
+      <ellipse cx="160" cy="100" rx="90" ry="75" fill="#fce4ec" stroke="#c62828" stroke-width="2.5"/>
+      <path d="M120 60 Q110 40 130 35 Q150 30 155 50" fill="none" stroke="#c62828" stroke-width="2"/>
+      <path d="M180 55 Q190 35 210 42 Q220 55 205 65" fill="none" stroke="#c62828" stroke-width="2"/>
+      <!-- Memory cells -->
+      <rect x="110" y="80" width="50" height="30" rx="5" fill="#fff9c4" stroke="#ff6f00" stroke-width="1.5"/>
+      <text x="135" y="100" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff6f00">count=5</text>
+      <rect x="168" y="80" width="60" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+      <text x="198" y="100" text-anchor="middle" font-family="monospace" font-size="8" fill="#1565c0">user="Alice"</text>
+      <rect x="130" y="118" width="55" height="28" rx="5" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
+      <text x="157" y="136" text-anchor="middle" font-family="monospace" font-size="8" fill="#6a1b9a">open=true</text>
+      <!-- Lightning bolts for re-render -->
+      <text x="60" y="130" font-size="22">⚡</text>
+      <text x="245" y="130" font-size="22">⚡</text>
+      <text x="142" y="195" font-family="sans-serif" font-size="11" fill="#757575" text-anchor="middle">React re-renders when state changes</text>
+    </svg>
+  </div>
+</div>
+
+<div class="page" id="ch7-story">
+  <div class="real-world">
+    <h2>🧠 A Real-World Story: The Scoreboard at a Football Match</h2>
+    <p>
+      Picture yourself at a football stadium ⚽. Up on the giant scoreboard it shows: <strong>Home 0 — 0 Away</strong>.
+      Every time a team scores, someone presses a button and the number goes up. The scoreboard <em>remembers</em>
+      the current score and <em>updates</em> itself for everyone to see.
+    </p>
+    <p>
+      Now imagine if the scoreboard had no memory — it would go back to 0 every time someone looked at it!
+      That would be useless. In the same way, a React component without <strong>state</strong> forgets
+      everything between renders. Add state, and it suddenly <em>remembers</em> — the score, whether a
+      menu is open, what a user typed into a form.
+    </p>
+    <p>
+      Every time the score changes ⚽, the scoreboard re-renders (updates on screen) automatically.
+      React does the same thing: change a piece of state and React <strong>automatically updates the UI</strong>
+      to match — no manual DOM manipulation needed. That's the magic! ✨
+    </p>
+  </div>
+
+  <h2>What Is State?</h2>
+  <p>
+    <strong>State</strong> is data that a component <em>owns</em>, <em>manages</em>, and can <em>change</em>
+    over time. When state changes, React automatically re-renders the component (and its children) to
+    reflect the new data.
+  </p>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 500 160" width="480" height="160" xmlns="http://www.w3.org/2000/svg">
+      <!-- State lifecycle loop -->
+      <rect x="30" y="50" width="110" height="60" rx="8" fill="#e8eaf6" stroke="#1a237e" stroke-width="2"/>
+      <text x="85" y="78" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12" font-weight="700" fill="#1a237e">State</text>
+      <text x="85" y="96" text-anchor="middle" font-family="monospace" font-size="10" fill="#424242">count = 5</text>
+
+      <path d="M145 80 L195 80" stroke="#ff6f00" stroke-width="2.5" marker-end="url(#arrS7)"/>
+      <text x="170" y="72" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#ff6f00">triggers</text>
+      <defs>
+        <marker id="arrS7" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ff6f00"/>
+        </marker>
+      </defs>
+
+      <rect x="200" y="50" width="110" height="60" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+      <text x="255" y="78" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12" font-weight="700" fill="#1565c0">Re-render</text>
+      <text x="255" y="96" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#424242">UI updates</text>
+
+      <path d="M315 80 L365 80" stroke="#2e7d32" stroke-width="2.5" marker-end="url(#arrS7b)"/>
+      <text x="340" y="72" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2e7d32">shows</text>
+      <defs>
+        <marker id="arrS7b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#2e7d32"/>
+        </marker>
+      </defs>
+
+      <rect x="370" y="50" width="110" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+      <text x="425" y="78" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12" font-weight="700" fill="#6a1b9a">New UI</text>
+      <text x="425" y="96" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#424242">count = 6</text>
+
+      <!-- Loop back arrow -->
+      <path d="M425 115 Q425 148 85 148 Q30 148 30 115" fill="none" stroke="#bdbdbd" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="250" y="160" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#757575">user action triggers setState → cycle repeats</text>
+    </svg>
+  </div>
+
+  <div class="callout definition">
+    <span class="callout-icon">📖</span>
+    <div>
+      <strong>Definition — useState:</strong> A React Hook that returns a tuple: <code>[currentValue, setterFunction]</code>.
+      Calling the setter schedules a re-render with the new value. It is the foundational building block
+      of all interactive React UIs.
+    </div>
+  </div>
+</div>
+
+<div class="page" id="ch7-kids">
+  <div class="kid-note">
+    <h2>🎮 For Kids — The Video Game Save File</h2>
+    <p>
+      Think of <strong>state</strong> like your video game save file 💾. When you're playing Mario, the game
+      remembers:
+    </p>
+    <ul>
+      <li>🍄 How many mushrooms you collected</li>
+      <li>⭐ How many stars you have</li>
+      <li>❤️ How many lives are left</li>
+      <li>🏆 Which levels you completed</li>
+    </ul>
+    <p>
+      Every time something changes (you grab a coin! 🪙), the game <strong>updates</strong> your save file
+      AND <strong>refreshes the screen</strong> to show your new score. That's exactly what React's
+      <code>useState</code> does!
+    </p>
+    <p>
+      In React-land: <code>useState(0)</code> creates a save slot starting at 0. When you call
+      <code>setScore(score + 1)</code>, React saves the new value AND redraws the screen. 🎮✨
+    </p>
+  </div>
+
+  <h3>Your First useState — Counter</h3>
+  <div class="code-block">
+    <div class="code-label">React 19 · Counter.jsx (Kid-friendly)</div>
+    <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="cmt">// score is the current value (starts at 0)</span>
+  <span class="cmt">// setScore is the function to change it</span>
+  <span class="kw">const</span> [<span class="var">score</span>, <span class="fn">setScore</span>] = <span class="fn">useState</span>(<span class="str">0</span>);
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">h2</span>&gt;🏆 Score: {<span class="var">score</span>}&lt;/<span class="kw">h2</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">setScore</span>(<span class="var">score</span> + <span class="str">1</span>)}&gt;+1 Point&lt;/<span class="kw">button</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">setScore</span>(<span class="var">score</span> - <span class="str">1</span>)}&gt;-1 Point&lt;/<span class="kw">button</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">setScore</span>(<span class="str">0</span>)}&gt;🔄 Reset&lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <strong>Remember:</strong> <code>const [score, setScore] = useState(0)</code> is called
+    <strong>array destructuring</strong>. React gives back an array with 2 items — the current value
+    and the setter function.
+  </div>
+</div>
+
+<div class="page" id="ch7-dev">
+  <div class="pro-tip">
+    <h2>💻 For Developers — State in Depth</h2>
+  </div>
+
+  <h3>Functional Updater Pattern</h3>
+  <p>When new state depends on old state, always use the functional form to avoid stale closures:</p>
+  <div class="code-block">
+    <div class="code-label">React 19 · functional updater</div>
+    <pre><span class="cmt">// ❌ WRONG — may read stale value in async contexts</span>
+<span class="fn">setCount</span>(<span class="var">count</span> + <span class="str">1</span>);
+
+<span class="cmt">// ✅ CORRECT — always gets the latest state</span>
+<span class="fn">setCount</span>(<span class="var">prev</span> =&gt; <span class="var">prev</span> + <span class="str">1</span>);
+
+<span class="cmt">// Real example: incrementing in a click handler called multiple times</span>
+<span class="kw">function</span> <span class="fn">handleTripleClick</span>() {
+  <span class="fn">setCount</span>(<span class="var">prev</span> =&gt; <span class="var">prev</span> + <span class="str">1</span>);
+  <span class="fn">setCount</span>(<span class="var">prev</span> =&gt; <span class="var">prev</span> + <span class="str">1</span>);
+  <span class="fn">setCount</span>(<span class="var">prev</span> =&gt; <span class="var">prev</span> + <span class="str">1</span>);
+  <span class="cmt">// count goes up by 3 (not 1) because each call receives the updated value</span>
+}</pre>
+  </div>
+
+  <h3>Updating Objects and Arrays in State</h3>
+  <div class="code-block">
+    <div class="code-label">React 19 · immutable state updates</div>
+    <pre><span class="kw">const</span> [<span class="var">user</span>, <span class="fn">setUser</span>] = <span class="fn">useState</span>({ name: <span class="str">'Alice'</span>, age: <span class="str">28</span>, city: <span class="str">'London'</span> });
+
+<span class="cmt">// ❌ WRONG — mutating state directly (React won't re-render!)</span>
+<span class="var">user</span>.<span class="var">age</span> = <span class="str">29</span>;
+<span class="fn">setUser</span>(<span class="var">user</span>); <span class="cmt">// same object reference → no re-render</span>
+
+<span class="cmt">// ✅ CORRECT — spread to create a NEW object</span>
+<span class="fn">setUser</span>(<span class="var">prev</span> =&gt; ({ ...<span class="var">prev</span>, age: <span class="str">29</span> }));
+
+<span class="cmt">// ========= Arrays =========</span>
+<span class="kw">const</span> [<span class="var">items</span>, <span class="fn">setItems</span>] = <span class="fn">useState</span>([<span class="str">'apple'</span>, <span class="str">'banana'</span>]);
+
+<span class="cmt">// Add item</span>
+<span class="fn">setItems</span>(<span class="var">prev</span> =&gt; [...<span class="var">prev</span>, <span class="str">'cherry'</span>]);
+
+<span class="cmt">// Remove item</span>
+<span class="fn">setItems</span>(<span class="var">prev</span> =&gt; <span class="var">prev</span>.<span class="fn">filter</span>(<span class="var">item</span> =&gt; <span class="var">item</span> !== <span class="str">'banana'</span>));
+
+<span class="cmt">// Update item</span>
+<span class="fn">setItems</span>(<span class="var">prev</span> =&gt; <span class="var">prev</span>.<span class="fn">map</span>(<span class="var">item</span> =&gt; <span class="var">item</span> === <span class="str">'apple'</span> ? <span class="str">'🍎 apple'</span> : <span class="var">item</span>));</pre>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <strong>Golden Rule of State:</strong> Never mutate state directly. Always return a <em>new</em>
+    object or array. React compares references; if the reference doesn't change, it skips re-rendering.
+  </div>
+
+  <h3>Lifting State Up</h3>
+  <p>When two sibling components need the same data, lift state to their closest common parent:</p>
+  <div class="code-block">
+    <div class="code-label">React 19 · lifting state up</div>
+    <pre><span class="kw">function</span> <span class="fn">TemperatureInput</span>({ <span class="var">value</span>, <span class="var">onChange</span>, <span class="var">unit</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">label</span>&gt;{<span class="var">unit</span>}&lt;/<span class="kw">label</span>&gt;
+      &lt;<span class="kw">input</span> value={<span class="var">value</span>} onChange={<span class="var">e</span> =&gt; <span class="fn">onChange</span>(<span class="var">e</span>.<span class="var">target</span>.<span class="var">value</span>)} /&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="fn">TemperatureConverter</span>() {
+  <span class="cmt">// State lives in the PARENT — shared between both inputs</span>
+  <span class="kw">const</span> [<span class="var">celsius</span>, <span class="fn">setCelsius</span>] = <span class="fn">useState</span>(<span class="str">''</span>);
+  <span class="kw">const</span> <span class="var">fahrenheit</span> = <span class="var">celsius</span> ? (<span class="var">celsius</span> * <span class="str">9</span>/<span class="str">5</span> + <span class="str">32</span>).<span class="fn">toFixed</span>(<span class="str">1</span>) : <span class="str">''</span>;
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="fn">TemperatureInput</span> value={<span class="var">celsius</span>}      onChange={<span class="fn">setCelsius</span>} unit=<span class="str">"°C"</span> /&gt;
+      &lt;<span class="fn">TemperatureInput</span> value={<span class="var">fahrenheit</span>} onChange={<span class="var">v</span> =&gt; <span class="fn">setCelsius</span>((<span class="var">v</span>-<span class="str">32</span>)*<span class="str">5</span>/<span class="str">9</span>)} unit=<span class="str">"°F"</span> /&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+</div>
+
+<div class="page" id="ch7-advanced">
+  <h2>Real-World State Example — Shopping Cart</h2>
+  <div class="code-block">
+    <div class="code-label">React 19 · ShoppingCart.jsx</div>
+    <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> <span class="var">PRODUCTS</span> = [
+  { id: <span class="str">1</span>, name: <span class="str">'Pizza Slice'</span>, price: <span class="str">3.99</span>, emoji: <span class="str">'🍕'</span> },
+  { id: <span class="str">2</span>, name: <span class="str">'Burger'</span>,     price: <span class="str">5.49</span>, emoji: <span class="str">'🍔'</span> },
+  { id: <span class="str">3</span>, name: <span class="str">'Ice Cream'</span>,  price: <span class="str">2.99</span>, emoji: <span class="str">'🍦'</span> },
+];
+
+<span class="kw">function</span> <span class="fn">ShoppingCart</span>() {
+  <span class="kw">const</span> [<span class="var">cart</span>, <span class="fn">setCart</span>] = <span class="fn">useState</span>({});
+
+  <span class="kw">const</span> <span class="fn">addItem</span> = (<span class="var">id</span>) =&gt;
+    <span class="fn">setCart</span>(<span class="var">prev</span> =&gt; ({ ...<span class="var">prev</span>, [<span class="var">id</span>]: (<span class="var">prev</span>[<span class="var">id</span>] || <span class="str">0</span>) + <span class="str">1</span> }));
+
+  <span class="kw">const</span> <span class="fn">removeItem</span> = (<span class="var">id</span>) =&gt;
+    <span class="fn">setCart</span>(<span class="var">prev</span> =&gt; {
+      <span class="kw">const</span> <span class="var">updated</span> = { ...<span class="var">prev</span> };
+      <span class="kw">if</span> (<span class="var">updated</span>[<span class="var">id</span>] &gt; <span class="str">1</span>) <span class="var">updated</span>[<span class="var">id</span>]--;
+      <span class="kw">else</span> <span class="kw">delete</span> <span class="var">updated</span>[<span class="var">id</span>];
+      <span class="kw">return</span> <span class="var">updated</span>;
+    });
+
+  <span class="kw">const</span> <span class="var">total</span> = <span class="var">PRODUCTS</span>.<span class="fn">reduce</span>((<span class="var">sum</span>, <span class="var">p</span>) =&gt;
+    <span class="var">sum</span> + (<span class="var">cart</span>[<span class="var">p</span>.<span class="var">id</span>] || <span class="str">0</span>) * <span class="var">p</span>.<span class="var">price</span>, <span class="str">0</span>);
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      {<span class="var">PRODUCTS</span>.<span class="fn">map</span>(<span class="var">p</span> =&gt; (
+        &lt;<span class="kw">div</span> key={<span class="var">p</span>.<span class="var">id</span>}&gt;
+          &lt;<span class="kw">span</span>&gt;{<span class="var">p</span>.<span class="var">emoji</span>} {<span class="var">p</span>.<span class="var">name</span>} ${<span class="var">p</span>.<span class="var">price</span>}&lt;/<span class="kw">span</span>&gt;
+          &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">addItem</span>(<span class="var">p</span>.<span class="var">id</span>)}&gt;+&lt;/<span class="kw">button</span>&gt;
+          &lt;<span class="kw">span</span>&gt;{<span class="var">cart</span>[<span class="var">p</span>.<span class="var">id</span>] || <span class="str">0</span>}&lt;/<span class="kw">span</span>&gt;
+          &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">removeItem</span>(<span class="var">p</span>.<span class="var">id</span>)}&gt;-&lt;/<span class="kw">button</span>&gt;
+        &lt;/<span class="kw">div</span>&gt;
+      ))}
+      &lt;<span class="kw">h3</span>&gt;Total: ${<span class="var">total</span>.<span class="fn">toFixed</span>(<span class="str">2</span>)}&lt;/<span class="kw">h3</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <div class="callout fun-fact">
+    <span class="callout-icon">🤩</span>
+    <strong>Fun Fact:</strong> React <strong>batches</strong> multiple setState calls in event handlers
+    into a single re-render (since React 18). So three <code>setState</code> calls in one click handler
+    result in only <em>one</em> re-render, not three! This automatic batching makes React fast.
+  </div>
+
+  <h2>State Machines &amp; Complex State with <code>useReducer</code></h2>
+  <p>
+    When a component has multiple state variables that always change together, or when the next state
+    depends on complex conditional transitions, <code>useReducer</code> is often cleaner than multiple
+    <code>useState</code> calls.
+  </p>
+
+  <div class="code-block">
+    <div class="code-label">React 19 · useReducer pattern</div>
+    <pre><span class="kw">import</span> { useReducer } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> <span class="var">initialState</span> = { count: <span class="str">0</span>, step: <span class="str">1</span>, status: <span class="str">'idle'</span> };
+
+<span class="kw">function</span> <span class="fn">counterReducer</span>(<span class="var">state</span>, <span class="var">action</span>) {
+  <span class="kw">switch</span> (<span class="var">action</span>.<span class="var">type</span>) {
+    <span class="kw">case</span> <span class="str">'INCREMENT'</span>:
+      <span class="kw">return</span> { ...<span class="var">state</span>, count: <span class="var">state</span>.<span class="var">count</span> + <span class="var">state</span>.<span class="var">step</span>, status: <span class="str">'active'</span> };
+    <span class="kw">case</span> <span class="str">'DECREMENT'</span>:
+      <span class="kw">return</span> { ...<span class="var">state</span>, count: <span class="var">state</span>.<span class="var">count</span> - <span class="var">state</span>.<span class="var">step</span>, status: <span class="str">'active'</span> };
+    <span class="kw">case</span> <span class="str">'SET_STEP'</span>:
+      <span class="kw">return</span> { ...<span class="var">state</span>, step: <span class="var">action</span>.<span class="var">payload</span> };
+    <span class="kw">case</span> <span class="str">'RESET'</span>:
+      <span class="kw">return</span> <span class="var">initialState</span>;
+    <span class="kw">default</span>:
+      <span class="kw">return</span> <span class="var">state</span>;
+  }
+}
+
+<span class="kw">export function</span> <span class="fn">AdvancedCounter</span>() {
+  <span class="kw">const</span> [<span class="var">state</span>, <span class="fn">dispatch</span>] = <span class="fn">useReducer</span>(<span class="var">counterReducer</span>, <span class="var">initialState</span>);
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> className=<span class="str">"counter-box"</span>&gt;
+      &lt;<span class="kw">h3</span>&gt;Count: {<span class="var">state</span>.<span class="var">count</span>} (Step: {<span class="var">state</span>.<span class="var">step</span>})&lt;/<span class="kw">h3</span>&gt;
+      &lt;<span class="kw">p</span>&gt;Status: {<span class="var">state</span>.<span class="var">status</span>}&lt;/<span class="kw">p</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">dispatch</span>({ type: <span class="str">'INCREMENT'</span> })}&gt;+{<span class="var">state</span>.<span class="var">step</span>}&lt;/<span class="kw">button</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">dispatch</span>({ type: <span class="str">'DECREMENT'</span> })}&gt;-{<span class="var">state</span>.<span class="var">step</span>}&lt;/<span class="kw">button</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">dispatch</span>({ type: <span class="str">'RESET'</span> })}&gt;Reset&lt;/<span class="kw">button</span>&gt;
+      &lt;<span class="kw">input</span>
+        type=<span class="str">"number"</span>
+        value={<span class="var">state</span>.<span class="var">step</span>}
+        onChange={<span class="var">e</span> =&gt; <span class="fn">dispatch</span>({ type: <span class="str">'SET_STEP'</span>, payload: <span class="fn">Number</span>(<span class="var">e</span>.<span class="var">target</span>.<span class="var">value</span>) })}
+      /&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}
+</pre>
+  </div>
+
+  <h2>State vs. Props vs. Local Variables</h2>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>State (<code>useState</code>)</th>
+        <th>Props (<code>props</code>)</th>
+        <th>Local Variable (<code>let x</code>)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ownership</td>
+        <td>Internal to component</td>
+        <td>Passed from parent</td>
+        <td>Function scope only</td>
+      </tr>
+      <tr>
+        <td>Mutated By</td>
+        <td>Component via setter</td>
+        <td>Parent only (read-only to child)</td>
+        <td>Direct assignment</td>
+      </tr>
+      <tr>
+        <td>Causes Re-render?</td>
+        <td>✅ Yes, on setter call</td>
+        <td>✅ Yes, when parent re-renders new props</td>
+        <td>❌ No</td>
+      </tr>
+      <tr>
+        <td>Persists Across Renders?</td>
+        <td>✅ Yes, React remembers it</td>
+        <td>✅ Yes, parent manages lifecycle</td>
+        <td>❌ No, wiped on next render</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Chapter 7 Summary</h2>
+  <ul class="summary-list">
+    <li>✅ <strong>State</strong> is a component's private, mutable memory</li>
+    <li>✅ <code>useState(initialValue)</code> returns <code>[value, setter]</code></li>
+    <li>✅ Calling the setter triggers a <strong>re-render</strong></li>
+    <li>✅ Never mutate state — always create new objects/arrays</li>
+    <li>✅ Use the functional updater <code>prev =&gt; newVal</code> when new state depends on old</li>
+    <li>✅ Lift state to the closest common parent when siblings need to share it</li>
+    <li>✅ State differs from props: state is <em>internal and mutable</em>; props are <em>external and read-only</em></li>
+  </ul>
+</div>
+
+<div class="page" id="ch7-quiz">
+  <div class="quiz-box">
+    <h2>🧠 Chapter 7 Quiz</h2>
+
+    <div class="quiz-question">
+      <p><strong>Q1.</strong> What is returned by <code>useState(42)</code>?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ An array with two elements: <code>[42, setterFunction]</code>. The first is the current state
+        value (42), the second is a function to update it.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q2.</strong> What's wrong with: <code>user.name = "Bob"; setUser(user);</code>?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ You're mutating the state object directly. Since the object reference doesn't change,
+        React may not detect the update. Always spread: <code>setUser({...user, name: "Bob"})</code>.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q3.</strong> What does "lifting state up" mean?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ Moving state to the nearest common parent of two sibling components that both need that
+        data. The parent holds state and passes it down via props.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q4.</strong> Why use <code>setCount(prev => prev + 1)</code> instead of <code>setCount(count + 1)</code>?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ The functional form always reads the <em>latest</em> state value, even inside async
+        callbacks or batched updates where <code>count</code> might be stale.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q5.</strong> What is the difference between props and state?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ <strong>Props</strong> come from the parent, are read-only, and flow downward.
+        <strong>State</strong> is owned by the component itself, is mutable, and triggers re-renders
+        when changed via the setter.</p>
+      </details>
+    </div>
+  </div>
+  <div class="page-number">Chapter 7 · State</div>
+</div>

@@ -1,0 +1,23 @@
+{
+  "Admin": {
+    "users": ["read", "write", "delete"],
+    "products": ["read", "write", "delete"],
+    "orders": ["read", "write", "delete"],
+    "analytics": ["read"],
+    "settings": ["read", "write"]
+  },
+  "Manager": {
+    "users": ["read"],
+    "products": ["read", "write"],
+    "orders": ["read", "write"],
+    "analytics": ["read"],
+    "settings": ["read"]
+  },
+  "Developer": {
+    "users": ["read"],
+    "products": ["read"],
+    "orders": ["read"],
+    "analytics": ["read"],
+    "settings": []
+  }
+}

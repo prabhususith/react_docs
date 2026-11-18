@@ -1,0 +1,479 @@
+<!-- ============================================================
+     CHAPTER 13: Change Detection — Zone.js vs React Fiber
+     Comic-Book Battle Theme
+     ============================================================ -->
+<div class="page chapter-page" id="chapter-13">
+
+  <!-- Chapter Header -->
+  <div class="chapter-header" style="background: linear-gradient(135deg, #1a237e 0%, #7b1fa2 100%);">
+    <div class="chapter-badge">13</div>
+    <div class="chapter-header-content">
+      <div class="chapter-unit-label">UNIT 4 · THE ROSETTA STONE</div>
+      <h1 class="chapter-title">Change Detection</h1>
+      <h2 class="chapter-subtitle">⚡ Zone.js vs React Fiber — The Ultimate Battle!</h2>
+      <div class="learning-objectives">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Understand WHY frameworks need change detection and what problem it solves</li>
+          <li>Compare Angular's Zone.js monkey-patching approach vs React's virtual DOM diffing</li>
+          <li>Learn React 19 Fiber scheduler internals and Angular's OnPush strategy</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opening Story -->
+  <div class="chapter-opening">
+    <div class="callout fun-fact">
+      <span class="callout-icon">🦸</span>
+      <div class="callout-body">
+        <h4>THE COMIC-BOOK BATTLE BEGINS!</h4>
+        <p>Imagine two superhero monitors watching over a city (your web app). Their job: whenever something
+        changes in the city — a building renovated, a road repaired — they must update the giant city map
+        hanging in City Hall so visitors always see the current state.</p>
+
+        <p>🅰️ <strong>ZONE-MAN</strong> (Angular's hero) patrols <em>every single street</em> in the city.
+        The moment ANY event happens anywhere — a mouse click, a timer ticking, an HTTP response arriving —
+        Zone-Man blows his whistle and shouts: <em>"EVERYONE CHECK YOUR SECTION!"</em> Every citizen
+        (component) looks around and reports whether their block changed. It's thorough. It's safe. But on
+        a giant city, all that checking takes time. 🏙️</p>
+
+        <p>⚛️ <strong>FIBER-GIRL</strong> (React's hero) is smarter. She has a magical crystal ball called
+        the <strong>Virtual DOM</strong>. When a building changes, the crystal ball shows the new city
+        layout. Fiber-Girl compares the old map to the new crystal-ball image, marks only the CHANGED
+        buildings with sticky notes, and sends repair crews only there. No unnecessary checking! And if
+        her repair list gets long, she can pause, let emergency services through, then continue — thanks
+        to her secret weapon: the <strong>Fiber Scheduler</strong>. 🔮</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Picture SVG -->
+  <div class="svg-container">
+    <h3>🗺️ The Big Picture — How Change Detection Works</h3>
+    <svg viewBox="0 0 900 420" width="100%" style="max-width:900px; border:2px solid #e0e0e0; border-radius:12px; background:#fafafa;">
+      <!-- Angular side -->
+      <rect x="20" y="20" width="390" height="380" rx="16" fill="#fff3e0" stroke="#c62828" stroke-width="2"/>
+      <text x="215" y="55" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="18" fill="#c62828">🅰️ Angular — Zone.js</text>
+
+      <!-- Zone bubble -->
+      <ellipse cx="215" cy="130" rx="140" ry="55" fill="#ffcdd2" stroke="#c62828" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="215" y="120" text-anchor="middle" font-size="13" font-family="Nunito" fill="#b71c1c" font-weight="700">Zone (wraps everything)</text>
+      <text x="215" y="140" text-anchor="middle" font-size="12" font-family="Nunito" fill="#c62828">click / HTTP / setTimeout</text>
+      <text x="215" y="158" text-anchor="middle" font-size="12" font-family="Nunito" fill="#c62828">ALL intercepted!</text>
+
+      <!-- Arrow down -->
+      <line x1="215" y1="186" x2="215" y2="216" stroke="#c62828" stroke-width="2" marker-end="url(#arrow-red)"/>
+      <defs>
+        <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#c62828"/>
+        </marker>
+        <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#1565c0"/>
+        </marker>
+        <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#2e7d32"/>
+        </marker>
+      </defs>
+
+      <!-- CD cycle -->
+      <rect x="130" y="218" width="170" height="38" rx="8" fill="#ef9a9a" stroke="#c62828" stroke-width="1.5"/>
+      <text x="215" y="242" text-anchor="middle" font-size="13" font-family="Nunito" fill="#b71c1c" font-weight="700">Check EVERY component</text>
+
+      <line x1="215" y1="258" x2="215" y2="288" stroke="#c62828" stroke-width="2" marker-end="url(#arrow-red)"/>
+
+      <rect x="120" y="290" width="190" height="38" rx="8" fill="#ef9a9a" stroke="#c62828" stroke-width="1.5"/>
+      <text x="215" y="314" text-anchor="middle" font-size="13" font-family="Nunito" fill="#b71c1c" font-weight="700">Update DOM if changed</text>
+
+      <text x="215" y="368" text-anchor="middle" font-size="11" font-family="Nunito" fill="#795548">OnPush ✅ skips subtrees</text>
+      <text x="215" y="386" text-anchor="middle" font-size="11" font-family="Nunito" fill="#795548">Signals 🔥 fine-grained</text>
+
+      <!-- React side -->
+      <rect x="490" y="20" width="390" height="380" rx="16" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+      <text x="685" y="55" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="18" fill="#1565c0">⚛️ React — Fiber</text>
+
+      <!-- setState trigger -->
+      <rect x="590" y="75" width="190" height="38" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="1.5"/>
+      <text x="685" y="99" text-anchor="middle" font-size="13" font-family="Nunito" fill="#0d47a1" font-weight="700">setState() called 🎯</text>
+
+      <line x1="685" y1="115" x2="685" y2="145" stroke="#1565c0" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+      <!-- Virtual DOM -->
+      <rect x="575" y="147" width="220" height="50" rx="8" fill="#90caf9" stroke="#1565c0" stroke-width="1.5"/>
+      <text x="685" y="168" text-anchor="middle" font-size="13" font-family="Nunito" fill="#0d47a1" font-weight="700">Build new Virtual DOM</text>
+      <text x="685" y="186" text-anchor="middle" font-size="12" font-family="Nunito" fill="#1565c0">🔮 Crystal ball snapshot</text>
+
+      <line x1="685" y1="199" x2="685" y2="229" stroke="#1565c0" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+      <!-- Diff -->
+      <rect x="575" y="231" width="220" height="50" rx="8" fill="#90caf9" stroke="#1565c0" stroke-width="1.5"/>
+      <text x="685" y="252" text-anchor="middle" font-size="13" font-family="Nunito" fill="#0d47a1" font-weight="700">Diff old vs new vDOM</text>
+      <text x="685" y="270" text-anchor="middle" font-size="12" font-family="Nunito" fill="#1565c0">Find changed nodes only 🕵️</text>
+
+      <line x1="685" y1="283" x2="685" y2="313" stroke="#1565c0" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+      <!-- Commit -->
+      <rect x="575" y="315" width="220" height="38" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="1.5"/>
+      <text x="685" y="339" text-anchor="middle" font-size="13" font-family="Nunito" fill="#0d47a1" font-weight="700">Commit to real DOM 🎯</text>
+
+      <text x="685" y="380" text-anchor="middle" font-size="11" font-family="Nunito" fill="#37474f">Fiber pauses for high-priority work</text>
+
+      <!-- VS badge -->
+      <circle cx="450" cy="210" r="30" fill="#ff6f00"/>
+      <text x="450" y="216" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="22" fill="white">VS</text>
+    </svg>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="comparison-table-wrapper">
+    <h3>⚔️ Zone.js vs React Fiber — Head to Head</h3>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular (Zone.js)</th>
+          <th class="react-col">⚛️ React (Fiber)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">Angular — Default CD</div>
+              <pre><code><span class="cmt">// Angular wraps browser APIs via Zone.js
+// No code needed — automatic!</span>
+
+<span class="cmt">// Every click/HTTP/timer triggers CD</span>
+<span class="kw">@Component</span>({
+  selector: <span class="str">'app-counter'</span>,
+  template: <span class="str">`
+    &lt;h1&gt;{{ count }}&lt;/h1&gt;
+    &lt;button (click)="increment()"&gt;+&lt;/button&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="fn">CounterComponent</span> {
+  count = <span class="num">0</span>;
+
+  <span class="fn">increment</span>() {
+    <span class="kw">this</span>.count++; <span class="cmt">// Zone detects, CD runs</span>
+  }
+}
+
+<span class="cmt">// OnPush — only checks when:</span>
+<span class="cmt">// 1. Input reference changes</span>
+<span class="cmt">// 2. Async pipe emits</span>
+<span class="cmt">// 3. markForCheck() called</span>
+<span class="kw">@Component</span>({
+  changeDetection: <span class="fn">ChangeDetectionStrategy</span>.OnPush
+})</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">React — Fiber Reconciler</div>
+              <pre><code><span class="cmt">// React knows EXACTLY what changed</span>
+<span class="cmt">// because YOU tell it via setState</span>
+
+<span class="kw">import</span> { useState, useTransition } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="cmt">// React knows count changed, only</span>
+  <span class="cmt">// re-renders THIS component subtree</span>
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">h1</span>&gt;{count}&lt;/<span class="kw">h1</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>)}&gt;
+        +
+      &lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}
+
+<span class="cmt">// React 18+ batches multiple setStates</span>
+<span class="cmt">// React 19: useTransition for low-priority</span>
+<span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>();
+<span class="fn">startTransition</span>(() =&gt; {
+  <span class="fn">setHeavyList</span>(newData); <span class="cmt">// non-urgent</span>
+});</code></pre>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="angular-col">
+            <strong>Zone.js Signals (Angular 17+)</strong>
+            <div class="code-block angular">
+              <pre><code><span class="kw">import</span> { signal, computed, effect }
+  <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+<span class="kw">@Component</span>({
+  template: <span class="str">`&lt;h1&gt;{{ count() }}&lt;/h1&gt;`</span>
+})
+<span class="kw">export class</span> <span class="fn">Counter</span> {
+  count = <span class="fn">signal</span>(<span class="num">0</span>);
+  doubled = <span class="fn">computed</span>(() =&gt;
+    <span class="kw">this</span>.<span class="fn">count</span>() * <span class="num">2</span>
+  );
+
+  <span class="fn">increment</span>() {
+    <span class="kw">this</span>.count.<span class="fn">update</span>(c =&gt; c + <span class="num">1</span>);
+    <span class="cmt">// Only THIS component re-renders!</span>
+  }
+}
+
+<span class="cmt">// effect() = useEffect() equivalent</span>
+<span class="fn">effect</span>(() =&gt; {
+  console.<span class="fn">log</span>(<span class="str">`Count: </span>${<span class="kw">this</span>.<span class="fn">count</span>()}<span class="str">`</span>);
+});</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <strong>React — memo & useMemo optimisation</strong>
+            <div class="code-block react">
+              <pre><code><span class="kw">import</span> { memo, useMemo, useCallback } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="cmt">// memo = OnPush equivalent</span>
+<span class="cmt">// Skip re-render if props unchanged</span>
+<span class="kw">const</span> <span class="fn">ExpensiveChild</span> = <span class="fn">memo</span>(<span class="kw">function</span>({ items }) {
+  <span class="kw">return</span> &lt;<span class="kw">ul</span>&gt;{items.<span class="fn">map</span>(i =&gt; &lt;<span class="kw">li</span>&gt;{i}&lt;/<span class="kw">li</span>&gt;)}&lt;/<span class="kw">ul</span>&gt;;
+});
+
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="cmt">// useMemo — cache expensive calculation</span>
+  <span class="kw">const</span> sortedItems = <span class="fn">useMemo</span>(
+    () =&gt; [...items].<span class="fn">sort</span>(),
+    [items]
+  );
+
+  <span class="cmt">// useCallback — stable function ref</span>
+  <span class="kw">const</span> handleClick = <span class="fn">useCallback</span>(
+    () =&gt; <span class="fn">doSomething</span>(),
+    []
+  );
+
+  <span class="kw">return</span> &lt;<span class="fn">ExpensiveChild</span> items={sortedItems} /&gt;;
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Kid Explains It -->
+  <div class="callout kid-note">
+    <span class="callout-icon">🧒</span>
+    <div class="callout-body">
+      <h4>Kid Explains It! 🎮</h4>
+      <p>Imagine you have 100 toy soldiers on a table. <strong>Angular</strong> is like a mom who, every time
+      you touch ONE soldier, checks every single soldier to see if it moved. <strong>React</strong> is like a
+      camera — it takes a photo BEFORE and AFTER you touch things, then only moves the soldiers that actually
+      changed. React's camera (Fiber) is also polite — if Dad calls for dinner, it pauses its work and
+      comes back later! 📸</p>
+    </div>
+  </div>
+
+  <!-- Pro Deep Dive -->
+  <div class="callout pro-tip">
+    <span class="callout-icon">🔬</span>
+    <div class="callout-body">
+      <h4>Pro Deep Dive 🧠</h4>
+      <p><strong>Zone.js Mechanics:</strong> Zone.js patches 50+ browser APIs (setTimeout, Promise, XHR, fetch,
+      addEventListener, etc.) at startup. After each async operation completes, it notifies Angular's
+      <code>ApplicationRef.tick()</code>, which triggers <strong>dirty checking</strong> top-down through
+      the entire component tree. This runs synchronously, blocking the main thread.</p>
+
+      <p><strong>React Fiber Architecture:</strong> Fiber is a complete rewrite of React's reconciler
+      (React 16+). The work unit is a "fiber" — a plain JS object representing a component instance.
+      Fiber splits rendering into <strong>Render Phase</strong> (interruptible, pure) and
+      <strong>Commit Phase</strong> (synchronous, applies DOM changes). The scheduler uses
+      <code>MessageChannel</code> to yield to the browser between fiber units, enabling
+      concurrent features like Suspense, useTransition, and useDeferredValue in React 18+.</p>
+
+      <p><strong>Angular Signals vs Zone.js:</strong> Angular 17+ Signals bypass Zone.js entirely.
+      A signal tracks its consumers at read-time (like MobX). When <code>signal.set()</code> is called,
+      only components that read that signal are scheduled for re-render — O(1) precision vs Zone's O(n)
+      full-tree walk. Angular 18+ can run <strong>zoneless</strong> with provideExperimentalZonelessChangeDetection().</p>
+
+      <p><strong>Gotcha — React Stale Closures:</strong> React re-renders create new function instances.
+      If you forget dependencies in useEffect, you capture stale state. Angular services are
+      class instances — no closure issues. Use <code>eslint-plugin-react-hooks</code> to catch this.</p>
+    </div>
+  </div>
+
+  <!-- Real-world Scenario -->
+  <div class="callout real-world">
+    <span class="callout-icon">🌍</span>
+    <div class="callout-body">
+      <h4>Real-World Scenario: Live Stock Ticker 📈</h4>
+      <p>A financial dashboard updates 500 stock prices per second via WebSocket.</p>
+      <ul>
+        <li><strong>Angular (default):</strong> Every WebSocket message triggers full CD — checks all
+        1000+ components. At 500 updates/sec that's 500,000 component checks/sec. 🔥 CPU spikes!</li>
+        <li><strong>Angular (OnPush + Signals):</strong> Only the specific stock row component with
+        the changed signal re-renders. Smooth 60fps. ✅</li>
+        <li><strong>React (naive):</strong> setState in WebSocket handler causes parent re-render,
+        cascading to all children. Same problem if not optimised.</li>
+        <li><strong>React (optimised):</strong> useMemo on stock list, memo on each StockRow,
+        useTransition to defer non-urgent price updates. Silky smooth. ✅</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- When to Use -->
+  <div class="when-to-use-grid">
+    <div class="when-angular">
+      <h4>🅰️ Use Angular Change Detection When…</h4>
+      <ul>
+        <li>Your team needs automatic change detection "just works" out of the box</li>
+        <li>You're adopting Angular Signals for fine-grained reactivity in new code</li>
+        <li>Large enterprise app where OnPush discipline enforced by team convention</li>
+        <li>You want <code>async pipe</code> to auto-subscribe and trigger CD for Observables</li>
+      </ul>
+    </div>
+    <div class="when-react">
+      <h4>⚛️ Use React Fiber When…</h4>
+      <ul>
+        <li>You need concurrent rendering — Suspense, streaming SSR</li>
+        <li>You want <code>useTransition</code> to keep UI responsive during heavy updates</li>
+        <li>Fine-grained control over what re-renders via <code>memo</code> + <code>useMemo</code></li>
+        <li>Your team prefers explicit state mutations over magic interceptors</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Cheatsheet -->
+  <div class="cheatsheet-card">
+    <h3>📋 Chapter 13 Cheatsheet — Change Detection</h3>
+    <div class="cheatsheet-grid">
+      <div class="cheat-item"><code>Zone.js</code> — Patches browser APIs; triggers CD on any async event</div>
+      <div class="cheat-item"><code>ChangeDetectionStrategy.OnPush</code> — Angular: skip subtree unless input changes</div>
+      <div class="cheat-item"><code>signal()</code> — Angular 17+: fine-grained reactivity, bypasses Zone</div>
+      <div class="cheat-item"><code>React Fiber</code> — Interruptible reconciler with priority scheduling</div>
+      <div class="cheat-item"><code>memo()</code> — Skip re-render if props shallowly equal</div>
+      <div class="cheat-item"><code>useTransition()</code> — Mark updates as low-priority; keep UI responsive</div>
+      <div class="cheat-item"><code>useDeferredValue()</code> — Defer recalculation of expensive derived state</div>
+      <div class="cheat-item"><code>Render Phase</code> — Interruptible; pure React work</div>
+      <div class="cheat-item"><code>Commit Phase</code> — Synchronous; applies DOM mutations</div>
+    </div>
+  </div>
+
+  <!-- Battle Simulation: Running Outside the Zone vs React FlushSync -->
+  <div class="callout definition">
+    <span class="callout-icon">⚔️</span>
+    <div class="callout-body">
+      <h4>Superpower Battle: NgZone.runOutsideAngular vs React flushSync</h4>
+      <p>Sometimes you need to escape the framework's automatic cycle for maximum raw speed or urgent DOM updates.</p>
+    </div>
+  </div>
+
+  <div class="comparison-table-wrapper">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular: Escaping Zone.js</th>
+          <th class="react-col">⚛️ React: Bypassing Batching with flushSync</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">runOutsideAngular.ts</div>
+              <pre><code><span class="kw">import</span> { Component, NgZone, inject, ElementRef, OnInit } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+<span class="kw">@Component</span>({
+  selector: <span class="str">'app-canvas-animator'</span>,
+  template: <span class="str">`&lt;canvas #myCanvas width="800" height="400"&gt;&lt;/canvas&gt;`</span>
+})
+<span class="kw">export class</span> <span class="fn">CanvasAnimatorComponent</span> <span class="kw">implements</span> <span class="fn">OnInit</span> {
+  <span class="kw">private</span> ngZone = <span class="fn">inject</span>(NgZone);
+  <span class="kw">private</span> el = <span class="fn">inject</span>(ElementRef);
+
+  <span class="fn">ngOnInit</span>() {
+    <span class="cmt">// 🚫 DO NOT let requestAnimationFrame trigger full CD 60 times/sec!</span>
+    <span class="kw">this</span>.ngZone.<span class="fn">runOutsideAngular</span>(() =&gt; {
+      <span class="kw">const</span> canvas = <span class="kw">this</span>.el.nativeElement.querySelector(<span class="str">'canvas'</span>);
+      <span class="kw">const</span> ctx = canvas.<span class="fn">getContext</span>(<span class="str">'2d'</span>);
+
+      <span class="kw">function</span> <span class="fn">renderLoop</span>() {
+        <span class="cmt">// Draw 10,000 particles at 60 FPS without touching Angular CD</span>
+        ctx.<span class="fn">clearRect</span>(<span class="num">0</span>, <span class="num">0</span>, <span class="num">800</span>, <span class="num">400</span>);
+        <span class="cmt">// ... drawing logic ...</span>
+        <span class="fn">requestAnimationFrame</span>(renderLoop);
+      }
+      <span class="fn">renderLoop</span>();
+    });
+  }
+
+  <span class="fn">syncScoreToUI</span>(score: <span class="var">number</span>) {
+    <span class="cmt">// Re-enter the zone only when we explicitly want to update the DOM!</span>
+    <span class="kw">this</span>.ngZone.<span class="fn">run</span>(() =&gt; {
+      <span class="kw">this</span>.playerScore = score;
+    });
+  }
+}</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">flushSync.tsx</div>
+              <pre><code><span class="kw">import</span> React, { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { flushSync } <span class="kw">from</span> <span class="str">'react-dom'</span>;
+
+<span class="kw">export function</span> <span class="fn">TerminalLog</span>() {
+  <span class="kw">const</span> [logs, setLogs] = <span class="fn">useState</span>&lt;<span class="var">string</span>[]&gt;([]);
+
+  <span class="kw">const</span> addLog = (newEntry: <span class="var">string</span>) =&gt; {
+    <span class="cmt">// React 18/19 batches all state updates by default</span>
+    <span class="cmt">// flushSync forces an IMMEDIATE synchronous DOM flush</span>
+    <span class="fn">flushSync</span>(() =&gt; {
+      <span class="fn">setLogs</span>(prev =&gt; [...prev, newEntry]);
+    });
+
+    <span class="cmt">// The DOM is guaranteed to be updated right here!</span>
+    <span class="kw">const</span> terminal = document.<span class="fn">getElementById</span>(<span class="str">'terminal-scroll'</span>);
+    <span class="kw">if</span> (terminal) {
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> id=<span class="str">"terminal-scroll"</span> style={{ height: <span class="num">200</span>, overflowY: <span class="str">'auto'</span> }}&gt;
+      {logs.<span class="fn">map</span>((log, i) =&gt; &lt;<span class="kw">div</span> key={i}&gt;{log}&lt;/<span class="kw">div</span>&gt;)}
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">addLog</span>(<span class="str">'System ping: OK'</span>)}&gt;Add Log&lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quiz -->
+  <div class="callout quiz-box">
+    <span class="callout-icon">🧠</span>
+    <div class="callout-body">
+      <h4>Quiz Time! 🎯</h4>
+      <ol>
+        <li>What does Zone.js do at application startup in Angular?
+          <details><summary>Answer</summary>It monkey-patches browser APIs (setTimeout, Promise, fetch, etc.) to intercept async operations and notify Angular when to run change detection.</details>
+        </li>
+        <li>What are the two phases of React Fiber rendering?
+          <details><summary>Answer</summary>Render Phase (interruptible, pure — builds fiber tree) and Commit Phase (synchronous — applies DOM changes).</details>
+        </li>
+        <li>How does <code>ChangeDetectionStrategy.OnPush</code> improve performance?
+          <details><summary>Answer</summary>It tells Angular to skip checking the component and its subtree unless: an @Input reference changes, the component requests a check manually, or an async pipe emits a new value.</details>
+        </li>
+        <li>What is <code>useTransition</code> in React 18/19 used for?
+          <details><summary>Answer</summary>To mark a state update as non-urgent/low-priority, allowing React to defer it and keep the UI responsive to high-priority interactions (like typing).</details>
+        </li>
+        <li>How do Angular Signals differ from Zone.js change detection?
+          <details><summary>Answer</summary>Signals use pull-based, fine-grained tracking — only the components that consumed a specific signal re-render when it changes, instead of checking the entire component tree.</details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>

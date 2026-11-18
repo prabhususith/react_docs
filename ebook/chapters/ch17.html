@@ -1,0 +1,461 @@
+<!-- ============================================================
+     CHAPTER 17: HTTP & Data Fetching — HttpClient vs TanStack Query
+     Pizza Delivery Analogy 🍕📦
+     ============================================================ -->
+<div class="page chapter-page" id="chapter-17">
+
+  <!-- Chapter Header -->
+  <div class="chapter-header" style="background: linear-gradient(135deg, #d84315 0%, #00838f 100%);">
+    <div class="chapter-badge">17</div>
+    <div class="chapter-header-content">
+      <div class="chapter-unit-label">UNIT 4 · THE ROSETTA STONE</div>
+      <h1 class="chapter-title">HTTP &amp; Data Fetching</h1>
+      <h2 class="chapter-subtitle">🍕 HttpClient vs TanStack Query — The Fast Pizza Delivery Service</h2>
+      <div class="learning-objectives">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Master modern asynchronous data fetching in client applications</li>
+          <li>Contrast Angular's RxJS-based HttpClient with React's TanStack Query (React Query)</li>
+          <li>Implement cache management, optimistic updates, request deduplication, and retry logic</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opening Story -->
+  <div class="chapter-opening">
+    <div class="callout fun-fact">
+      <span class="callout-icon">🍕</span>
+      <div class="callout-body">
+        <h4>The Friday Night Pizza Dilemma 🍕🛵</h4>
+        <p>Imagine it is movie night with your friends and you are craving your favorite piping-hot double-cheese pizza. How does that pizza get from the Italian oven downtown to your living room table? You pick up the phone, place an order with the kitchen (API Server), wait for the delivery scooter (Network Request), and open the door when the bell rings (Response Handling).</p>
+
+        <p>🅰️ <strong>Angular's Pizzeria (HttpClient &amp; RxJS)</strong> provides a direct pneumatic tube system. When you place an order, you receive a radio antenna (an <strong>Observable</strong> stream). Before the pizza reaches you, it passes through security checkpoints called <strong>HttpInterceptors</strong> where officers automatically attach your VIP coupon (Authorization JWT header) or check if the sauce spilled (Global Error Handling). You can cancel the order mid-flight by hanging up (unsubscribe), or chain orders together using magical pipe conveyor belts (<code>switchMap</code>). It is enterprise precision at its finest! 🛰️📜</p>
+
+        <p>⚛️ <strong>React's TanStack Query (The Super-Smart Delivery Concierge)</strong> does something even more incredible: it remembers! If you ordered a Margherita pizza ten minutes ago, TanStack Query immediately hands you a warm slice from its thermal food warmer (<strong>Memory Cache</strong>) in 0 milliseconds, while quietly dispatching a scooter to the kitchen in the background to verify if fresh oregano was added (<strong>Stale-While-Revalidate</strong>). If the delivery driver gets stuck in a thunderstorm, it automatically retries three times without you lifting a finger! 🚀📦</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Picture SVG -->
+  <div class="svg-container">
+    <h3>🗺️ The Big Picture — Network Request &amp; Caching Lifecycle</h3>
+    <svg viewBox="0 0 940 450" width="100%" style="max-width:940px; border:2px solid #e0e0e0; border-radius:12px; background:#fafafa;">
+      <defs>
+        <marker id="arrow-red-17" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#d84315"/>
+        </marker>
+        <marker id="arrow-teal-17" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#00838f"/>
+        </marker>
+      </defs>
+
+      <!-- Angular Left Side -->
+      <rect x="25" y="20" width="425" height="410" rx="14" fill="#fbe9e7" stroke="#d84315" stroke-width="2"/>
+      <text x="237" y="52" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="17" fill="#bf360c">🅰️ Angular HttpClient (RxJS Pipeline)</text>
+
+      <rect x="55" y="75" width="365" height="45" rx="8" fill="#ffccbc" stroke="#d84315"/>
+      <text x="237" y="102" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#bf360c">1. http.get&lt;Pizza[]&gt;('/api/menu')</text>
+
+      <line x1="237" y1="120" x2="237" y2="152" stroke="#d84315" stroke-width="2" marker-end="url(#arrow-red-17)"/>
+
+      <rect x="55" y="154" width="365" height="58" rx="8" fill="#ffab91" stroke="#d84315"/>
+      <text x="237" y="176" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="800" fill="#bf360c">2. HttpInterceptor Pipeline 🛡️</text>
+      <text x="237" y="196" text-anchor="middle" font-size="11" font-family="Nunito" fill="#bf360c">Add Bearer Token · Catch 401 &amp; Refresh · Show Spinner</text>
+
+      <line x1="237" y1="212" x2="237" y2="246" stroke="#d84315" stroke-width="2" marker-end="url(#arrow-red-17)"/>
+
+      <rect x="55" y="248" width="365" height="58" rx="8" fill="#ff8a65" stroke="#bf360c"/>
+      <text x="237" y="272" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="800" fill="#ffffff">3. Observable Stream &amp; Operators</text>
+      <text x="237" y="292" text-anchor="middle" font-size="11" font-family="Nunito" fill="#fff3e0">pipe(retry(3), catchError(handleErr), map(transform))</text>
+
+      <line x1="237" y1="306" x2="237" y2="340" stroke="#d84315" stroke-width="2" marker-end="url(#arrow-red-17)"/>
+
+      <rect x="55" y="342" width="365" height="48" rx="8" fill="#ffccbc" stroke="#d84315"/>
+      <text x="237" y="364" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#bf360c">4. Template: *ngFor="let p of menu$ | async"</text>
+      <text x="237" y="380" text-anchor="middle" font-size="11" font-family="Nunito" fill="#bf360c">Auto-subscribes &amp; cancels on destroy!</text>
+
+      <text x="237" y="415" text-anchor="middle" font-size="11" font-family="Nunito" fill="#d84315">Push-Based Stream · First-Class Cancellation</text>
+
+      <!-- React Right Side -->
+      <rect x="490" y="20" width="425" height="410" rx="14" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/>
+      <text x="702" y="52" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="17" fill="#006064">⚛️ React + TanStack Query v5</text>
+
+      <rect x="520" y="75" width="365" height="45" rx="8" fill="#b2ebf2" stroke="#00838f"/>
+      <text x="702" y="102" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#006064">1. useQuery({ queryKey: ['pizzas'], queryFn })</text>
+
+      <line x1="702" y1="120" x2="702" y2="152" stroke="#00838f" stroke-width="2" marker-end="url(#arrow-teal-17)"/>
+
+      <rect x="520" y="154" width="365" height="58" rx="8" fill="#80deea" stroke="#00838f"/>
+      <text x="702" y="176" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="800" fill="#006064">2. Cache Check (Stale-While-Revalidate) ⚡</text>
+      <text x="702" y="196" text-anchor="middle" font-size="11" font-family="Nunito" fill="#006064">Found cached data? Return instantly! Re-fetch in background.</text>
+
+      <line x1="702" y1="212" x2="702" y2="246" stroke="#00838f" stroke-width="2" marker-end="url(#arrow-teal-17)"/>
+
+      <rect x="520" y="248" width="365" height="58" rx="8" fill="#4dd0e1" stroke="#006064"/>
+      <text x="702" y="272" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="800" fill="#004d40">3. Automated Lifecycle &amp; State</text>
+      <text x="702" y="292" text-anchor="middle" font-size="11" font-family="Nunito" fill="#e0f2f1">isPending, isError, isFetching, auto-retries, window refocus</text>
+
+      <line x1="702" y1="306" x2="702" y2="340" stroke="#00838f" stroke-width="2" marker-end="url(#arrow-teal-17)"/>
+
+      <rect x="520" y="342" width="365" height="48" rx="8" fill="#b2ebf2" stroke="#00838f"/>
+      <text x="702" y="364" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#006064">4. useMutation() with Optimistic UI</text>
+      <text x="702" y="380" text-anchor="middle" font-size="11" font-family="Nunito" fill="#006064">queryClient.invalidateQueries({ queryKey: ['pizzas'] })</text>
+
+      <text x="702" y="415" text-anchor="middle" font-size="11" font-family="Nunito" fill="#00838f">Zero State Boilerplate · Intelligent Revalidation</text>
+    </svg>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="comparison-table-wrapper">
+    <h3>⚔️ Side-by-Side Code: Fetching and Mutating Data</h3>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular: HttpClient + RxJS Service</th>
+          <th class="react-col">⚛️ React: TanStack Query v5 Hook</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">pizza.service.ts</div>
+              <pre><code><span class="kw">import</span> { Injectable, inject } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { HttpClient } <span class="kw">from</span> <span class="str">'@angular/common/http'</span>;
+<span class="kw">import</span> { Observable, retry, catchError, throwError } <span class="kw">from</span> <span class="str">'rxjs'</span>;
+
+<span class="kw">export interface</span> <span class="fn">Pizza</span> {
+  id: <span class="var">number</span>;
+  name: <span class="var">string</span>;
+  price: <span class="var">number</span>;
+}
+
+<span class="kw">@Injectable</span>({ providedIn: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="fn">PizzaService</span> {
+  <span class="kw">private</span> http = <span class="fn">inject</span>(HttpClient);
+  <span class="kw">private</span> apiUrl = <span class="str">'https://api.pizzashop.com/pizzas'</span>;
+
+  <span class="fn">getPizzas</span>(): <span class="fn">Observable</span>&lt;<span class="fn">Pizza</span>[]&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;<span class="fn">Pizza</span>[]&gt;(<span class="kw">this</span>.apiUrl).<span class="fn">pipe</span>(
+      <span class="fn">retry</span>(<span class="num">2</span>),
+      <span class="fn">catchError</span>(err =&gt; {
+        console.<span class="fn">error</span>(<span class="str">'Failed to load menu'</span>, err);
+        <span class="kw">return</span> <span class="fn">throwError</span>(() =&gt; <span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Pizza server down!'</span>));
+      })
+    );
+  }
+
+  <span class="fn">addPizza</span>(newPizza: <span class="fn">Omit</span>&lt;<span class="fn">Pizza</span>, <span class="str">'id'</span>&gt;): <span class="fn">Observable</span>&lt;<span class="fn">Pizza</span>&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">post</span>&lt;<span class="fn">Pizza</span>&gt;(<span class="kw">this</span>.apiUrl, newPizza);
+  }
+}</code></pre>
+            </div>
+            <div class="code-block angular">
+              <div class="code-label">auth.interceptor.ts (Functional Interceptor)</div>
+              <pre><code><span class="kw">import</span> { HttpInterceptorFn } <span class="kw">from</span> <span class="str">'@angular/common/http'</span>;
+
+<span class="kw">export const</span> authInterceptor: <span class="fn">HttpInterceptorFn</span> = (req, next) =&gt; {
+  <span class="kw">const</span> token = localStorage.<span class="fn">getItem</span>(<span class="str">'authToken'</span>);
+  <span class="kw">const</span> authReq = token
+    ? req.<span class="fn">clone</span>({ setHeaders: { Authorization: <span class="str">`Bearer </span>${token}<span class="str">`</span> } })
+    : req;
+  <span class="kw">return</span> <span class="fn">next</span>(authReq);
+};</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">usePizzas.ts (TanStack Query Query &amp; Mutation)</div>
+              <pre><code><span class="kw">import</span> { useQuery, useMutation, useQueryClient } <span class="kw">from</span> <span class="str">'@tanstack/react-query'</span>;
+
+<span class="kw">export interface</span> <span class="fn">Pizza</span> {
+  id: <span class="var">number</span>;
+  name: <span class="var">string</span>;
+  price: <span class="var">number</span>;
+}
+
+<span class="kw">async function</span> <span class="fn">fetchPizzas</span>(): <span class="fn">Promise</span>&lt;<span class="fn">Pizza</span>[]&gt; {
+  <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://api.pizzashop.com/pizzas'</span>);
+  <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Pizza server down!'</span>);
+  <span class="kw">return</span> res.<span class="fn">json</span>();
+}
+
+<span class="kw">export function</span> <span class="fn">usePizzas</span>() {
+  <span class="kw">return</span> <span class="fn">useQuery</span>({
+    queryKey: [<span class="str">'pizzas'</span>],
+    queryFn: fetchPizzas,
+    staleTime: <span class="num">1000</span> * <span class="num">60</span> * <span class="num">5</span>, <span class="cmt">// Cache fresh for 5 mins</span>
+    retry: <span class="num">2</span>
+  });
+}
+
+<span class="kw">export function</span> <span class="fn">useAddPizza</span>() {
+  <span class="kw">const</span> queryClient = <span class="fn">useQueryClient</span>();
+  <span class="kw">return</span> <span class="fn">useMutation</span>({
+    mutationFn: <span class="kw">async</span> (newPizza: <span class="fn">Omit</span>&lt;<span class="fn">Pizza</span>, <span class="str">'id'</span>&gt;) =&gt; {
+      <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://api.pizzashop.com/pizzas'</span>, {
+        method: <span class="str">'POST'</span>,
+        headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+        body: JSON.<span class="fn">stringify</span>(newPizza)
+      });
+      <span class="kw">return</span> res.<span class="fn">json</span>();
+    },
+    onSuccess: () =&gt; {
+      <span class="cmt">// Automatically invalidate &amp; refetch pizzas list!</span>
+      queryClient.<span class="fn">invalidateQueries</span>({ queryKey: [<span class="str">'pizzas'</span>] });
+    }
+  });
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">PizzaMenuComponent (TypeScript &amp; Template)</div>
+              <pre><code><span class="kw">@Component</span>({
+  selector: <span class="str">'app-pizza-menu'</span>,
+  template: <span class="str">`
+    &lt;div *ngIf="pizzas$ | async as pizzas; else loading"&gt;
+      &lt;div *ngFor="let pizza of pizzas" class="pizza-card"&gt;
+        &lt;h4&gt;{{ pizza.name }}&lt;/h4&gt;
+        &lt;span&gt;\${{ pizza.price }}&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;ng-template #loading&gt;
+      &lt;p&gt;Baking pizzas... 🍕&lt;/p&gt;
+    &lt;/ng-template&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="fn">PizzaMenuComponent</span> {
+  <span class="kw">private</span> pizzaService = <span class="fn">inject</span>(PizzaService);
+  pizzas$ = <span class="kw">this</span>.pizzaService.<span class="fn">getPizzas</span>();
+}</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">PizzaMenu.tsx (React Component)</div>
+              <pre><code><span class="kw">import</span> React <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { usePizzas, useAddPizza } <span class="kw">from</span> <span class="str">'./usePizzas'</span>;
+
+<span class="kw">export function</span> <span class="fn">PizzaMenu</span>() {
+  <span class="kw">const</span> { data: pizzas, isPending, error } = <span class="fn">usePizzas</span>();
+  <span class="kw">const</span> addPizzaMutation = <span class="fn">useAddPizza</span>();
+
+  <span class="kw">if</span> (isPending) <span class="kw">return</span> &lt;<span class="kw">p</span>&gt;Baking pizzas... 🍕&lt;/<span class="kw">p</span>&gt;;
+  <span class="kw">if</span> (error) <span class="kw">return</span> &lt;<span class="kw">p</span>&gt;Delivery error: {error.message}&lt;/<span class="kw">p</span>&gt;;
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      {pizzas.<span class="fn">map</span>(pizza =&gt; (
+        &lt;<span class="kw">div</span> key={pizza.id} className=<span class="str">"pizza-card"</span>&gt;
+          &lt;<span class="kw">h4</span>&gt;{pizza.name}&lt;/<span class="kw">h4</span>&gt;
+          &lt;<span class="kw">span</span>&gt;${pizza.price}&lt;/<span class="kw">span</span>&gt;
+        &lt;/<span class="kw">div</span>&gt;
+      ))}
+      &lt;<span class="kw">button</span>
+        disabled={addPizzaMutation.isPending}
+        onClick={() =&gt; addPizzaMutation.<span class="fn">mutate</span>({ name: <span class="str">'Pepperoni'</span>, price: <span class="num">14</span> })}&gt;
+        {addPizzaMutation.isPending ? <span class="str">'Adding...'</span> : <span class="str">'Add Pepperoni 🍕'</span>}
+      &lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Kid Explains It -->
+  <div class="callout kid-note">
+    <span class="callout-icon">🧒</span>
+    <div class="callout-body">
+      <h4>Kid Explains It! 🎮</h4>
+      <p>Imagine sending a text to your friend asking for their high score. <strong>Angular's HttpClient</strong> is like a super-secure walkie-talkie with a volume knob and safety switches — if your friend doesn't reply, the walkie-talkie automatically beeps three times. <strong>React's TanStack Query</strong> is like a super-smart robot butler — if you ask for the score, he tells you what it was 2 minutes ago right away, while running upstairs to see if your friend just beat it! You never wait looking at a blank wall! 🤖🍕</p>
+    </div>
+  </div>
+
+  <!-- Pro Deep Dive -->
+  <div class="callout pro-tip">
+    <span class="callout-icon">🔬</span>
+    <div class="callout-body">
+      <h4>Pro Deep Dive 🧠</h4>
+      <p><strong>Declarative vs Imperative Cache Invalidation:</strong> Angular's <code>HttpClient</code> is an HTTP transport client, <em>not</em> an application-level cache. To get caching in Angular, developers typically write custom RxJS subjects with <code>shareReplay(1)</code>, or pull in <code>@ngneat/cashew</code> or Angular's TanStack Query port. In contrast, TanStack Query is fundamentally an asynchronous state synchronizer: it handles deduping multiple simultaneous component calls, background revalidation on window focus, garbage collecting unused cache nodes via <code>gcTime</code>, and network-disconnect pauses out of the box.</p>
+
+      <p><strong>Optimistic Updates (Zero-Latency UI):</strong> When a user likes a post or drops a topping onto a pizza, waiting for a 200ms network round-trip makes the app feel sluggish. TanStack Query's <code>onMutate</code> lets you snapshot previous data, immediately update the cache with your predicted result, and rollback seamlessly in <code>onError</code> if the server responds with a 500 error.</p>
+
+      <p><strong>Cancellation Mechanics:</strong> Angular Observables are lazy and natively support cancellation: when a component unmounts, the <code>async</code> pipe cancels the subscription, causing <code>HttpClient</code> to abort the browser's underlying <code>XMLHttpRequest</code> or <code>fetch</code> via <code>AbortController</code>. In TanStack Query, pass <code>signal</code> from <code>queryFn({ signal })</code> into your <code>fetch(url, { signal })</code> call to achieve identical native browser request cancellation.</p>
+    </div>
+  </div>
+
+  <!-- Real-world Scenario -->
+  <div class="callout real-world">
+    <span class="callout-icon">🌍</span>
+    <div class="callout-body">
+      <h4>Real-World Scenario: Live Search Autocomplete with Debounce 🔍</h4>
+      <p>As a user types in a restaurant search box, we must prevent spamming the backend with 15 queries for "M-a-r-g-h-e-r-i-t-a".</p>
+      <ul>
+        <li><strong>Angular RxJS Approach:</strong>
+          <code>searchTerm$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(term =&gt; this.http.get('/search?q=' + term)))</code>. If the user types faster, <code>switchMap</code> automatically cancels the previous in-flight HTTP request. ⚡</li>
+        <li><strong>React TanStack Query Approach:</strong>
+          Bind debounced search query state to <code>queryKey: ['search', debouncedTerm]</code> with <code>enabled: debouncedTerm.length &gt; 2</code>. As the key changes, TanStack Query fetches the new term and caches previous search results so backspacing is instantaneous! 🎯</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- When to Use -->
+  <div class="when-to-use-grid">
+    <div class="when-angular">
+      <h4>🅰️ Use Angular HttpClient When…</h4>
+      <ul>
+        <li>You want a unified, dependency-injected HTTP client with zero extra npm packages</li>
+        <li>Your organization enforces enterprise-wide token injection via functional <code>HttpInterceptors</code></li>
+        <li>You already leverage RxJS operators across your services for complex stream composition</li>
+        <li>You need typed progress events for tracking file upload/download percentages</li>
+      </ul>
+    </div>
+    <div class="when-react">
+      <h4>⚛️ Use TanStack Query When…</h4>
+      <ul>
+        <li>You want automatic caching, background polling, and window-refocus revalidation</li>
+        <li>You want to eliminate manual <code>isLoading</code>, <code>error</code>, and <code>data</code> useState flags</li>
+        <li>You need optimistic mutations with automatic rollback on error</li>
+        <li>You desire query deduplication across dozens of simultaneously mounted components</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Cheatsheet -->
+  <div class="cheatsheet-card">
+    <h3>📋 Chapter 17 Cheatsheet — HTTP &amp; Data Fetching</h3>
+    <div class="cheatsheet-grid">
+      <div class="cheat-item"><code>http.get&lt;T&gt;()</code> — Angular: Type-safe GET returning an Observable</div>
+      <div class="cheat-item"><code>HttpInterceptorFn</code> — Angular: Functional request/response interceptor</div>
+      <div class="cheat-item"><code>switchMap()</code> — RxJS: Cancels previous request when new term arrives</div>
+      <div class="cheat-item"><code>useQuery()</code> — TanStack: Auto-cached declarative server state hook</div>
+      <div class="cheat-item"><code>useMutation()</code> — TanStack: Trigger POST/PUT/DELETE operations</div>
+      <div class="cheat-item"><code>invalidateQueries()</code> — TanStack: Mark cache stale &amp; trigger background refetch</div>
+      <div class="cheat-item"><code>staleTime</code> — TanStack: Milliseconds data is considered fresh</div>
+      <div class="cheat-item"><code>gcTime</code> — TanStack: Duration inactive cache remains in memory</div>
+    </div>
+  </div>
+
+  <!-- Infinite Scrolling & Pagination Battle -->
+  <div class="callout definition">
+    <span class="callout-icon">📜</span>
+    <div class="callout-body">
+      <h4>Advanced Data Fetching: Infinite Scrolling &amp; Pagination</h4>
+      <p>How do you fetch page 2, page 3, and page 4 as the customer scrolls down through a list of 500 pizzas?</p>
+    </div>
+  </div>
+
+  <div class="comparison-table-wrapper">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular: RxJS scan() &amp; BehaviorSubject</th>
+          <th class="react-col">⚛️ React: TanStack useInfiniteQuery()</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">infinite-pizza.service.ts</div>
+              <pre><code><span class="kw">import</span> { Injectable, inject } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { HttpClient } <span class="kw">from</span> <span class="str">'@angular/common/http'</span>;
+<span class="kw">import</span> { BehaviorSubject, switchMap, scan, Observable } <span class="kw">from</span> <span class="str">'rxjs'</span>;
+
+<span class="kw">@Injectable</span>({ providedIn: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="fn">InfinitePizzaService</span> {
+  <span class="kw">private</span> http = <span class="fn">inject</span>(HttpClient);
+  <span class="kw">private</span> page$ = <span class="kw">new</span> <span class="fn">BehaviorSubject</span>&lt;<span class="var">number</span>&gt;(<span class="num">1</span>);
+
+  <span class="cmt">// Accumulate pages into one continuous array via scan()</span>
+  pizzas$: <span class="fn">Observable</span>&lt;<span class="fn">Pizza</span>[]&gt; = <span class="kw">this</span>.page$.<span class="fn">pipe</span>(
+    <span class="fn">switchMap</span>(page =&gt;
+      <span class="kw">this</span>.http.<span class="fn">get</span>&lt;<span class="fn">Pizza</span>[]&gt;(<span class="str">`/api/pizzas?page=</span>${page}<span class="str">&amp;limit=10`</span>)
+    ),
+    <span class="fn">scan</span>((acc, newPage) =&gt; [...acc, ...newPage], [] <span class="kw">as</span> <span class="fn">Pizza</span>[])
+  );
+
+  <span class="fn">loadMore</span>() {
+    <span class="kw">this</span>.page$.<span class="fn">next</span>(<span class="kw">this</span>.page$.value + <span class="num">1</span>);
+  }
+}</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">InfinitePizzaList.tsx</div>
+              <pre><code><span class="kw">import</span> React <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { useInfiniteQuery } <span class="kw">from</span> <span class="str">'@tanstack/react-query'</span>;
+
+<span class="kw">export function</span> <span class="fn">InfinitePizzaList</span>() {
+  <span class="kw">const</span> {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = <span class="fn">useInfiniteQuery</span>({
+    queryKey: [<span class="str">'infinite-pizzas'</span>],
+    queryFn: <span class="kw">async</span> ({ pageParam = <span class="num">1</span> }) =&gt; {
+      <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/pizzas?page=</span>${pageParam}<span class="str">&amp;limit=10`</span>);
+      <span class="kw">return</span> res.<span class="fn">json</span>();
+    },
+    initialPageParam: <span class="num">1</span>,
+    getNextPageParam: (lastPage, allPages) =&gt;
+      lastPage.hasMore ? allPages.length + <span class="num">1</span> : <span class="kw">undefined</span>
+  });
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      {data?.pages.<span class="fn">map</span>((page, i) =&gt; (
+        &lt;<span class="fn">React.Fragment</span> key={i}&gt;
+          {page.items.<span class="fn">map</span>(pizza =&gt; (
+            &lt;<span class="kw">div</span> key={pizza.id}&gt;{pizza.name}&lt;/<span class="kw">div</span>&gt;
+          ))}
+        &lt;/<span class="fn">React.Fragment</span>&gt;
+      ))}
+      &lt;<span class="kw">button</span>
+        disabled={!hasNextPage || isFetchingNextPage}
+        onClick={() =&gt; <span class="fn">fetchNextPage</span>()}&gt;
+        {isFetchingNextPage ? <span class="str">'Loading more pizzas...'</span> : <span class="str">'Load More 🍕'</span>}
+      &lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quiz -->
+  <div class="callout quiz-box">
+    <span class="callout-icon">🧠</span>
+    <div class="callout-body">
+      <h4>Quiz Time! 🎯</h4>
+      <ol>
+        <li>What happens when an Angular component using the <code>async</code> pipe unmounts during an active HTTP call?
+          <details><summary>Answer</summary>The async pipe automatically unsubscribes from the Observable, which instructs HttpClient to abort the underlying HTTP request via the browser's AbortController.</details>
+        </li>
+        <li>What is the difference between <code>staleTime</code> and <code>gcTime</code> in TanStack Query?
+          <details><summary>Answer</summary><code>staleTime</code> is how long data is considered fresh before a background refetch is triggered. <code>gcTime</code> (Garbage Collection time) is how long unused data remains in memory cache before being deleted.</details>
+        </li>
+        <li>What is an HttpInterceptor in Angular commonly used for?
+          <details><summary>Answer</summary>Attaching authorization Bearer tokens to outbound requests, logging telemetry, centralized HTTP error handling (e.g. redirecting to login on 401), or adding custom headers.</details>
+        </li>
+        <li>How does an optimistic update work in a React mutation?
+          <details><summary>Answer</summary>It updates the UI immediately with the expected result before the server finishes responding. If the server request succeeds, the cache stays updated; if it fails, it rolls back to the previous snapshot.</details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+</div>

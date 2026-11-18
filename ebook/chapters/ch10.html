@@ -1,0 +1,436 @@
+<!-- ============================================================
+     CHAPTER 10: Angular Architecture — The Enterprise Blueprint
+     ============================================================ -->
+<div class="page chapter-header" id="chapter-10">
+  <div class="chapter-number-badge">10</div>
+  <div class="chapter-header-content">
+    <div class="unit-label">UNIT 3 · Angular — The Enterprise Giant</div>
+    <h1 class="chapter-title">Angular Architecture</h1>
+    <p class="chapter-subtitle">Blueprints, standalone components, dependency injection, and application trees</p>
+    <div class="learning-objectives">
+      <h3>🎯 Learning Objectives</h3>
+      <ul>
+        <li>Understand Angular's opinionated, enterprise-grade architectural philosophy</li>
+        <li>Master Standalone Components introduced in modern Angular (v14–v18+)</li>
+        <li>Explore the relationship between Components, Templates, Services, and Directives</li>
+        <li>Understand TypeScript decorators (<code>@Component</code>, <code>@Injectable</code>)</li>
+        <li>Compare Angular's full-suite architecture with React's modular library approach</li>
+        <li>Trace data and event flows through the Angular component tree</li>
+      </ul>
+    </div>
+  </div>
+  <div class="chapter-header-illustration">
+    <!-- Architectural Blueprint SVG -->
+    <svg viewBox="0 0 340 220" width="340" height="220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="blueprintGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <rect width="20" height="20" fill="#0d47a1"/>
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1565c0" stroke-width="0.8"/>
+        </pattern>
+        <linearGradient id="angGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#dd0031"/>
+          <stop offset="100%" stop-color="#c3002f"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Blueprint Grid Background -->
+      <rect x="10" y="10" width="320" height="200" rx="8" fill="url(#blueprintGrid)" stroke="#64b5f6" stroke-width="2"/>
+
+      <!-- Angular Shield Crest Outline -->
+      <polygon points="170,25 240,55 220,135 170,165 120,135 100,55" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="4,2"/>
+      
+      <!-- Component Blueprint Nodes -->
+      <rect x="125" y="45" width="90" height="35" rx="4" fill="#ffffff" fill-opacity="0.15" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="170" y="66" font-family="'Nunito', sans-serif" font-weight="700" font-size="11" fill="#ffffff" text-anchor="middle">AppComponent</text>
+
+      <!-- Connector Lines -->
+      <line x1="150" y1="80" x2="100" y2="105" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="190" y1="80" x2="240" y2="105" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="170" y1="80" x2="170" y2="105" stroke="#ffffff" stroke-width="1.5"/>
+
+      <!-- Child Component Nodes -->
+      <rect x="60" y="105" width="75" height="30" rx="4" fill="#ffffff" fill-opacity="0.15" stroke="#64b5f6" stroke-width="1.5"/>
+      <text x="97" y="124" font-family="'Nunito', sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">NavComponent</text>
+
+      <rect x="145" y="105" width="50" height="30" rx="4" fill="#ffffff" fill-opacity="0.15" stroke="#64b5f6" stroke-width="1.5"/>
+      <text x="170" y="124" font-family="'Nunito', sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">Router</text>
+
+      <rect x="205" y="105" width="75" height="30" rx="4" fill="#ffffff" fill-opacity="0.15" stroke="#64b5f6" stroke-width="1.5"/>
+      <text x="242" y="124" font-family="'Nunito', sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">UserComponent</text>
+
+      <!-- Service Pipe underneath -->
+      <rect x="80" y="155" width="180" height="25" rx="12" fill="#dd0031" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="170" y="172" font-family="monospace" font-weight="bold" font-size="10" fill="#ffffff" text-anchor="middle">@Injectable() Service</text>
+
+      <!-- Compass / Ruler marks -->
+      <text x="30" y="35" font-family="monospace" font-size="10" fill="#90caf9">📐 ARCH-SPEC 2026</text>
+      <text x="170" y="202" font-family="'Nunito', sans-serif" font-size="11" fill="#bbdefb" text-anchor="middle">Structured Blueprint for High-Scale Enterprise Systems</text>
+    </svg>
+  </div>
+</div>
+
+<div class="page" id="ch10-story">
+  <div class="real-world">
+    <h2>🏗️ A Real-World Story: The Skyscraper Blueprint</h2>
+    <p>
+      Imagine you want to build a towering, 100-story glass skyscraper in the centre of Tokyo or New York 🏙️.
+      Could you simply hire a couple of friends, buy some timber at the hardware shop, and start nailing boards
+      together as you go? Of course not! That skyscraper would wobble in the first breeze and collapse!
+    </p>
+    <p>
+      To build a massive skyscraper, civil engineers spend months drafting <strong>blueprints</strong>.
+      Every water pipe, electrical conduit, fire staircase, and elevator shaft has a designated, regulated place.
+      Whether you look at the 2nd floor or the 80th floor, every electrical socket follows the exact same standard.
+    </p>
+    <p>
+      That is what <strong>Angular</strong> was designed to be: the architectural blueprint for gigantic
+      software systems built by enterprise teams at banks, airlines, and hospital networks. Where React gives
+      you a box of awesome LEGO pieces and lets you build however you like, Angular provides a complete,
+      pre-inspected construction site with steel girders, electrical conduits, and safety inspections already in place! 📐👷‍♂️
+    </p>
+  </div>
+
+  <h2>Framework vs. Library: The Big Paradigm Difference</h2>
+  <p>
+    React is fundamentally a <strong>UI library</strong>. It handles rendering components to the screen,
+    and leaves routing, HTTP requests, forms, and state management up to your team's choice of external libraries.
+    Angular is a <strong>complete batteries-included platform</strong>. When you generate an Angular application,
+    it comes out-of-the-box with:
+  </p>
+  <ul>
+    <li>🚀 Built-in client-side routing (<code>@angular/router</code>)</li>
+    <li>📬 Enterprise HTTP client with interceptors (<code>@angular/common/http</code>)</li>
+    <li>📝 Two sophisticated form architectures: Reactive Forms and Template-driven Forms</li>
+    <li>💉 Hierarchical Dependency Injection system directly embedded into the engine</li>
+    <li>⚡ Modern reactive primitives with Angular Signals and RxJS observables</li>
+  </ul>
+
+  <div class="callout definition">
+    <span class="callout-icon">📖</span>
+    <div>
+      <strong>Definition — Opinionated Framework:</strong> A framework that establishes clear, standard conventions
+      for file organization, dependency injection, and state handling. In Angular, developers from New York to London
+      can open any project and immediately recognize the structure without asking "which router or state library are you using?"
+    </div>
+  </div>
+</div>
+
+<div class="page" id="ch10-kids">
+  <div class="kid-note">
+    <h2>🎮 For Kids — The Mega Theme Park City</h2>
+    <p>
+      Imagine playing a simulation game like <em>SimCity</em> or building a huge amusement park 🎢.
+      To make sure thousands of visitors have fun without running out of snacks or getting lost, you need
+      three main teams:
+    </p>
+    <ul>
+      <li>🎪 <strong>The Component (The Ride):</strong> This is the roller coaster that guests see, touch,
+      and ride on! In Angular, components are the visual buttons, cards, and pages on screen.</li>
+      <li>📜 <strong>The Template (The Ride Exterior):</strong> The colorful paint, signs, and glowing lights
+      that decorate the ride. In Angular, templates are the HTML files that tell the browser what things look like.</li>
+      <li>🚚 <strong>The Service (The Delivery Truck):</strong> The underground delivery tunnels where trucks
+      bring hot dogs, popcorn, and spare parts to every ride. The guests never see the trucks, but without them,
+      the park stops working! That's what Angular Services do!</li>
+    </ul>
+    <p>
+      Angular's city manager hands every ride whatever delivery truck it needs using a super-smart system called
+      <strong>Dependency Injection</strong>. It's like having a magical pneumatic tube system across your entire city! 💨📦
+    </p>
+  </div>
+
+  <h2>The 4 Pillars of Angular Architecture</h2>
+  <div class="svg-container">
+    <svg viewBox="0 0 520 180" width="500" height="180" xmlns="http://www.w3.org/2000/svg">
+      <!-- 4 pillars -->
+      <g transform="translate(10, 20)">
+        <rect x="0" y="0" width="115" height="135" rx="6" fill="#e8eaf6" stroke="#1a237e" stroke-width="2"/>
+        <text x="57" y="30" font-family="'Nunito', sans-serif" font-weight="800" font-size="12" fill="#1a237e" text-anchor="middle">1. Component</text>
+        <text x="57" y="55" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">TypeScript Class</text>
+        <text x="57" y="75" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Holds business logic</text>
+        <text x="57" y="95" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">&amp; UI state</text>
+        <text x="57" y="120" font-size="16" text-anchor="middle">🏛️</text>
+      </g>
+
+      <g transform="translate(140, 20)">
+        <rect x="0" y="0" width="115" height="135" rx="6" fill="#fce4ec" stroke="#c2185b" stroke-width="2"/>
+        <text x="57" y="30" font-family="'Nunito', sans-serif" font-weight="800" font-size="12" fill="#c2185b" text-anchor="middle">2. Template</text>
+        <text x="57" y="55" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Enhanced HTML</text>
+        <text x="57" y="75" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Bindings &amp; Directives</text>
+        <text x="57" y="95" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Displays user data</text>
+        <text x="57" y="120" font-size="16" text-anchor="middle">🎨</text>
+      </g>
+
+      <g transform="translate(270, 20)">
+        <rect x="0" y="0" width="115" height="135" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+        <text x="57" y="30" font-family="'Nunito', sans-serif" font-weight="800" font-size="12" fill="#2e7d32" text-anchor="middle">3. Service</text>
+        <text x="57" y="55" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Injectable Class</text>
+        <text x="57" y="75" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">HTTP &amp; Data fetch</text>
+        <text x="57" y="95" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Shared Singleton</text>
+        <text x="57" y="120" font-size="16" text-anchor="middle">🚚</text>
+      </g>
+
+      <g transform="translate(400, 20)">
+        <rect x="0" y="0" width="115" height="135" rx="6" fill="#fff8e1" stroke="#f57f17" stroke-width="2"/>
+        <text x="57" y="30" font-family="'Nunito', sans-serif" font-weight="800" font-size="12" fill="#f57f17" text-anchor="middle">4. DI Engine</text>
+        <text x="57" y="55" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Hierarchical Tree</text>
+        <text x="57" y="75" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Automatic wiring</text>
+        <text x="57" y="95" font-family="sans-serif" font-size="9" fill="#424242" text-anchor="middle">Zero prop drilling</text>
+        <text x="57" y="120" font-size="16" text-anchor="middle">💉</text>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="page" id="ch10-dev">
+  <div class="pro-tip">
+    <h2>💻 For Developers — Anatomy of a Modern Standalone Component</h2>
+  </div>
+
+  <p>
+    Since Angular 14–17+, <strong>Standalone Components</strong> are the default standard. You no longer
+    need bulky <code>NgModule</code> declarations to configure simple views. Everything a component needs
+    is explicitly declared inside its <code>@Component</code> decorator!
+  </p>
+
+  <div class="code-block angular">
+    <div class="code-label">Angular · user-card.component.ts (Modern Standalone)</div>
+    <pre><span class="kw">import</span> { <span class="var">Component</span>, <span class="var">Input</span>, <span class="var">Output</span>, <span class="var">EventEmitter</span>, <span class="var">inject</span>, <span class="var">signal</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="var">CommonModule</span> } <span class="kw">from</span> <span class="str">'@angular/common'</span>;
+<span class="kw">import</span> { <span class="var">UserService</span> } <span class="kw">from</span> <span class="str">'./user.service'</span>;
+
+<span class="cmt">/**
+ * @Component decorator provides metadata that registers this TypeScript class
+ * as an Angular UI building block.
+ */</span>
+@<span class="fn">Component</span>({
+  selector: <span class="str">'app-user-card'</span>,
+  standalone: <span class="kw">true</span>,                     <span class="cmt">// Modern standalone component (default in v17+)</span>
+  imports: [<span class="var">CommonModule</span>],              <span class="cmt">// Directly import dependencies without NgModule!</span>
+  template: <span class="str">`
+    &lt;article class="user-card" [class.active]="isActive()"&gt;
+      &lt;header&gt;
+        &lt;h3&gt;{{ username }}&lt;/h3&gt;
+        &lt;span class="badge"&gt;{{ role }}&lt;/span&gt;
+      &lt;/header&gt;
+      &lt;div class="body"&gt;
+        &lt;p&gt;Status: {{ status() }}&lt;/p&gt;
+        &lt;button (click)="toggleActive()"&gt;Toggle Status&lt;/button&gt;
+        &lt;button (click)="deleteUser()" class="btn-danger"&gt;Remove&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+  `</span>,
+  styles: [<span class="str">`
+    .user-card { border: 1px solid #e0e0e0; padding: 16px; border-radius: 8px; }
+    .active { border-color: #2e7d32; background: #f1f8e9; }
+    .btn-danger { background: #d32f2f; color: white; }
+  `</span>]
+})
+<span class="kw">export class</span> <span class="var">UserCardComponent</span> {
+  <span class="cmt">// Modern Functional Dependency Injection</span>
+  <span class="kw">private</span> <span class="var">userService</span> = <span class="fn">inject</span>(<span class="var">UserService</span>);
+
+  <span class="cmt">// Inputs &amp; Outputs</span>
+  @<span class="fn">Input</span>({ required: <span class="kw">true</span> }) <span class="var">username</span>!: <span class="kw">string</span>;
+  @<span class="fn">Input</span>() <span class="var">role</span>: <span class="kw">string</span> = <span class="str">'Member'</span>;
+  @<span class="fn">Output</span>() <span class="var">userDeleted</span> = <span class="kw">new</span> <span class="fn">EventEmitter</span>&lt;<span class="kw">string</span>&gt;();
+
+  <span class="cmt">// Modern Angular Signal reactive state</span>
+  <span class="var">isActive</span> = <span class="fn">signal</span>(<span class="kw">false</span>);
+  <span class="var">status</span> = <span class="fn">signal</span>(<span class="str">'Offline'</span>);
+
+  <span class="fn">toggleActive</span>() {
+    <span class="kw">this</span>.<span class="var">isActive</span>.<span class="fn">update</span>(<span class="var">active</span> =&gt; !<span class="var">active</span>);
+    <span class="kw">this</span>.<span class="var">status</span>.<span class="fn">set</span>(<span class="kw">this</span>.<span class="var">isActive</span>() ? <span class="str">'Active Online'</span> : <span class="str">'Away'</span>);
+  }
+
+  <span class="fn">deleteUser</span>() {
+    <span class="kw">this</span>.<span class="var">userService</span>.<span class="fn">removeUser</span>(<span class="kw">this</span>.<span class="var">username</span>);
+    <span class="kw">this</span>.<span class="var">userDeleted</span>.<span class="fn">emit</span>(<span class="kw">this</span>.<span class="var">username</span>);
+  }
+}</pre>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <strong>Notice:</strong> Angular cleanly separates the metadata (<code>@Component</code>), the template HTML,
+    the styles, and the TypeScript logic class. In enterprise teams, designers can tweak template HTML while
+    software engineers refine the TypeScript logic with zero collision!
+  </div>
+</div>
+
+<div class="page" id="ch10-comparison">
+  <h2>Architectural Comparison: React 19 vs. Angular 18/19</h2>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Concept</th>
+        <th>React 19 Philosophy</th>
+        <th>Angular Philosophy</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Component Model</td>
+        <td>Plain JavaScript/TypeScript functions returning JSX</td>
+        <td>TypeScript Classes decorated with <code>@Component()</code></td>
+      </tr>
+      <tr>
+        <td>Modularity</td>
+        <td>Unopinionated: Bring your own router, forms, and fetchers</td>
+        <td>Integrated Platform: Router, Forms, and HTTP bundled by team Google</td>
+      </tr>
+      <tr>
+        <td>State Mechanism</td>
+        <td><code>useState</code>, <code>useReducer</code>, and React 19 Actions</td>
+        <td>Angular Signals (<code>signal()</code>), RxJS Observables</td>
+      </tr>
+      <tr>
+        <td>Dependency Sharing</td>
+        <td>React Context API (tree-based provider/consumer)</td>
+        <td>Hierarchical Injector Tree with <code>@Injectable()</code> &amp; <code>inject()</code></td>
+      </tr>
+      <tr>
+        <td>Data Binding</td>
+        <td>Unidirectional with explicit event handlers (<code>onChange={e =&gt; ...}</code>)</td>
+        <td>Two-way (<code>[(ngModel)]</code>), property binding (<code>[prop]</code>), event binding (<code>(event)</code>)</td>
+      </tr>
+      <tr>
+        <td>Templates</td>
+        <td>JSX (Full JavaScript expression power)</td>
+        <td>HTML extended with control flow (<code>@if</code>, <code>@for</code>, pipes)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>How the Component Tree Renders</h3>
+  <div class="svg-container">
+    <svg viewBox="0 0 520 160" width="500" height="160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Root Application -->
+      <rect x="200" y="10" width="120" height="35" rx="6" fill="#c2185b" stroke="#880e4f" stroke-width="2"/>
+      <text x="260" y="32" font-family="'Nunito', sans-serif" font-weight="700" font-size="11" fill="#ffffff" text-anchor="middle">Root: AppComponent</text>
+
+      <!-- Branches -->
+      <path d="M220 45 L110 80" stroke="#757575" stroke-width="2"/>
+      <path d="M300 45 L410 80" stroke="#757575" stroke-width="2"/>
+
+      <!-- Navigation & Main Views -->
+      <rect x="50" y="80" width="120" height="30" rx="4" fill="#1565c0" stroke="#0d47a1" stroke-width="1.5"/>
+      <text x="110" y="100" font-family="'Nunito', sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">HeaderComponent</text>
+
+      <rect x="350" y="80" width="120" height="30" rx="4" fill="#1565c0" stroke="#0d47a1" stroke-width="1.5"/>
+      <text x="410" y="100" font-family="'Nunito', sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">&lt;router-outlet /&gt;</text>
+
+      <!-- Sub views -->
+      <path d="M410 110 L350 135" stroke="#757575" stroke-width="1.5"/>
+      <path d="M410 110 L470 135" stroke="#757575" stroke-width="1.5"/>
+
+      <rect x="290" y="135" width="110" height="22" rx="4" fill="#2e7d32"/>
+      <text x="345" y="150" font-family="monospace" font-size="9" fill="#ffffff" text-anchor="middle">DashboardView</text>
+
+      <rect x="420" y="135" width="100" height="22" rx="4" fill="#2e7d32"/>
+      <text x="470" y="150" font-family="monospace" font-size="9" fill="#ffffff" text-anchor="middle">SettingsView</text>
+    </svg>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <strong>Common Pitfall:</strong> Coming from React, developers often try to create "inline" components
+    inside a single Angular file. In Angular, each component is a standalone class unit with its own encapsulated
+    styles and change detector.
+  </div>
+</div>
+
+<div class="page" id="ch10-tryyourself">
+  <h2>🛠️ Try It Yourself!</h2>
+  <div class="quiz-box" style="border-left-color:#c2185b; background:#fce4ec;">
+    <h3>Architecture Blueprint Exercise: The Flight Tracker</h3>
+    <p>Design the architecture for an airport departure board system:</p>
+    <ul>
+      <li>Identify which components are present (e.g. <code>DepartureBoardComponent</code>, <code>FlightRowComponent</code>).</li>
+      <li>Define what data flows down as <code>@Input()</code> and what actions flow up as <code>@Output()</code>.</li>
+      <li>Declare an <code>@Injectable() FlightDataService</code> to simulate polling departure times.</li>
+      <li>Draft the component decorator demonstrating modern standalone configuration.</li>
+    </ul>
+  </div>
+
+  <div class="code-block angular">
+    <div class="code-label">Starter scaffold · flight-board.component.ts</div>
+    <pre><span class="kw">import</span> { <span class="var">Component</span>, <span class="var">signal</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="var">CommonModule</span> } <span class="kw">from</span> <span class="str">'@angular/common'</span>;
+
+@<span class="fn">Component</span>({
+  selector: <span class="str">'app-departure-board'</span>,
+  standalone: <span class="kw">true</span>,
+  imports: [<span class="var">CommonModule</span>],
+  template: <span class="str">`
+    &lt;div class="airport-screen"&gt;
+      &lt;h1&gt;London Heathrow Terminal 5 — Departures&lt;/h1&gt;
+      &lt;!-- TODO: Render flight rows using modern @for control flow --&gt;
+    &lt;/div&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="var">DepartureBoardComponent</span> {
+  <span class="cmt">// Flight data signal array</span>
+  <span class="var">flights</span> = <span class="fn">signal</span>([
+    { flightNumber: <span class="str">'BA142'</span>, destination: <span class="str">'Tokyo Haneda'</span>, gate: <span class="str">'A12'</span>, status: <span class="str">'Boarding'</span> },
+    { flightNumber: <span class="str">'AF108'</span>, destination: <span class="str">'Paris CDG'</span>,     gate: <span class="str">'B04'</span>, status: <span class="str">'On Time'</span> }
+  ]);
+}</pre>
+  </div>
+
+  <h2>Chapter 10 Summary</h2>
+  <ul class="summary-list">
+    <li>✅ <strong>Angular</strong> is an opinionated, complete enterprise application platform backed by Google</li>
+    <li>✅ Modern Angular relies on <strong>Standalone Components</strong>, eliminating legacy <code>NgModule</code> boilerplate</li>
+    <li>✅ <code>@Component</code> decorators attach templates, encapsulated styles, and selectors to TypeScript classes</li>
+    <li>✅ Data flows down via <code>@Input()</code> properties; events bubble up via <code>@Output() EventEmitter</code></li>
+    <li>✅ Angular's Dependency Injection system provides seamless singleton and scoped service wiring</li>
+    <li>✅ Modern Angular applications combine Signals for local reactivity with RxJS for complex asynchronous streams</li>
+  </ul>
+</div>
+
+<div class="page" id="ch10-quiz">
+  <div class="quiz-box">
+    <h2>🧠 Chapter 10 Quiz</h2>
+
+    <div class="quiz-question">
+      <p><strong>Q1.</strong> What does the <code>standalone: true</code> flag accomplish in an Angular component?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ It allows the component to directly import its own dependencies (other components, directives, pipes)
+        without having to be declared inside an <code>NgModule</code>, making code modular and easy to bundle.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q2.</strong> What decorator designates a class as an Angular service ready for dependency injection?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ <code>@Injectable({ providedIn: 'root' })</code>. This tells Angular's DI injector how to instantiate
+        and provide the service across the application.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q3.</strong> How does modern Angular inject dependencies without constructor parameter injection?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ Using the modern <code>inject(ServiceClass)</code> functional injection function introduced in Angular 14+.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q4.</strong> In the Angular architecture, what is the role of the <code>selector</code> property?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ It specifies the custom HTML tag name (e.g. <code>app-user-card</code>) that represents this component
+        when inserted into parent templates.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q5.</strong> What is the main structural difference between a React component and an Angular component?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ A React component is a function that returns JSX markup; an Angular component is a TypeScript class
+        annotated with a <code>@Component</code> decorator that links separate or inline HTML templates and CSS styles.</p>
+      </details>
+    </div>
+  </div>
+  <div class="page-number">Chapter 10 · Angular Architecture</div>
+</div>

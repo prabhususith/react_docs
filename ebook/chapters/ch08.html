@@ -1,0 +1,414 @@
+<!-- ============================================================
+     CHAPTER 8: React Hooks Deep Dive
+     ============================================================ -->
+<div class="page chapter-header" id="chapter-8">
+  <div class="chapter-number-badge">8</div>
+  <div class="chapter-header-content">
+    <div class="unit-label">UNIT 2 · React 19 — The Modern Way</div>
+    <h1 class="chapter-title">React Hooks Deep Dive</h1>
+    <p class="chapter-subtitle">The fishing hooks that connect your component to React's superpowers</p>
+    <div class="learning-objectives">
+      <h3>🎯 Learning Objectives</h3>
+      <ul>
+        <li>Understand the rules of hooks and why they exist</li>
+        <li>Use <code>useEffect</code> for side effects and data fetching</li>
+        <li>Optimise with <code>useMemo</code> and <code>useCallback</code></li>
+        <li>Use <code>useRef</code> for DOM access and persistent values</li>
+        <li>Build custom hooks to reuse stateful logic</li>
+        <li>Identify when and when NOT to use each hook</li>
+      </ul>
+    </div>
+  </div>
+  <div class="chapter-header-illustration">
+    <svg viewBox="0 0 320 200" width="320" height="200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Water line -->
+      <rect x="0" y="130" width="320" height="70" fill="#e3f2fd" opacity="0.6"/>
+      <path d="M0 130 Q40 120 80 130 Q120 140 160 130 Q200 120 240 130 Q280 140 320 130" fill="none" stroke="#1565c0" stroke-width="2"/>
+      <!-- Fishing hooks -->
+      <line x1="60" y1="20" x2="60" y2="140" stroke="#ff6f00" stroke-width="2"/>
+      <path d="M60 140 Q60 165 80 165 Q100 165 100 148" fill="none" stroke="#ff6f00" stroke-width="2.5"/>
+      <text x="30" y="18" font-family="monospace" font-size="9" fill="#ff6f00">useState</text>
+
+      <line x1="130" y1="20" x2="130" y2="140" stroke="#1a237e" stroke-width="2"/>
+      <path d="M130 140 Q130 160 148 160 Q166 160 166 145" fill="none" stroke="#1a237e" stroke-width="2.5"/>
+      <text x="100" y="18" font-family="monospace" font-size="9" fill="#1a237e">useEffect</text>
+
+      <line x1="200" y1="20" x2="200" y2="140" stroke="#2e7d32" stroke-width="2"/>
+      <path d="M200 140 Q200 162 220 162 Q240 162 240 147" fill="none" stroke="#2e7d32" stroke-width="2.5"/>
+      <text x="168" y="18" font-family="monospace" font-size="9" fill="#2e7d32">useCallback</text>
+
+      <line x1="270" y1="20" x2="270" y2="140" stroke="#6a1b9a" stroke-width="2"/>
+      <path d="M270 140 Q270 160 288 160 Q306 160 306 145" fill="none" stroke="#6a1b9a" stroke-width="2.5"/>
+      <text x="246" y="18" font-family="monospace" font-size="9" fill="#6a1b9a">useRef</text>
+
+      <!-- Fish -->
+      <ellipse cx="85" cy="155" rx="12" ry="7" fill="#42a5f5"/>
+      <text x="140" y="195" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#757575">Hooks connect components to React's internals</text>
+    </svg>
+  </div>
+</div>
+
+<div class="page" id="ch8-story">
+  <div class="real-world">
+    <h2>🎣 A Real-World Story: The Fishing Trip</h2>
+    <p>
+      Imagine you're on a fishing trip 🎣. You're sitting in a boat on a calm lake. Underneath the water is
+      a whole world of fish, water plants, and currents — that's React's internal world (state, lifecycle,
+      DOM). You can't just jump in and grab things — you'd disturb everything!
+    </p>
+    <p>
+      Instead, you use <strong>fishing hooks</strong>. Each hook is designed to catch something specific:
+      a spinner lure catches bass, a fly lure catches trout. In React, each Hook is designed to access a
+      specific superpower: <code>useEffect</code> catches "moments in time" (when the component mounts or
+      updates), <code>useRef</code> catches a direct handle to a DOM element, <code>useMemo</code>
+      catches a cached computation result.
+    </p>
+    <p>
+      The best fisherman knows which hook to use for which fish. The best React developer knows which
+      Hook to reach for in each situation. By the end of this chapter, you'll be an expert angler! 🏆
+    </p>
+  </div>
+
+  <div class="callout definition">
+    <span class="callout-icon">📖</span>
+    <div>
+      <strong>Definition — React Hook:</strong> A special function (always prefixed with <code>use</code>)
+      that lets function components "hook into" React features like state, lifecycle, context, refs, and
+      memoisation. Introduced in React 16.8, hooks replaced class component lifecycle methods.
+    </div>
+  </div>
+
+  <h2>The Rules of Hooks</h2>
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <div>
+      <strong>Two Unbreakable Rules:</strong>
+      <ol>
+        <li>✅ <strong>Only call Hooks at the top level</strong> — never inside loops, conditions, or nested functions</li>
+        <li>✅ <strong>Only call Hooks from React functions</strong> — components or custom hooks, never plain JS functions</li>
+      </ol>
+      These rules ensure React can track hook order correctly on every render.
+    </div>
+  </div>
+</div>
+
+<div class="page" id="ch8-useeffect">
+  <h2>🎣 Hook #2: useEffect — The Lifecycle Hook</h2>
+  <p>
+    <code>useEffect</code> lets you perform <strong>side effects</strong>: fetching data, subscribing to
+    events, manipulating the DOM, setting timers — anything that reaches "outside" the component.
+  </p>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 500 120" width="480" height="120" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="30" width="90" height="50" rx="6" fill="#e8eaf6" stroke="#1a237e" stroke-width="1.5"/>
+      <text x="55" y="60" text-anchor="middle" font-family="monospace" font-size="9" fill="#1a237e">Component</text>
+      <text x="55" y="74" text-anchor="middle" font-family="monospace" font-size="8" fill="#1a237e">mounts</text>
+      <path d="M105 55 L145 55" stroke="#ff6f00" stroke-width="2" marker-end="url(#arrH8)"/>
+      <defs><marker id="arrH8" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff6f00"/></marker></defs>
+      <rect x="150" y="30" width="100" height="50" rx="6" fill="#fff9c4" stroke="#ff6f00" stroke-width="1.5"/>
+      <text x="200" y="58" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff6f00">useEffect</text>
+      <text x="200" y="72" text-anchor="middle" font-family="monospace" font-size="8" fill="#ff6f00">runs callback</text>
+      <path d="M255 55 L295 55" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrH8b)"/>
+      <defs><marker id="arrH8b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2e7d32"/></marker></defs>
+      <rect x="300" y="30" width="90" height="50" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+      <text x="345" y="58" text-anchor="middle" font-family="monospace" font-size="9" fill="#1565c0">Side effect</text>
+      <text x="345" y="72" text-anchor="middle" font-family="monospace" font-size="8" fill="#1565c0">fetch / subscribe</text>
+      <path d="M395 55 L435 55" stroke="#c62828" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrH8c)"/>
+      <defs><marker id="arrH8c" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c62828"/></marker></defs>
+      <rect x="440" y="30" width="55" height="50" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+      <text x="467" y="57" text-anchor="middle" font-family="monospace" font-size="8" fill="#c62828">cleanup</text>
+      <text x="467" y="70" text-anchor="middle" font-family="monospace" font-size="7" fill="#c62828">on unmount</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-label">React 19 · useEffect patterns</div>
+    <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ <span class="var">userId</span> }) {
+  <span class="kw">const</span> [<span class="var">user</span>, <span class="fn">setUser</span>] = <span class="fn">useState</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> [<span class="var">loading</span>, <span class="fn">setLoading</span>] = <span class="fn">useState</span>(<span class="kw">true</span>);
+
+  <span class="cmt">// Runs AFTER render, re-runs when userId changes</span>
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">let</span> <span class="var">cancelled</span> = <span class="kw">false</span>;   <span class="cmt">// for cleanup</span>
+    <span class="fn">setLoading</span>(<span class="kw">true</span>);
+
+    <span class="fn">fetch</span>(<span class="str">`/api/users/${<span class="var">userId</span>}`</span>)
+      .<span class="fn">then</span>(<span class="var">r</span> =&gt; <span class="var">r</span>.<span class="fn">json</span>())
+      .<span class="fn">then</span>(<span class="var">data</span> =&gt; {
+        <span class="kw">if</span> (!<span class="var">cancelled</span>) {   <span class="cmt">// only update if still mounted</span>
+          <span class="fn">setUser</span>(<span class="var">data</span>);
+          <span class="fn">setLoading</span>(<span class="kw">false</span>);
+        }
+      });
+
+    <span class="cmt">// Cleanup function — runs before next effect or on unmount</span>
+    <span class="kw">return</span> () =&gt; { <span class="var">cancelled</span> = <span class="kw">true</span>; };
+  }, [<span class="var">userId</span>]);  <span class="cmt">// dependency array — re-run only when userId changes</span>
+
+  <span class="kw">if</span> (<span class="var">loading</span>) <span class="kw">return</span> &lt;<span class="kw">p</span>&gt;Loading...&lt;/<span class="kw">p</span>&gt;;
+  <span class="kw">return</span> &lt;<span class="kw">h2</span>&gt;{<span class="var">user</span>?.<span class="var">name</span>}&lt;/<span class="kw">h2</span>&gt;;
+}
+
+<span class="cmt">// Three dependency array forms:</span>
+<span class="fn">useEffect</span>(() =&gt; { <span class="cmt">/* runs after EVERY render */</span> });
+<span class="fn">useEffect</span>(() =&gt; { <span class="cmt">/* runs only ONCE on mount */</span> }, []);
+<span class="fn">useEffect</span>(() =&gt; { <span class="cmt">/* runs when dep1 or dep2 changes */</span> }, [<span class="var">dep1</span>, <span class="var">dep2</span>]);</pre>
+  </div>
+</div>
+
+<div class="page" id="ch8-perf-hooks">
+  <h2>🎣 Hook #3: useMemo — The Cache Hook</h2>
+  <div class="code-block">
+    <div class="code-label">React 19 · useMemo</div>
+    <pre><span class="kw">import</span> { useMemo } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">ProductList</span>({ <span class="var">products</span>, <span class="var">searchTerm</span> }) {
+  <span class="cmt">// Recomputes ONLY when products or searchTerm changes</span>
+  <span class="kw">const</span> <span class="var">filtered</span> = <span class="fn">useMemo</span>(() =&gt; {
+    <span class="kw">return</span> <span class="var">products</span>.<span class="fn">filter</span>(<span class="var">p</span> =&gt;
+      <span class="var">p</span>.<span class="var">name</span>.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(<span class="var">searchTerm</span>.<span class="fn">toLowerCase</span>())
+    );
+  }, [<span class="var">products</span>, <span class="var">searchTerm</span>]);
+
+  <span class="kw">return</span> &lt;<span class="kw">ul</span>&gt;{<span class="var">filtered</span>.<span class="fn">map</span>(<span class="var">p</span> =&gt; &lt;<span class="kw">li</span> key={<span class="var">p</span>.<span class="var">id</span>}&gt;{<span class="var">p</span>.<span class="var">name</span>}&lt;/<span class="kw">li</span>&gt;)}&lt;/<span class="kw">ul</span>&gt;;
+}</pre>
+  </div>
+
+  <h2>🎣 Hook #4: useCallback — Stable Function References</h2>
+  <div class="code-block">
+    <div class="code-label">React 19 · useCallback</div>
+    <pre><span class="kw">import</span> { useCallback, memo } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> <span class="fn">Button</span> = <span class="fn">memo</span>(({ <span class="var">onClick</span>, <span class="var">label</span> }) =&gt; {
+  <span class="kw">return</span> &lt;<span class="kw">button</span> onClick={<span class="var">onClick</span>}&gt;{<span class="var">label</span>}&lt;/<span class="kw">button</span>&gt;;
+});
+
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [<span class="var">count</span>, <span class="fn">setCount</span>] = <span class="fn">useState</span>(<span class="str">0</span>);
+
+  <span class="cmt">// Without useCallback, handleClick is new on EVERY render → Button re-renders</span>
+  <span class="cmt">// WITH useCallback, same function reference → Button is skipped ✅</span>
+  <span class="kw">const</span> <span class="fn">handleClick</span> = <span class="fn">useCallback</span>(() =&gt; {
+    <span class="fn">setCount</span>(<span class="var">prev</span> =&gt; <span class="var">prev</span> + <span class="str">1</span>);
+  }, []); <span class="cmt">// no deps — function never changes</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">p</span>&gt;Count: {<span class="var">count</span>}&lt;/<span class="kw">p</span>&gt;
+      &lt;<span class="fn">Button</span> onClick={<span class="fn">handleClick</span>} label=<span class="str">"Increment"</span> /&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <h2>🎣 Hook #5: useRef — The Persistence Hook</h2>
+  <div class="code-block">
+    <div class="code-label">React 19 · useRef — two use cases</div>
+    <pre><span class="kw">import</span> { useRef, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">VideoPlayer</span>() {
+  <span class="cmt">// Use case 1: DOM reference</span>
+  <span class="kw">const</span> <span class="var">videoRef</span> = <span class="fn">useRef</span>(<span class="kw">null</span>);
+
+  <span class="kw">const</span> <span class="fn">handlePlay</span> = () =&gt; <span class="var">videoRef</span>.<span class="var">current</span>.<span class="fn">play</span>();
+  <span class="kw">const</span> <span class="fn">handlePause</span> = () =&gt; <span class="var">videoRef</span>.<span class="var">current</span>.<span class="fn">pause</span>();
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">video</span> ref={<span class="var">videoRef</span>} src=<span class="str">"/movie.mp4"</span> /&gt;
+      &lt;<span class="kw">button</span> onClick={<span class="fn">handlePlay</span>}&gt;▶ Play&lt;/<span class="kw">button</span>&gt;
+      &lt;<span class="kw">button</span> onClick={<span class="fn">handlePause</span>}&gt;⏸ Pause&lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="fn">Timer</span>() {
+  <span class="cmt">// Use case 2: Persistent value that doesn't trigger re-render</span>
+  <span class="kw">const</span> <span class="var">intervalRef</span> = <span class="fn">useRef</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> [<span class="var">seconds</span>, <span class="fn">setSeconds</span>] = <span class="fn">useState</span>(<span class="str">0</span>);
+
+  <span class="kw">const</span> <span class="fn">start</span> = () =&gt; {
+    <span class="var">intervalRef</span>.<span class="var">current</span> = <span class="fn">setInterval</span>(() =&gt; <span class="fn">setSeconds</span>(<span class="var">s</span> =&gt; <span class="var">s</span>+<span class="str">1</span>), <span class="str">1000</span>);
+  };
+  <span class="kw">const</span> <span class="fn">stop</span> = () =&gt; <span class="fn">clearInterval</span>(<span class="var">intervalRef</span>.<span class="var">current</span>);
+
+  <span class="kw">return</span> &lt;<span class="kw">div</span>&gt;{<span class="var">seconds</span>}s &lt;<span class="kw">button</span> onClick={<span class="fn">start</span>}&gt;Start&lt;/<span class="kw">button</span>&gt; &lt;<span class="kw">button</span> onClick={<span class="fn">stop</span>}&gt;Stop&lt;/<span class="kw">button</span>&gt;&lt;/<span class="kw">div</span>&gt;;
+}</pre>
+  </div>
+</div>
+
+<div class="page" id="ch8-custom-hooks">
+  <h2>Building Custom Hooks</h2>
+  <p>Extract reusable stateful logic into your own custom hook:</p>
+  <div class="code-block">
+    <div class="code-label">React 19 · useFetch custom hook</div>
+    <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="cmt">// Convention: custom hooks start with "use"</span>
+<span class="kw">function</span> <span class="fn">useFetch</span>(<span class="var">url</span>) {
+  <span class="kw">const</span> [<span class="var">data</span>,    <span class="fn">setData</span>]    = <span class="fn">useState</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> [<span class="var">loading</span>, <span class="fn">setLoading</span>] = <span class="fn">useState</span>(<span class="kw">true</span>);
+  <span class="kw">const</span> [<span class="var">error</span>,   <span class="fn">setError</span>]   = <span class="fn">useState</span>(<span class="kw">null</span>);
+
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> <span class="var">controller</span> = <span class="kw">new</span> <span class="fn">AbortController</span>();
+    <span class="fn">setLoading</span>(<span class="kw">true</span>);
+
+    <span class="fn">fetch</span>(<span class="var">url</span>, { signal: <span class="var">controller</span>.<span class="var">signal</span> })
+      .<span class="fn">then</span>(<span class="var">r</span> =&gt; <span class="var">r</span>.<span class="fn">json</span>())
+      .<span class="fn">then</span>(<span class="fn">setData</span>)
+      .<span class="fn">catch</span>(<span class="var">e</span> =&gt; { <span class="kw">if</span> (<span class="var">e</span>.<span class="var">name</span> !== <span class="str">'AbortError'</span>) <span class="fn">setError</span>(<span class="var">e</span>); })
+      .<span class="fn">finally</span>(() =&gt; <span class="fn">setLoading</span>(<span class="kw">false</span>));
+
+    <span class="kw">return</span> () =&gt; <span class="var">controller</span>.<span class="fn">abort</span>();
+  }, [<span class="var">url</span>]);
+
+  <span class="kw">return</span> { <span class="var">data</span>, <span class="var">loading</span>, <span class="var">error</span> };
+}
+
+<span class="cmt">// Using the custom hook — SO clean!</span>
+<span class="kw">function</span> <span class="fn">PostList</span>() {
+  <span class="kw">const</span> { <span class="var">data</span>: <span class="var">posts</span>, <span class="var">loading</span>, <span class="var">error</span> } = <span class="fn">useFetch</span>(<span class="str">'/api/posts'</span>);
+  <span class="kw">if</span> (<span class="var">loading</span>) <span class="kw">return</span> &lt;<span class="kw">p</span>&gt;Loading...&lt;/<span class="kw">p</span>&gt;;
+  <span class="kw">if</span> (<span class="var">error</span>)   <span class="kw">return</span> &lt;<span class="kw">p</span>&gt;Error: {<span class="var">error</span>.<span class="var">message</span>}&lt;/<span class="kw">p</span>&gt;;
+  <span class="kw">return</span> &lt;<span class="kw">ul</span>&gt;{<span class="var">posts</span>.<span class="fn">map</span>(<span class="var">p</span> =&gt; &lt;<span class="kw">li</span> key={<span class="var">p</span>.<span class="var">id</span>}&gt;{<span class="var">p</span>.<span class="var">title</span>}&lt;/<span class="kw">li</span>&gt;)}&lt;/<span class="kw">ul</span>&gt;;
+}</pre>
+  </div>
+
+  <div class="callout fun-fact">
+    <span class="callout-icon">🤩</span>
+    <strong>Fun Fact:</strong> Popular libraries like <code>react-query</code>, <code>swr</code>, and
+    <code>zustand</code> are largely built on custom hooks. When you master custom hooks, you can build
+    your own state management library!
+  </div>
+
+  <h2>More Essential Built-in Hooks</h2>
+
+  <h3>🎣 Hook #6: useId — Unique Accessibility Identifiers</h3>
+  <p>
+    When connecting form labels to inputs (e.g. <code>htmlFor="email"</code>), hardcoded IDs cause clashes
+    if the component is rendered multiple times on the same page. <code>useId</code> generates unique,
+    server-safe IDs that remain stable across hydration.
+  </p>
+  <div class="code-block">
+    <div class="code-label">React 19 · useId</div>
+    <pre><span class="kw">import</span> { useId } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">FormField</span>({ <span class="var">label</span>, <span class="var">type</span> = <span class="str">'text'</span> }) {
+  <span class="kw">const</span> <span class="var">id</span> = <span class="fn">useId</span>();
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> className=<span class="str">"form-group"</span>&gt;
+      &lt;<span class="kw">label</span> htmlFor={<span class="var">id</span>}&gt;{<span class="var">label</span>}&lt;/<span class="kw">label</span>&gt;
+      &lt;<span class="kw">input</span> id={<span class="var">id</span>} type={<span class="var">type</span>} /&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <h3>🎣 Hook #7: Custom Hook — useLocalStorage</h3>
+  <p>
+    Combine <code>useState</code> and <code>useEffect</code> to synchronize state automatically with the browser's
+    local storage:
+  </p>
+  <div class="code-block">
+    <div class="code-label">React 19 · useLocalStorage custom hook</div>
+    <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">export function</span> <span class="fn">useLocalStorage</span>(<span class="var">key</span>, <span class="var">initialValue</span>) {
+  <span class="kw">const</span> [<span class="var">storedValue</span>, <span class="fn">setStoredValue</span>] = <span class="fn">useState</span>(() =&gt; {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> <span class="var">item</span> = <span class="var">window</span>.<span class="var">localStorage</span>.<span class="fn">getItem</span>(<span class="var">key</span>);
+      <span class="kw">return</span> <span class="var">item</span> ? <span class="fn">JSON</span>.<span class="fn">parse</span>(<span class="var">item</span>) : <span class="var">initialValue</span>;
+    } <span class="kw">catch</span> (<span class="var">error</span>) {
+      <span class="var">console</span>.<span class="fn">error</span>(<span class="var">error</span>);
+      <span class="kw">return</span> <span class="var">initialValue</span>;
+    }
+  });
+
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">try</span> {
+      <span class="var">window</span>.<span class="var">localStorage</span>.<span class="fn">setItem</span>(<span class="var">key</span>, <span class="fn">JSON</span>.<span class="fn">stringify</span>(<span class="var">storedValue</span>));
+    } <span class="kw">catch</span> (<span class="var">error</span>) {
+      <span class="var">console</span>.<span class="fn">error</span>(<span class="var">error</span>);
+    }
+  }, [<span class="var">key</span>, <span class="var">storedValue</span>]);
+
+  <span class="kw">return</span> [<span class="var">storedValue</span>, <span class="fn">setStoredValue</span>];
+}</pre>
+  </div>
+
+  <table class="comparison-table">
+    <thead>
+      <tr><th>Hook</th><th>Purpose</th><th>When to Use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>useState</code></td><td>Store mutable data</td><td>Any changeable UI data</td></tr>
+      <tr><td><code>useEffect</code></td><td>Side effects</td><td>Fetching, subscriptions, timers</td></tr>
+      <tr><td><code>useMemo</code></td><td>Cache expensive computation</td><td>Filtering/sorting large lists</td></tr>
+      <tr><td><code>useCallback</code></td><td>Stable function reference</td><td>Passing callbacks to memoized children</td></tr>
+      <tr><td><code>useRef</code></td><td>DOM access / mutable value</td><td>Focusing inputs, storing timers</td></tr>
+      <tr><td><code>useContext</code></td><td>Read context value</td><td>Themes, auth, locale</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Chapter 8 Summary</h2>
+  <ul class="summary-list">
+    <li>✅ Hooks must be called at the top level and only inside React functions</li>
+    <li>✅ <code>useEffect</code> runs after render; return a cleanup function for subscriptions</li>
+    <li>✅ The dependency array controls when <code>useEffect</code> re-runs</li>
+    <li>✅ <code>useMemo</code> caches a computed value; <code>useCallback</code> caches a function</li>
+    <li>✅ <code>useRef</code> gives DOM access and stores values without triggering re-renders</li>
+    <li>✅ Custom hooks (prefixed <code>use</code>) extract and share stateful logic cleanly</li>
+  </ul>
+</div>
+
+<div class="page" id="ch8-quiz">
+  <div class="quiz-box">
+    <h2>🧠 Chapter 8 Quiz</h2>
+
+    <div class="quiz-question">
+      <p><strong>Q1.</strong> What are the two rules of hooks?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ 1) Call hooks only at the top level (not inside loops/conditions). 2) Call hooks only inside
+        React function components or custom hooks.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q2.</strong> What does an empty dependency array <code>[]</code> mean for <code>useEffect</code>?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ The effect runs only once — after the initial render (component mount). It never re-runs
+        due to state/prop changes.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q3.</strong> What is the difference between <code>useMemo</code> and <code>useCallback</code>?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ <code>useMemo</code> memoizes a <em>computed value</em> (the result of calling a function).
+        <code>useCallback</code> memoizes the <em>function itself</em> (its reference), useful for passing
+        stable callbacks to child components.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q4.</strong> Name two use cases for <code>useRef</code>.</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ 1) Accessing a DOM element directly (e.g., focus an input, control video playback).
+        2) Storing a mutable value that persists across renders without causing re-renders (e.g., interval ID, previous value).</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q5.</strong> How do you name a custom hook and why?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ Always start with <code>use</code> (e.g., <code>useFetch</code>, <code>useLocalStorage</code>).
+        This naming convention is required so the React linter can enforce hook rules on your custom hook.</p>
+      </details>
+    </div>
+  </div>
+  <div class="page-number">Chapter 8 · React Hooks</div>
+</div>

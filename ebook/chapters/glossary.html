@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary — React 19 &amp; Angular</title>
+<style>
+  :root {
+    --primary: #1a237e;
+    --react: #0288d1;
+    --angular: #dd0031;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #0f172a;
+    --muted: #475569;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 30px 20px;
+    line-height: 1.6;
+  }
+  .glossary-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  .glossary-header {
+    text-align: center;
+    margin-bottom: 35px;
+    border-bottom: 3px solid var(--border);
+    padding-bottom: 20px;
+  }
+  .glossary-header h1 {
+    font-size: 32px;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  .glossary-header p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .alphabet-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin: 20px 0 35px;
+    position: sticky;
+    top: 10px;
+    background: var(--card-bg);
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    z-index: 100;
+  }
+  .alphabet-nav a {
+    text-decoration: none;
+    font-weight: 700;
+    color: var(--primary);
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .alphabet-nav a:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+  .letter-section {
+    margin-bottom: 40px;
+    scroll-margin-top: 70px;
+  }
+  .letter-heading {
+    font-size: 28px;
+    font-weight: 900;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary), var(--react));
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(2, 136, 209, 0.3);
+  }
+  .term-card {
+    background: #f8fafc;
+    border-left: 5px solid var(--primary);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .term-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+  }
+  .tag-react { background: #e0f2fe; color: var(--react); }
+  .tag-angular { background: #ffe4e6; color: var(--angular); }
+  .tag-both { background: #f3e8ff; color: #7c3aed; }
+  .tag-web { background: #e2e8f0; color: #334155; }
+
+  .def-section {
+    margin-bottom: 8px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .def-label {
+    font-weight: 700;
+    display: inline-block;
+    margin-right: 6px;
+  }
+  .kids-def {
+    color: #0369a1;
+    background: #f0f9ff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  .pro-def {
+    color: #1e293b;
+    background: #ffffff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+  }
+  .see-also {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .see-also a {
+    color: var(--react);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .see-also a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<div class="glossary-container">
+  <div class="glossary-header">
+    <h1>📖 The Master Web &amp; Framework Glossary</h1>
+    <p>A comprehensive A-Z reference bridging child-friendly intuition with production engineering rigor.</p>
+  </div>
+
+  <div class="alphabet-nav">
+    <a href="#letter-A">A</a>
+    <a href="#letter-B">B</a>
+    <a href="#letter-C">C</a>
+    <a href="#letter-D">D</a>
+    <a href="#letter-E">E</a>
+    <a href="#letter-F">F</a>
+    <a href="#letter-G">G</a>
+    <a href="#letter-H">H</a>
+    <a href="#letter-I">I</a>
+    <a href="#letter-J">J</a>
+    <a href="#letter-K">K</a>
+    <a href="#letter-L">L</a>
+    <a href="#letter-M">M</a>
+    <a href="#letter-N">N</a>
+    <a href="#letter-O">O</a>
+    <a href="#letter-P">P</a>
+    <a href="#letter-R">R</a>
+    <a href="#letter-S">S</a>
+    <a href="#letter-T">T</a>
+    <a href="#letter-U">U</a>
+    <a href="#letter-V">V</a>
+    <a href="#letter-W">W</a>
+    <a href="#letter-Z">Z</a>
+  </div>
+
+  <!-- A -->
+  <div class="letter-section" id="letter-A">
+    <div class="letter-heading">A</div>
+
+    <div class="term-card">
+      <div class="term-title">Action (React 19) <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Like pressing a magical "Send" button on a birthday card that handles mailing it, waiting for a reply, and showing an hourglass while you wait!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An async transition function passed to forms or hook states (e.g., <code>useActionState</code>) that automatically manages pending states, optimistic updates, and sequential submission lifecycles.</div>
+      <div class="see-also">→ See Also: <a href="#useActionState">useActionState</a>, <a href="#useOptimistic">useOptimistic</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Ahead-of-Time (AOT) Compilation <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Baking the cake at home before the party instead of bringing raw flour and eggs to assemble in front of your guests.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> The process of compiling Angular HTML templates and TypeScript code into efficient native JavaScript code during the build stage before the browser executes it, improving startup time and catching template errors.</div>
+      <div class="see-also">→ See Also: <a href="#JIT">JIT</a>, <a href="#Ivy">Ivy Compiler</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Async Pipe <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A robot that listens to a walkie-talkie and writes whatever words come out directly onto a chalkboard, then turns the walkie-talkie off when you leave the room.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An Angular template pipe (<code>| async</code>) that automatically subscribes to an Observable or Promise, returns latest emitted values, marks the component for change detection, and unsubscribes on destroy.</div>
+      <div class="see-also">→ See Also: <a href="#Observable">Observable</a>, <a href="#Pipe">Pipe</a></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="letter-section" id="letter-B">
+    <div class="letter-heading">B</div>
+
+    <div class="term-card">
+      <div class="term-title">Bundle &amp; Bundler <span class="tag tag-web">Web Dev</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Packing all your toys, clothes, and snacks into one neat backpack so you only have to carry a single bag on vacation.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A tool (such as Vite, Rollup, webpack, or esbuild) that traces code dependencies and packages numerous JavaScript, CSS, and asset files into optimized, minified output chunks for deployment.</div>
+      <div class="see-also">→ See Also: <a href="#TreeShaking">Tree Shaking</a>, <a href="#Vite">Vite</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">BehaviorSubject <span class="tag tag-angular">RxJS / Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A scoreboard that always displays the current score. Whoever walks into the gym can immediately see what the score is right now!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A variant of RxJS Subject requiring an initial value that caches its current value and immediately emits it to any new subscriber upon subscription.</div>
+      <div class="see-also">→ See Also: <a href="#Subject">Subject</a>, <a href="#Observable">Observable</a></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="letter-section" id="letter-C">
+    <div class="letter-heading">C</div>
+
+    <div class="term-card">
+      <div class="term-title">Change Detection <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A referee checking the scoreboard whenever a player scores a goal to make sure the stadium numbers get updated instantly.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> The mechanism by which a framework synchronizes internal state mutations with the browser DOM tree (via Zone.js/Signals in Angular or Fiber reconciliation in React).</div>
+      <div class="see-also">→ See Also: <a href="#Zone.js">Zone.js</a>, <a href="#Fiber">Fiber</a>, <a href="#Signal">Signal</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Component <span class="tag tag-both">Core</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A single snap-together LEGO brick—like a steering wheel, a door, or a windshield—used over and over to build a giant castle or spaceship.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> The primary modular building block of modern user interfaces; an isolated, reusable unit encapsulating markup, presentation styles, and behavior state.</div>
+      <div class="see-also">→ See Also: <a href="#Props">Props</a>, <a href="#State">State</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Context API <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A loudspeaker announcement in a school that reaches every single classroom at once without having to whisper the secret from student to student down the hall.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> React's built-in dependency broadcast system allowing data to be shared down the component tree without manual prop drilling at intermediate nodes.</div>
+      <div class="see-also">→ See Also: <a href="#DependencyInjection">Dependency Injection</a>, <a href="#PropDrilling">Prop Drilling</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Controlled Component <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A toy car with a remote control—the car only turns when the remote button is pressed and updates where the steering wheel points.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A form input element whose values are governed strictly by React state, updated on every keystroke through event handlers rather than querying the DOM node directly.</div>
+      <div class="see-also">→ See Also: <a href="#State">State</a></div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="letter-section" id="letter-D">
+    <div class="letter-heading">D</div>
+
+    <div class="term-card">
+      <div class="term-title">Decorator <span class="tag tag-angular">Angular / TS</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A magical sticker you slap onto your binder that gives it superhero powers, like making it waterproof or glowing in the dark!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A TypeScript syntax feature (<code>@Component</code>, <code>@Injectable</code>) that attaches metadata to classes, properties, or parameters at compile time for framework introspection.</div>
+      <div class="see-also">→ See Also: <a href="#Injectable">Injectable</a>, <a href="#Component">Component</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Dependency Injection (DI) <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Asking the teacher for a pencil and she gives you one from her box, instead of you having to chop down a tree and make graphite yourself!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An architectural design pattern where an injector manages the instantiation and lifecycle of dependencies, supplying them to requesting consumers via hierarchical lookup.</div>
+      <div class="see-also">→ See Also: <a href="#Injectable">Injectable</a>, <a href="#Provider">Provider</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Directive <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A special recipe card or rule attached to a toy that changes how it behaves, like telling a doll to dance whenever music plays.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An Angular class decorated with <code>@Directive()</code> that can attach custom behavior, manipulate attributes, or modify the layout structure of DOM elements.</div>
+      <div class="see-also">→ See Also: <a href="#Component">Component</a>, <a href="#StructuralDirective">Structural Directive</a></div>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="letter-section" id="letter-E">
+    <div class="letter-heading">E</div>
+
+    <div class="term-card">
+      <div class="term-title">Effect <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Doing your chores right after school ends—like saving your score after winning a video game level.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An operation that reaches outside the pure functional computation of rendering (e.g. <code>useEffect</code> in React, <code>effect()</code> in Angular Signals) to trigger network requests, timers, or DOM modifications.</div>
+      <div class="see-also">→ See Also: <a href="#Hook">Hook</a>, <a href="#Signal">Signal</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Error Boundary <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A safety net under a circus trapeze so if an acrobat slips, nobody crashes to the floor and the rest of the show keeps going!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A React component implementing <code>componentDidCatch</code> or <code>getDerivedStateFromError</code> to catch JavaScript errors anywhere in its child tree and render fallback UI.</div>
+      <div class="see-also">→ See Also: <a href="#Suspense">Suspense</a></div>
+    </div>
+  </div>
+
+  <!-- F -->
+  <div class="letter-section" id="letter-F">
+    <div class="letter-heading">F</div>
+
+    <div class="term-card">
+      <div class="term-title">Fiber Architecture <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Pausing your drawing when dinner is ready, eating pizza, and then resuming exactly the stroke you were making without starting over!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> React's core reconciler algorithm since v16, organizing work into incremental units (fibers) that allow cooperative multitasking, prioritization, and interruptions during concurrent rendering.</div>
+      <div class="see-also">→ See Also: <a href="#Reconciliation">Reconciliation</a>, <a href="#VirtualDOM">Virtual DOM</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">FormGroup &amp; FormControl <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A clipboard holding a test sheet: each answer box is a Control, and the whole test paper is the Group.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Core building blocks of Angular Reactive Forms: <code>FormControl</code> tracks the value and validation status of individual inputs, while <code>FormGroup</code> aggregates multiple controls into a synchronized validation object.</div>
+      <div class="see-also">→ See Also: <a href="#ReactiveForms">Reactive Forms</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Fragment <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> An invisible zipper bag that groups three toys together without adding an extra clunky cardboard box.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A React syntax wrapper (<code>&lt;&gt;...&lt;/&gt;</code> or <code>&lt;Fragment&gt;</code>) allowing multiple children to be returned from a component without adding superfluous wrapper nodes to the DOM.</div>
+      <div class="see-also">→ See Also: <a href="#JSX">JSX</a></div>
+    </div>
+  </div>
+
+  <!-- G -->
+  <div class="letter-section" id="letter-G">
+    <div class="letter-heading">G</div>
+
+    <div class="term-card">
+      <div class="term-title">Guard (Route Guard) <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A security bouncer checking tickets at the movie theater door before letting people into the auditorium.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A functional or class interface (such as <code>canActivate</code> or <code>canDeactivate</code>) that determines whether navigation to or from a specific route is allowed.</div>
+      <div class="see-also">→ See Also: <a href="#Router">Router</a></div>
+    </div>
+  </div>
+
+  <!-- H -->
+  <div class="letter-section" id="letter-H">
+    <div class="letter-heading">H</div>
+
+    <div class="term-card">
+      <div class="term-title">Hook <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A magical fishing pole you dip into React's lake to pull out memories, timers, or superpowers for your component!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A function whose name starts with <code>use</code> that allows functional components to hook into React state, context, and lifecycle lifelines without requiring class declarations.</div>
+      <div class="see-also">→ See Also: <a href="#useState">useState</a>, <a href="#useEffect">useEffect</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Higher-Order Component (HOC) <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Putting an iron armor suit over your superhero figure so they gain laser cannons and shield powers!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A pattern where a pure function accepts an existing component and returns an enhanced new component wrapping it with shared logic or props.</div>
+      <div class="see-also">→ See Also: <a href="#Component">Component</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Hydration <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Pouring water on a dried sponge creature until it puffs up into a squishy, living dinosaur you can play with!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> The client-side process where a framework attaches event listeners and establishes reactive internal data structures over pre-rendered static HTML from the server.</div>
+      <div class="see-also">→ See Also: <a href="#SSR">SSR</a></div>
+    </div>
+  </div>
+
+  <!-- I -->
+  <div class="letter-section" id="letter-I">
+    <div class="letter-heading">I</div>
+
+    <div class="term-card">
+      <div class="term-title">Immutability <span class="tag tag-both">Core</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Taking a clean new sheet of paper to draw changes instead of erasing and ruining your original masterpiece.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A software design principle wherein data structures cannot be modified post-creation; state updates yield brand new object references, enabling fast reference equality checks.</div>
+      <div class="see-also">→ See Also: <a href="#State">State</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Injectable <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Marking a toy as "sharable with the whole classroom" so anyone can ask for it and share the exact same copy.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An Angular decorator (<code>@Injectable()</code>) that registers a service class with the dependency injection system, defining its visibility and scope (e.g. <code>providedIn: 'root'</code>).</div>
+      <div class="see-also">→ See Also: <a href="#DependencyInjection">Dependency Injection</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Interpolation <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A "Mad Libs" game where you fill in the blank words with your pet's funny name!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Embedding evaluated expressions directly within markup (<code>{{ value }}</code> in Angular, <code>{value}</code> in JSX) to display dynamic strings in the view.</div>
+      <div class="see-also">→ See Also: <a href="#JSX">JSX</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Ivy Compiler <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> An ultra-fast translation machine that turns complex blueprint sheets into tiny LEGO instructions in the blink of an eye.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Angular's next-generation compilation engine producing smaller bundle sizes, faster build times, and incremental compilation with template type-checking.</div>
+      <div class="see-also">→ See Also: <a href="#AOT">AOT</a></div>
+    </div>
+  </div>
+
+  <!-- J -->
+  <div class="letter-section" id="letter-J">
+    <div class="letter-heading">J</div>
+
+    <div class="term-card">
+      <div class="term-title">JSX (JavaScript XML) <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Writing comic book captions and drawing pictures on the exact same page instead of keeping them in separate binders.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A syntax extension to ECMAScript providing an XML/HTML-like syntax that compiles down into standard JavaScript function calls (e.g., <code>React.createElement</code> or the <code>jsx-runtime</code>).</div>
+      <div class="see-also">→ See Also: <a href="#TSX">TSX</a>, <a href="#VirtualDOM">Virtual DOM</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">JIT (Just-in-Time) Compilation <span class="tag tag-web">Web Dev</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Translating a story word-by-word out loud to your friend while you read it, instead of translating the whole book beforehand.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Compiling code or templates in the user's browser runtime on the fly immediately prior to execution, contrast with Ahead-of-Time (AOT).</div>
+      <div class="see-also">→ See Also: <a href="#AOT">AOT</a></div>
+    </div>
+  </div>
+
+  <!-- K -->
+  <div class="letter-section" id="letter-K">
+    <div class="letter-heading">K</div>
+
+    <div class="term-card">
+      <div class="term-title">Key Prop <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Putting name tags on your puppies so when they run around and switch places, you still know exactly who is who!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A unique string or integer identifier assigned to elements in mapped lists, assisting React's reconciliation diffing to identify which items have changed, moved, or deleted.</div>
+      <div class="see-also">→ See Also: <a href="#Reconciliation">Reconciliation</a></div>
+    </div>
+  </div>
+
+  <!-- L -->
+  <div class="letter-section" id="letter-L">
+    <div class="letter-heading">L</div>
+
+    <div class="term-card">
+      <div class="term-title">Lazy Loading <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Only pulling out your winter sled from the garage when it actually starts snowing, instead of lugging it to school in July.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A performance optimization pattern where code bundles, components, or route modules are downloaded on demand only when navigation occurs or triggers trigger.</div>
+      <div class="see-also">→ See Also: <a href="#Suspense">Suspense</a>, <a href="#Router">Router</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Lifecycle Hooks <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Waking up in the morning, eating lunch at noon, brushing teeth at night: specific moments where you do specific tasks.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Callback methods (e.g. <code>ngOnInit</code>, <code>ngOnDestroy</code> in Angular; hook equivalents like <code>useEffect</code> in React) invoked by the framework at predetermined stages of a component's lifetime.</div>
+      <div class="see-also">→ See Also: <a href="#Component">Component</a></div>
+    </div>
+  </div>
+
+  <!-- M -->
+  <div class="letter-section" id="letter-M">
+    <div class="letter-heading">M</div>
+
+    <div class="term-card">
+      <div class="term-title">Memoization <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Remembering that 12 x 12 = 144 instantly in your head because you wrote it down yesterday, rather than counting on your fingers 144 times!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An optimization technique that caches computation results keyed by input parameters; subsequent calls with identical inputs immediately return the cached output (e.g. <code>React.memo</code>, <code>useMemo</code>).</div>
+      <div class="see-also">→ See Also: <a href="#useMemo">useMemo</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Model Signal <span class="tag tag-angular">Angular 17+</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A two-way walkie-talkie where either person can talk or listen to change the channel together.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A special writable signal in modern Angular created via <code>model()</code> that creates both an input and an automatic matching output event for two-way binding.</div>
+      <div class="see-also">→ See Also: <a href="#Signal">Signal</a></div>
+    </div>
+  </div>
+
+  <!-- N -->
+  <div class="letter-section" id="letter-N">
+    <div class="letter-heading">N</div>
+
+    <div class="term-card">
+      <div class="term-title">NgModule <span class="tag tag-angular">Angular (Classic)</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A binder that holds your math worksheets, pencils, and ruler all wrapped in one labeled school folder.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Angular's traditional module declaration system declaring components, directives, pipes, and providers as a cohesive compilation scope (now largely superseded by Standalone Components).</div>
+      <div class="see-also">→ See Also: <a href="#StandaloneComponent">Standalone Component</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">NgRx <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A giant central bank vault where all the city's gold coins are kept safely with strict rules for guards who want to deposit or withdraw.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A Redux-inspired reactive state management library for Angular applications built on RxJS, enforcing unidirectional data flow through actions, reducers, and selectors.</div>
+      <div class="see-also">→ See Also: <a href="#Redux">Redux</a>, <a href="#Observable">Observable</a></div>
+    </div>
+  </div>
+
+  <!-- O -->
+  <div class="letter-section" id="letter-O">
+    <div class="letter-heading">O</div>
+
+    <div class="term-card">
+      <div class="term-title">Observable <span class="tag tag-angular">RxJS / Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A conveyor belt in a donut factory! Fresh donuts keep rolling out over time, and you grab them whenever a new one slides by.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A lazy, push-based data stream construct representing values emitted over time that can be cancelled, mapped, filtered, and transformed using functional operators.</div>
+      <div class="see-also">→ See Also: <a href="#Subject">Subject</a>, <a href="#Signal">Signal</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">OnPush Change Detection <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A sleepy guard who only opens his eyes if someone rings the doorbell or knocks on the door, instead of looking out the window 24/7.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An optimization strategy (<code>ChangeDetectionStrategy.OnPush</code>) where Angular only checks a component if its <code>@Input</code> references change, an event fires inside it, or an async pipe emits.</div>
+      <div class="see-also">→ See Also: <a href="#ChangeDetection">Change Detection</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Optimistic UI <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> High-fiving your friend immediately when you shoot the basketball before it even swooshes through the net!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Updating client-side view state instantly upon user interaction assuming backend success, with rollback logic in the event of API rejection.</div>
+      <div class="see-also">→ See Also: <a href="#useOptimistic">useOptimistic</a></div>
+    </div>
+  </div>
+
+  <!-- P -->
+  <div class="letter-section" id="letter-P">
+    <div class="letter-heading">P</div>
+
+    <div class="term-card">
+      <div class="term-title">Pipe <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A coin-sorting machine: you drop in raw messy coins, and it stacks them into neat dollar rolls!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A class decorated with <code>@Pipe()</code> implementing <code>PipeTransform</code> used in templates to format and transform display data without altering the source value.</div>
+      <div class="see-also">→ See Also: <a href="#AsyncPipe">Async Pipe</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Portal <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Doctor Strange opening a glowing circular portal to drop a box from inside your bedroom straight into the middle of Times Square!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A mechanism (<code>createPortal</code> in React or CDK Portal in Angular) that renders child elements into a distinct DOM node outside the parent component's DOM hierarchy.</div>
+      <div class="see-also">→ See Also: <a href="#VirtualDOM">Virtual DOM</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Props (Properties) <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Instructions written on a sticky note handed to a robot chef telling it whether you want chocolate or vanilla ice cream.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Read-only inputs passed from parent to child components in React; immutable within the receiving component and driving pure view projections.</div>
+      <div class="see-also">→ See Also: <a href="#State">State</a>, <a href="#Component">Component</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Prop Drilling <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Passing a bucket of water down a long line of 20 kids just to give a drink to the last kid standing at the back fence.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> The anti-pattern of threading props through intermediate component layers that do not need the data themselves, merely to reach deeply nested descendants.</div>
+      <div class="see-also">→ See Also: <a href="#ContextAPI">Context API</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Provider <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> The ice cream truck parked on the street corner supplying popsicles to all the kids in the neighborhood.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An object or component configured to provide a concrete service instance or context value to downstream injection tokens and consumers.</div>
+      <div class="see-also">→ See Also: <a href="#DependencyInjection">Dependency Injection</a>, <a href="#ContextAPI">Context API</a></div>
+    </div>
+  </div>
+
+  <!-- R -->
+  <div class="letter-section" id="letter-R">
+    <div class="letter-heading">R</div>
+
+    <div class="term-card">
+      <div class="term-title">Reactive Forms <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A cockpit control panel where every dial and switch is directly wired to computerized sensors that beep the moment an error occurs.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A model-driven form approach in Angular where form controls, validation rules, and async streams are configured explicitly in TypeScript rather than template markup.</div>
+      <div class="see-also">→ See Also: <a href="#FormGroup">FormGroup</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Reconciliation <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Spot-the-difference puzzle! React compares yesterday's drawing with today's drawing and only rubs out the tiny spot that actually changed.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> React's diffing algorithm that compares two Virtual DOM trees to compute the minimal set of real DOM operations required to update the screen.</div>
+      <div class="see-also">→ See Also: <a href="#Fiber">Fiber Architecture</a>, <a href="#VirtualDOM">Virtual DOM</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Redux <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A single notebook where the club president writes down every single club decision so everyone reads the same official truth.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A predictable, centralized state container for JavaScript applications based on strict unidirectional data flow: actions dispatched to pure reducers produce immutable new states.</div>
+      <div class="see-also">→ See Also: <a href="#NgRx">NgRx</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Router <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> The GPS navigation screen in your car showing which room or page to display when you click a street link.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A client-side library synchronizing the browser URL path with rendered component hierarchies without triggering full-page browser reloads.</div>
+      <div class="see-also">→ See Also: <a href="#Guard">Route Guard</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">RxJS (Reactive Extensions) <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A super-fun water park full of twisty water slides, valves, and filters where water flows smoothly from pools to splash pads!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A library for reactive programming using Observables to compose asynchronous or callback-based code in a declarative, functional pipeline.</div>
+      <div class="see-also">→ See Also: <a href="#Observable">Observable</a>, <a href="#Subject">Subject</a></div>
+    </div>
+  </div>
+
+  <!-- S -->
+  <div class="letter-section" id="letter-S">
+    <div class="letter-heading">S</div>
+
+    <div class="term-card">
+      <div class="term-title">Server Components (RSC) <span class="tag tag-react">React 19</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A chef cooking meals in the restaurant kitchen and serving ready-to-eat hot plates, so you don't have to cook at the table yourself.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> React components that execute exclusively on the server, allowing direct database access, zero client bundle weight, and streaming response chunks.</div>
+      <div class="see-also">→ See Also: <a href="#SSR">SSR</a>, <a href="#Action">Action</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Signal <span class="tag tag-both">Both</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A glowing light bulb with a wire connected to a bell. Whenever the light turns on, the bell rings automatically without anyone yelling!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A reactive primitive holding a value that notifies tracked dependencies upon alteration, enabling granular, dependency-tracked updates without tree-wide re-rendering.</div>
+      <div class="see-also">→ See Also: <a href="#State">State</a>, <a href="#ChangeDetection">Change Detection</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Single Page Application (SPA) <span class="tag tag-web">Web Dev</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A magic storybook whose pictures change smoothly in front of your eyes without you ever having to flip to a whole new paper page.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A web application loading a single HTML page that dynamically updates the view in response to user actions via JavaScript without reloading the entire document.</div>
+      <div class="see-also">→ See Also: <a href="#Router">Router</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Standalone Component <span class="tag tag-angular">Angular 17+</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A superhero action figure that comes with all their own gadgets and cape in one blister pack—no huge accessory case required!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An Angular component, pipe, or directive with <code>standalone: true</code> that imports its own dependencies directly, eliminating the need for an intermediate <code>@NgModule</code>.</div>
+      <div class="see-also">→ See Also: <a href="#NgModule">NgModule</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">State <span class="tag tag-both">Core</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Your character's current health points, gold coins, and inventory bag items in a video game at this exact second.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> The dynamic data snapshot governing a component's current visual output and behavior over time; changes in state prompt framework reconciliation and UI updates.</div>
+      <div class="see-also">→ See Also: <a href="#Props">Props</a>, <a href="#useState">useState</a>, <a href="#Signal">Signal</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Suspense <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> The cute animated countdown cartoon that plays on movie screens while the projector is loading the main film.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A React component wrapper (<code>&lt;Suspense fallback={...}&gt;</code>) that pauses rendering of its subtree while asynchronous dependencies (code splits, promises, data) resolve.</div>
+      <div class="see-also">→ See Also: <a href="#LazyLoading">Lazy Loading</a></div>
+    </div>
+  </div>
+
+  <!-- T -->
+  <div class="letter-section" id="letter-T">
+    <div class="letter-heading">T</div>
+
+    <div class="term-card">
+      <div class="term-title">TanStack Query (React Query) <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A super-smart butler who gets your toys, keeps them shiny, orders new ones when they break, and remembers what you asked for so you don't wait.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An asynchronous state management and data-fetching library providing caching, automatic background re-fetching, deduplication, and optimistic mutations.</div>
+      <div class="see-also">→ See Also: <a href="#RxJS">RxJS</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Template <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A stencil outline of a dinosaur that you trace onto paper before coloring it in with your crayons.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> HTML markup augmented with Angular directives, control flow statements (<code>@if</code>, <code>@for</code>), and binding syntax defining a component's visual representation.</div>
+      <div class="see-also">→ See Also: <a href="#JSX">JSX</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Tree Shaking <span class="tag tag-web">Web Dev</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Shaking an apple tree so only the loose dead twigs fall off, keeping your basket light and full of sweet apples only!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Dead-code elimination performed by modern bundlers using ES module static analysis (<code>import</code> / <code>export</code>) to omit unreferenced exports from production bundles.</div>
+      <div class="see-also">→ See Also: <a href="#Bundle">Bundle</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">TSX <span class="tag tag-react">React / TS</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> JSX with a spelling and grammar checker that underlines mistakes in red ink before you turn your homework in!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> TypeScript file format containing JSX markup, allowing static type checking of component props, event handlers, and embedded expressions.</div>
+      <div class="see-also">→ See Also: <a href="#JSX">JSX</a></div>
+    </div>
+  </div>
+
+  <!-- U -->
+  <div class="letter-section" id="letter-U">
+    <div class="letter-heading">U</div>
+
+    <div class="term-card" id="useActionState">
+      <div class="term-title">useActionState <span class="tag tag-react">React 19</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A helper that holds your hand while submitting a form, telling you if the computer is still thinking or finished.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> React 19 hook (replacing <code>useFormState</code>) managing action execution lifecycles, exposing <code>[state, formAction, isPending]</code> tuples.</div>
+      <div class="see-also">→ See Also: <a href="#Action">Action</a></div>
+    </div>
+
+    <div class="term-card" id="useOptimistic">
+      <div class="term-title">useOptimistic <span class="tag tag-react">React 19</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Drawing a gold star on your chart right away assuming your teacher will say "Good job!", but being ready to erase it if she asks for a correction.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A React 19 hook allowing components to display speculative state while an asynchronous action is in-flight, reverting automatically if the action fails.</div>
+      <div class="see-also">→ See Also: <a href="#OptimisticUI">Optimistic UI</a></div>
+    </div>
+
+    <div class="term-card" id="useState">
+      <div class="term-title">useState <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A mini whiteboard inside your component where you write a number and wipe it off to write a new one whenever you want.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> The core React state hook returning a stateful value and an updater function that triggers component re-rendering upon invocation.</div>
+      <div class="see-also">→ See Also: <a href="#State">State</a></div>
+    </div>
+
+    <div class="term-card" id="useEffect">
+      <div class="term-title">useEffect <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Telling your toy robot: "Every time my bedroom light turns on, play a song!"</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A hook used to declare side effects synchronized with component rendering and reactive dependencies, executing after DOM mutations.</div>
+      <div class="see-also">→ See Also: <a href="#Effect">Effect</a></div>
+    </div>
+
+    <div class="term-card" id="useMemo">
+      <div class="term-title">useMemo <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Writing down a really long math answer in your pocket notebook so you don't have to calculate it again next time.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A performance hook that memoizes the computed return value of a pure function across renders, recalculating only when specified dependencies change.</div>
+      <div class="see-also">→ See Also: <a href="#Memoization">Memoization</a></div>
+    </div>
+  </div>
+
+  <!-- V -->
+  <div class="letter-section" id="letter-V">
+    <div class="letter-heading">V</div>
+
+    <div class="term-card">
+      <div class="term-title">ViewEncapsulation <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Painting inside the lines of your coloring book so your red paint never accidentally leaks into your brother's book!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> Angular's styling isolation strategy (<code>Emulated</code>, <code>ShadowDom</code>, <code>None</code>) preventing component CSS rules from leaking to or being overridden by external styles.</div>
+      <div class="see-also">→ See Also: <a href="#Component">Component</a></div>
+    </div>
+
+    <div class="term-card" id="VirtualDOM">
+      <div class="term-title">Virtual DOM (VDOM) <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> Planning your LEGO castle in your notebook first before actually picking up real plastic bricks, making sure you don't drop any.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An in-memory JavaScript tree representation of the actual DOM; React diffs virtual trees to compute batch patches applied efficiently to the browser DOM.</div>
+      <div class="see-also">→ See Also: <a href="#Reconciliation">Reconciliation</a>, <a href="#Fiber">Fiber Architecture</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Vite <span class="tag tag-web">Web Dev</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A supersonic skateboard that launches your game instantly the second you click start!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A next-generation frontend build tool providing fast Hot Module Replacement (HMR) powered by native ES modules in development and Rollup/esbuild in production.</div>
+      <div class="see-also">→ See Also: <a href="#Bundle">Bundle</a></div>
+    </div>
+  </div>
+
+  <!-- W -->
+  <div class="letter-section" id="letter-W">
+    <div class="letter-heading">W</div>
+
+    <div class="term-card">
+      <div class="term-title">Webpack <span class="tag tag-web">Web Dev</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A big factory packing machine that collects thousands of parts and boxes them up neatly for delivery.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A static module bundler for modern JavaScript applications constructing dependency dependency graphs and emitting optimized bundles.</div>
+      <div class="see-also">→ See Also: <a href="#Bundle">Bundle</a></div>
+    </div>
+  </div>
+
+  <!-- Z -->
+  <div class="letter-section" id="letter-Z">
+    <div class="letter-heading">Z</div>
+
+    <div class="term-card" id="Zone.js">
+      <div class="term-title">Zone.js <span class="tag tag-angular">Angular</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> An invisible watchtower guard ringing an alarm bell every time anyone clicks a button, a timer ticks, or a message arrives from the internet!</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> An execution context library that monkey-patches browser asynchronous APIs (timers, DOM events, XMLHttpRequest, Promises) to notify Angular to run change detection cycles. Modern Angular provides Zoneless mode via Signals.</div>
+      <div class="see-also">→ See Also: <a href="#ChangeDetection">Change Detection</a>, <a href="#Signal">Signal</a></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-title">Zustand <span class="tag tag-react">React</span></div>
+      <div class="def-section kids-def">🎮 <strong>Kids:</strong> A tiny, friendly pocket notebook for your toys that doesn't need giant rules or complicated passwords to write in.</div>
+      <div class="def-section pro-def">💻 <strong>Pro:</strong> A lightweight, un-opinionated state management solution for React utilizing simplified hooks without boilerplate provider wrappers.</div>
+      <div class="see-also">→ See Also: <a href="#Redux">Redux</a>, <a href="#State">State</a></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

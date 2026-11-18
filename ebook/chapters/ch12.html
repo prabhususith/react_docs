@@ -1,0 +1,442 @@
+<!-- ============================================================
+     CHAPTER 12: Angular Services & Dependency Injection
+     ============================================================ -->
+<div class="page chapter-header" id="chapter-12">
+  <div class="chapter-number-badge">12</div>
+  <div class="chapter-header-content">
+    <div class="unit-label">UNIT 3 · Angular — The Enterprise Giant</div>
+    <h1 class="chapter-title">Angular Services &amp; Dependency Injection</h1>
+    <p class="chapter-subtitle">The plumbing system that supplies data and business logic across your application</p>
+    <div class="learning-objectives">
+      <h3>🎯 Learning Objectives</h3>
+      <ul>
+        <li>Understand the core philosophy of Dependency Injection (DI) and Inversion of Control</li>
+        <li>Master the <code>@Injectable({ providedIn: 'root' })</code> decorator and singleton lifecycles</li>
+        <li>Use modern functional injection with <code>inject(ServiceToken)</code></li>
+        <li>Explore hierarchical injectors: root, component-level, and module injectors</li>
+        <li>Compare Angular's Dependency Injection system with React's Context API</li>
+        <li>Implement unit testing with mocked service providers</li>
+      </ul>
+    </div>
+  </div>
+  <div class="chapter-header-illustration">
+    <!-- Plumbing / Water Pipes SVG -->
+    <svg viewBox="0 0 340 220" width="340" height="220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#90caf9"/>
+          <stop offset="50%" stop-color="#1e88e5"/>
+          <stop offset="100%" stop-color="#0d47a1"/>
+        </linearGradient>
+        <linearGradient id="tankGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#26a69a"/>
+          <stop offset="100%" stop-color="#00695c"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Water Tank / Central Service -->
+      <rect x="110" y="20" width="120" height="50" rx="8" fill="url(#tankGrad)" stroke="#004d40" stroke-width="2"/>
+      <text x="170" y="42" font-family="'Nunito', sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle">Central Water Tower</text>
+      <text x="170" y="58" font-family="monospace" font-size="9" fill="#e0f2f1" text-anchor="middle">@Injectable({root})</text>
+
+      <!-- Main Vertical Pipe -->
+      <rect x="162" y="70" width="16" height="45" fill="url(#pipeGrad)" stroke="#1565c0" stroke-width="1.5"/>
+
+      <!-- T-Junction Valve -->
+      <circle cx="170" cy="115" r="14" fill="#ffb300" stroke="#ff6f00" stroke-width="2"/>
+      <circle cx="170" cy="115" r="5" fill="#e65100"/>
+
+      <!-- Horizontal Distribution Pipe -->
+      <rect x="50" y="108" width="240" height="14" fill="url(#pipeGrad)" stroke="#1565c0" stroke-width="1.5"/>
+
+      <!-- Drop Pipes down to rooms/components -->
+      <rect x="56" y="122" width="12" height="30" fill="url(#pipeGrad)" stroke="#1565c0" stroke-width="1.5"/>
+      <rect x="164" y="122" width="12" height="30" fill="url(#pipeGrad)" stroke="#1565c0" stroke-width="1.5"/>
+      <rect x="272" y="122" width="12" height="30" fill="url(#pipeGrad)" stroke="#1565c0" stroke-width="1.5"/>
+
+      <!-- Taps / Components -->
+      <!-- Bathroom Tap -->
+      <rect x="35" y="152" width="55" height="32" rx="4" fill="#e8eaf6" stroke="#1a237e" stroke-width="1.5"/>
+      <text x="62" y="167" font-family="'Nunito', sans-serif" font-size="8" font-weight="700" fill="#1a237e" text-anchor="middle">Bathroom</text>
+      <text x="62" y="178" font-family="monospace" font-size="7" fill="#424242" text-anchor="middle">inject(Water)</text>
+
+      <!-- Kitchen Tap -->
+      <rect x="142" y="152" width="56" height="32" rx="4" fill="#e8eaf6" stroke="#1a237e" stroke-width="1.5"/>
+      <text x="170" y="167" font-family="'Nunito', sans-serif" font-size="8" font-weight="700" fill="#1a237e" text-anchor="middle">Kitchen</text>
+      <text x="170" y="178" font-family="monospace" font-size="7" fill="#424242" text-anchor="middle">inject(Water)</text>
+
+      <!-- Garden Tap -->
+      <rect x="250" y="152" width="55" height="32" rx="4" fill="#e8eaf6" stroke="#1a237e" stroke-width="1.5"/>
+      <text x="277" y="167" font-family="'Nunito', sans-serif" font-size="8" font-weight="700" fill="#1a237e" text-anchor="middle">Garden</text>
+      <text x="277" y="178" font-family="monospace" font-size="7" fill="#424242" text-anchor="middle">inject(Water)</text>
+
+      <!-- Droplets -->
+      <circle cx="62" cy="192" r="3" fill="#29b6f6"/>
+      <circle cx="170" cy="192" r="3" fill="#29b6f6"/>
+      <circle cx="277" cy="192" r="3" fill="#29b6f6"/>
+
+      <!-- Footer label -->
+      <text x="170" y="210" font-family="'Nunito', sans-serif" font-size="10" fill="#757575" text-anchor="middle">Water (Data) flows on demand without carrying buckets</text>
+    </svg>
+  </div>
+</div>
+
+<div class="page" id="ch12-story">
+  <div class="real-world">
+    <h2>🚰 A Real-World Story: The City Water Supply</h2>
+    <p>
+      Imagine living in a giant apartment building with two hundred apartments 🏢. Every morning, people
+      need fresh water to brush their teeth, make coffee ☕, and take showers.
+    </p>
+    <p>
+      What if there were no pipes in the building? Every morning at 6:00 AM, each tenant would have to walk
+      down twenty flights of stairs with heavy plastic buckets, walk to the town well, fill their buckets,
+      carry them all the way back up the stairs, and store them in their living room! That would be exhausting,
+      messy, and slow. If five people in a row needed a cup of water, they would spend their whole day
+      passing buckets up and down the stairwell (just like <strong>prop drilling</strong> in code!).
+    </p>
+    <p>
+      Instead, modern buildings have a <strong>plumbing system</strong>! There is one clean municipal water
+      tower on top of the hill. Copper pipes run through the walls behind every room. Whenever you want water,
+      you don't hike to the well—you just turn on the kitchen tap 🚰, and fresh water pours out on demand!
+    </p>
+    <p>
+      That is exactly what <strong>Angular Services and Dependency Injection</strong> do! Your components don't
+      create their own data fetchers or pass data through twenty layers of parent components. They simply
+      declare: <em>"Hey Angular, please connect me to the UserService tap!"</em> And Angular instantly hooks up
+      the pipe! 💧✨
+    </p>
+  </div>
+
+  <h2>What is Dependency Injection?</h2>
+  <p>
+    <strong>Dependency Injection (DI)</strong> is a design pattern where a class does not instantiate its own
+    dependencies (such as HTTP clients, logging services, or database stores) using <code>new MyService()</code>.
+    Instead, an external entity—the <strong>Injector</strong>—creates and supplies those dependencies.
+  </p>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 520 160" width="500" height="160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Old tight coupling -->
+      <rect x="20" y="30" width="220" height="100" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+      <text x="130" y="55" font-family="'Nunito', sans-serif" font-size="12" font-weight="800" fill="#c62828" text-anchor="middle">Without DI: Tight Coupling</text>
+      <text x="35" y="80" font-family="monospace" font-size="9" fill="#424242">class UserComponent {</text>
+      <text x="50" y="98" font-family="monospace" font-size="9" fill="#c62828">service = new UserService(); // Hardcoded!</text>
+      <text x="35" y="116" font-family="monospace" font-size="9" fill="#424242">}</text>
+
+      <!-- With DI -->
+      <rect x="280" y="30" width="220" height="100" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="390" y="55" font-family="'Nunito', sans-serif" font-size="12" font-weight="800" fill="#2e7d32" text-anchor="middle">With DI: Inversion of Control</text>
+      <text x="295" y="80" font-family="monospace" font-size="9" fill="#424242">class UserComponent {</text>
+      <text x="310" y="98" font-family="monospace" font-size="9" fill="#2e7d32">service = inject(UserService); // Supplied!</text>
+      <text x="295" y="116" font-family="monospace" font-size="9" fill="#424242">}</text>
+    </svg>
+  </div>
+
+  <div class="callout definition">
+    <span class="callout-icon">📖</span>
+    <div>
+      <strong>Definition — Singleton Service:</strong> An object instance created only once by the root injector.
+      Every component in the application that requests this service receives a reference to the exact same shared
+      instance, maintaining synchronized global state.
+    </div>
+  </div>
+</div>
+
+<div class="page" id="ch12-kids">
+  <div class="kid-note">
+    <h2>🎮 For Kids — The Magic Backpack Dispenser 🎒</h2>
+    <p>
+      Imagine you're playing an adventure RPG like <em>Zelda</em> or <em>Minecraft</em> 🗡️.
+      Whenever your hero enters a dungeon, they need:
+    </p>
+    <ul>
+      <li>🔦 A flashlight to see in dark caves</li>
+      <li>🗺️ A map to find treasure chests</li>
+      <li>🥪 A snack box to restore health</li>
+    </ul>
+    <p>
+      Would it make sense if your hero had to stop playing the game, chop down trees, smelt copper, and
+      <em>build their own flashlight from scratch</em> every single time they stepped into a room?
+      No way! That would take forever!
+    </p>
+    <p>
+      In video games, the game engine automatically hands your character the tools from their inventory.
+      In Angular, that's what <code>inject()</code> does! You simply say:
+      <code>flashlight = inject(TorchService)</code>, and BAM! Angular reaches into the game backpack and
+      hands your hero a fully-charged flashlight ready to go! ⚡🔦
+    </p>
+  </div>
+
+  <h2>Modern Functional Injection with <code>inject()</code></h2>
+  <p>
+    In older versions of Angular, developers had to write lengthy constructor signatures. In modern Angular
+    (v14+), you can use the clean, elegant <code>inject()</code> function directly in class property initializers!
+  </p>
+
+  <div class="code-block angular">
+    <div class="code-label">Angular · Old Constructor vs Modern inject()</div>
+    <pre><span class="cmt">// ❌ Older Angular Constructor Injection (verbose boilerplate)</span>
+<span class="kw">export class</span> <span class="var">LegacyComponent</span> {
+  <span class="kw">constructor</span>(
+    <span class="kw">private</span> <span class="var">authService</span>: <span class="var">AuthService</span>,
+    <span class="kw">private</span> <span class="var">router</span>: <span class="var">Router</span>,
+    <span class="kw">private</span> <span class="var">http</span>: <span class="var">HttpClient</span>
+  ) {}
+}
+
+<span class="cmt">// ✅ Modern Angular Functional Injection (clean &amp; readable!)</span>
+<span class="kw">export class</span> <span class="var">ModernComponent</span> {
+  <span class="kw">private</span> <span class="var">authService</span> = <span class="fn">inject</span>(<span class="var">AuthService</span>);
+  <span class="kw">private</span> <span class="var">router</span>      = <span class="fn">inject</span>(<span class="var">Router</span>);
+  <span class="kw">private</span> <span class="var">http</span>        = <span class="fn">inject</span>(<span class="var">HttpClient</span>);
+}</pre>
+  </div>
+</div>
+
+<div class="page" id="ch12-dev">
+  <div class="pro-tip">
+    <h2>💻 For Developers — Building an Enterprise Service</h2>
+  </div>
+
+  <p>
+    Let's build a real-world Angular service combining the <code>@Injectable</code> decorator, modern
+    Angular Signals, and the built-in HTTP client.
+  </p>
+
+  <div class="code-block angular">
+    <div class="code-label">Angular · cart.service.ts</div>
+    <pre><span class="kw">import</span> { <span class="var">Injectable</span>, <span class="var">signal</span>, <span class="var">computed</span>, <span class="var">inject</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="var">HttpClient</span> } <span class="kw">from</span> <span class="str">'@angular/common/http'</span>;
+
+<span class="kw">export interface</span> <span class="var">CartItem</span> {
+  id: <span class="kw">number</span>;
+  name: <span class="kw">string</span>;
+  price: <span class="kw">number</span>;
+  quantity: <span class="kw">number</span>;
+}
+
+<span class="cmt">/**
+ * providedIn: 'root' registers this service with the application-wide root injector.
+ * It is tree-shakable: if unused, the bundler excludes it from production bundles!
+ */</span>
+@<span class="fn">Injectable</span>({
+  providedIn: <span class="str">'root'</span>
+})
+<span class="kw">export class</span> <span class="var">CartService</span> {
+  <span class="kw">private</span> <span class="var">http</span> = <span class="fn">inject</span>(<span class="var">HttpClient</span>);
+
+  <span class="cmt">// Reactive Signal State</span>
+  <span class="kw">private</span> <span class="var">itemsSignal</span> = <span class="fn">signal</span>&lt;<span class="var">CartItem</span>[]&gt;([]);
+
+  <span class="cmt">// Read-only public signal for components</span>
+  <span class="var">items</span> = <span class="kw">this</span>.<span class="var">itemsSignal</span>.<span class="fn">asReadonly</span>();
+
+  <span class="cmt">// Computed signals automatically recalculate when itemsSignal changes</span>
+  <span class="var">itemCount</span> = <span class="fn">computed</span>(() =&gt;
+    <span class="kw">this</span>.<span class="var">itemsSignal</span>().<span class="fn">reduce</span>((<span class="var">sum</span>, <span class="var">item</span>) =&gt; <span class="var">sum</span> + <span class="var">item</span>.<span class="var">quantity</span>, <span class="str">0</span>)
+  );
+
+  <span class="var">totalPrice</span> = <span class="fn">computed</span>(() =&gt;
+    <span class="kw">this</span>.<span class="var">itemsSignal</span>().<span class="fn">reduce</span>((<span class="var">sum</span>, <span class="var">item</span>) =&gt; <span class="var">sum</span> + (<span class="var">item</span>.<span class="var">price</span> * <span class="var">item</span>.<span class="var">quantity</span>), <span class="str">0</span>)
+  );
+
+  <span class="fn">addItem</span>(<span class="var">newItem</span>: <span class="var">CartItem</span>) {
+    <span class="kw">this</span>.<span class="var">itemsSignal</span>.<span class="fn">update</span>(<span class="var">items</span> =&gt; {
+      <span class="kw">const</span> <span class="var">existing</span> = <span class="var">items</span>.<span class="fn">find</span>(<span class="var">i</span> =&gt; <span class="var">i</span>.<span class="var">id</span> === <span class="var">newItem</span>.<span class="var">id</span>);
+      <span class="kw">if</span> (<span class="var">existing</span>) {
+        <span class="kw">return</span> <span class="var">items</span>.<span class="fn">map</span>(<span class="var">i</span> =&gt; <span class="var">i</span>.<span class="var">id</span> === <span class="var">newItem</span>.<span class="var">id</span>
+          ? { ...<span class="var">i</span>, quantity: <span class="var">i</span>.<span class="var">quantity</span> + <span class="var">newItem</span>.<span class="var">quantity</span> }
+          : <span class="var">i</span>
+        );
+      }
+      <span class="kw">return</span> [...<span class="var">items</span>, <span class="var">newItem</span>];
+    });
+  }
+
+  <span class="fn">clearCart</span>() {
+    <span class="kw">this</span>.<span class="var">itemsSignal</span>.<span class="fn">set</span>([]);
+  }
+}</pre>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <strong>Tree-Shaking Superpower:</strong> By setting <code>providedIn: 'root'</code>, you enable
+    Angular's build optimizer to inspect whether your app ever actually imports the service. If not,
+    the entire class is deleted from your production JavaScript bundle!
+  </div>
+</div>
+
+<div class="page" id="ch12-comparison">
+  <h2>Hierarchical Injector Tree: Root vs. Scoped Services</h2>
+  <p>
+    Angular doesn't just have one global injector—it possesses a <strong>hierarchical tree of injectors</strong>
+    mirroring your component hierarchy.
+  </p>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 520 180" width="500" height="180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Root Injector -->
+      <rect x="180" y="15" width="160" height="35" rx="6" fill="#1565c0" stroke="#0d47a1" stroke-width="2"/>
+      <text x="260" y="37" font-family="'Nunito', sans-serif" font-weight="700" font-size="11" fill="#ffffff" text-anchor="middle">Root Injector (Singleton)</text>
+
+      <path d="M220 50 L120 85" stroke="#9e9e9e" stroke-width="2"/>
+      <path d="M300 50 L400 85" stroke="#9e9e9e" stroke-width="2"/>
+
+      <!-- Component-level Injector -->
+      <rect x="50" y="85" width="140" height="35" rx="6" fill="#00897b" stroke="#004d40" stroke-width="1.5"/>
+      <text x="120" y="103" font-family="'Nunito', sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">AdminModule Injector</text>
+      <text x="120" y="115" font-family="monospace" font-size="8" fill="#e0f2f1" text-anchor="middle">Scoped to Admin Route</text>
+
+      <rect x="330" y="85" width="140" height="35" rx="6" fill="#e53935" stroke="#b71c1c" stroke-width="1.5"/>
+      <text x="400" y="103" font-family="'Nunito', sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">EditorComponent</text>
+      <text x="400" y="115" font-family="monospace" font-size="8" fill="#ffebee" text-anchor="middle">providers: [DraftService]</text>
+
+      <!-- Child of editor gets new instance -->
+      <path d="M400 120 L400 145" stroke="#9e9e9e" stroke-width="1.5"/>
+      <rect x="330" y="145" width="140" height="25" rx="4" fill="#ffcdd2" stroke="#e53935" stroke-width="1"/>
+      <text x="400" y="161" font-family="'Nunito', sans-serif" font-size="9" fill="#b71c1c" text-anchor="middle">SubEditor gets private draft</text>
+    </svg>
+  </div>
+
+  <h2>Angular Dependency Injection vs React Context API</h2>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>Angular Dependency Injection</th>
+        <th>React Context API</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Mechanism</td>
+        <td>Class tokens registered with DI container</td>
+        <td>Context objects with <code>&lt;Provider value={...}&gt;</code> wrappers</td>
+      </tr>
+      <tr>
+        <td>Tree Dependency</td>
+        <td>Can be injected anywhere without wrapping DOM elements</td>
+        <td>Must be wrapped by a JSX Provider higher up in the component tree</td>
+      </tr>
+      <tr>
+        <td>Unit Testing</td>
+        <td>Easy mocking via <code>TestBed.configureTestingModule()</code></td>
+        <td>Must mock provider wrappers or pass custom test values</td>
+      </tr>
+      <tr>
+        <td>Lifecycle</td>
+        <td>Managed automatically by injector tier (singleton or component destroyed)</td>
+        <td>Bound strictly to the lifespan of the Provider component</td>
+      </tr>
+      <tr>
+        <td>Fine-Grained Updates</td>
+        <td>Combined with Angular Signals, only reading nodes re-render</td>
+        <td>All consumers re-render when context value object changes (unless memoized)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <strong>Common React Pitfall in Angular:</strong> In React, creating a provider at the root of your app
+    is standard practice. In Angular, you do NOT need to wrap your component in a <code>&lt;ServiceProvider&gt;</code>!
+    Simply adding <code>@Injectable({ providedIn: 'root' })</code> makes it available everywhere automatically.
+  </div>
+</div>
+
+<div class="page" id="ch12-tryyourself">
+  <h2>🛠️ Try It Yourself!</h2>
+  <div class="quiz-box" style="border-left-color:#00897b; background:#e0f2f1;">
+    <h3>Plumbing Challenge: The High-Score Leaderboard Service</h3>
+    <p>Construct a leaderboard service for an online gaming platform:</p>
+    <ul>
+      <li>Use <code>@Injectable({ providedIn: 'root' })</code>.</li>
+      <li>Store scores in an internal Signal array: <code>{ player: string, score: number }</code>.</li>
+      <li>Create a computed signal <code>topThree</code> that sorts descending and returns the top 3 scores.</li>
+      <li>Create a component that uses <code>inject(LeaderboardService)</code> and displays the top players!</li>
+    </ul>
+  </div>
+
+  <div class="code-block angular">
+    <div class="code-label">Solution blueprint · leaderboard.service.ts</div>
+    <pre><span class="kw">import</span> { <span class="var">Injectable</span>, <span class="var">signal</span>, <span class="var">computed</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+@<span class="fn">Injectable</span>({ providedIn: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="var">LeaderboardService</span> {
+  <span class="kw">private</span> <span class="var">scores</span> = <span class="fn">signal</span>([
+    { player: <span class="str">'PixelKnight'</span>, score: <span class="str">9800</span> },
+    { player: <span class="str">'DragonSlayer'</span>, score: <span class="str">8750</span> },
+    { player: <span class="str">'ShadowNinja'</span>, score: <span class="str">11200</span> }
+  ]);
+
+  <span class="var">topThree</span> = <span class="fn">computed</span>(() =&gt;
+    [...<span class="kw">this</span>.<span class="var">scores</span>()]
+      .<span class="fn">sort</span>((<span class="var">a</span>, <span class="var">b</span>) =&gt; <span class="var">b</span>.<span class="var">score</span> - <span class="var">a</span>.<span class="var">score</span>)
+      .<span class="fn">slice</span>(<span class="str">0</span>, <span class="str">3</span>)
+  );
+
+  <span class="fn">recordScore</span>(<span class="var">player</span>: <span class="kw">string</span>, <span class="var">score</span>: <span class="kw">number</span>) {
+    <span class="kw">this</span>.<span class="var">scores</span>.<span class="fn">update</span>(<span class="var">list</span> =&gt; [...<span class="var">list</span>, { <span class="var">player</span>, <span class="var">score</span> }]);
+  }
+}</pre>
+  </div>
+
+  <h2>Chapter 12 Summary</h2>
+  <ul class="summary-list">
+    <li>✅ <strong>Dependency Injection</strong> separates consumer classes from dependency construction logic</li>
+    <li>✅ The <code>@Injectable({ providedIn: 'root' })</code> decorator provides tree-shakable singletons</li>
+    <li>✅ Modern Angular uses <code>inject(ServiceToken)</code> for clean, concise functional injection</li>
+    <li>✅ The hierarchical injector tree allows scoped services at route, module, or component levels</li>
+    <li>✅ Angular DI eliminates prop drilling and does not require manual JSX Provider wrappers</li>
+    <li>✅ Services cleanly encapsulate HTTP interactions, business rules, and shared reactive state</li>
+  </ul>
+</div>
+
+<div class="page" id="ch12-quiz">
+  <div class="quiz-box">
+    <h2>🧠 Chapter 12 Quiz</h2>
+
+    <div class="quiz-question">
+      <p><strong>Q1.</strong> What does <code>providedIn: 'root'</code> do inside an <code>@Injectable</code> decorator?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ It registers the service with the application-wide root injector as a tree-shakable singleton.
+        Every component asking for it shares the exact same instance.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q2.</strong> What happens if you register a service in a component's <code>providers: [MyService]</code> array?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ Angular creates a new, private instance of <code>MyService</code> scoped specifically to that component
+        and its children. When that component is unmounted from the DOM, the service instance is destroyed.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q3.</strong> How does modern Angular's <code>inject()</code> function improve on constructor injection?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ It removes the need for large, repetitive constructor parameter lists and allows dependencies
+        to be declared directly as class field initializers.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q4.</strong> Compare Angular DI with React Context: which one requires wrapping JSX elements?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ React Context requires a <code>&lt;MyContext.Provider&gt;</code> element to wrap the component subtree.
+        Angular DI requires no JSX/HTML wrappers—the injector tree supplies dependencies based on TypeScript tokens.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q5.</strong> What does "Inversion of Control" mean in the context of Angular services?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ Instead of a component controlling how and when its dependencies are created (via <code>new</code>),
+        control is inverted: the framework's injector handles instantiation, lifecycle, and injection.</p>
+      </details>
+    </div>
+  </div>
+  <div class="page-number">Chapter 12 · Angular Services &amp; Dependency Injection</div>
+</div>

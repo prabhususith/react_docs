@@ -1,0 +1,463 @@
+<!-- ============================================================
+     CHAPTER 15: Routing — Angular Router vs React Router
+     GPS/Navigation Analogy 🗺️
+     ============================================================ -->
+<div class="page chapter-page" id="chapter-15">
+
+  <!-- Chapter Header -->
+  <div class="chapter-header" style="background: linear-gradient(135deg, #00695c 0%, #1565c0 100%);">
+    <div class="chapter-badge">15</div>
+    <div class="chapter-header-content">
+      <div class="chapter-unit-label">UNIT 4 · THE ROSETTA STONE</div>
+      <h1 class="chapter-title">Routing</h1>
+      <h2 class="chapter-subtitle">🗺️ Angular Router vs React Router — Your App's GPS System</h2>
+      <div class="learning-objectives">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Understand client-side routing — how URLs map to components without page reloads</li>
+          <li>Compare Angular's built-in Router module with React Router v6/v7</li>
+          <li>Implement lazy loading, route guards, and nested routes in both frameworks</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opening Story -->
+  <div class="chapter-opening">
+    <div class="callout fun-fact">
+      <span class="callout-icon">🛰️</span>
+      <div class="callout-body">
+        <h4>Your App Needs a GPS! 🗺️</h4>
+        <p>Imagine a giant shopping mall with hundreds of stores. When you first arrive, you're at the
+        main entrance <strong>(/home)</strong>. You want to find the food court <strong>(/food)</strong>,
+        then a specific restaurant <strong>(/food/sushi)</strong>. Without a directory, you're lost!
+        Web apps have the same problem — they need a <strong>router</strong> to map URLs to the right
+        "room" (component) to show you.</p>
+
+        <p>🅰️ <strong>Angular's GPS</strong> (Angular Router) comes factory-installed in the car.
+        It's powerful from day one — it has voice guidance (route guards), traffic alerts (canActivate),
+        multiple screens (named outlets), preloaded maps (preloading strategies), and even toll-road
+        permissions (lazy-loaded modules). It's the full luxury navigation suite. 🚗💨</p>
+
+        <p>⚛️ <strong>React's GPS</strong> (React Router v6/v7) is a sleek aftermarket system you
+        install. It's lighter, more flexible, and in its latest version uses a
+        <strong>loader/action</strong> pattern inspired by Remix — load data before rendering, handle
+        form submissions server-side. It lives as JSX right inside your components, so routing
+        feels natural to React developers. With React Router v7, it became a full framework with
+        SSR support — essentially Remix rebranded! 🔮</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Picture SVG -->
+  <div class="svg-container">
+    <h3>🗺️ The Big Picture — Routing Architecture</h3>
+    <svg viewBox="0 0 920 420" width="100%" style="max-width:920px; border:2px solid #e0e0e0; border-radius:12px; background:#fafafa;">
+      <!-- URL bar at top -->
+      <rect x="20" y="15" width="880" height="36" rx="8" fill="#e8eaf6" stroke="#3949ab" stroke-width="1.5"/>
+      <text x="460" y="38" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#1a237e" font-weight="600">https://myapp.com/products/42/reviews</text>
+
+      <!-- Angular side -->
+      <rect x="20" y="65" width="415" height="340" rx="14" fill="#fff3e0" stroke="#e65100" stroke-width="2"/>
+      <text x="228" y="92" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="16" fill="#e65100">🅰️ Angular Router</text>
+
+      <rect x="50" y="104" width="355" height="34" rx="8" fill="#ffcc80" stroke="#e65100"/>
+      <text x="228" y="126" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="#bf360c">RouterModule.forRoot(routes)</text>
+
+      <rect x="50" y="150" width="160" height="52" rx="8" fill="#ffe0b2" stroke="#e65100"/>
+      <text x="130" y="170" text-anchor="middle" font-size="11" font-family="Nunito" fill="#bf360c" font-weight="700">{ path: 'products',</text>
+      <text x="130" y="186" text-anchor="middle" font-size="11" font-family="Nunito" fill="#bf360c">component: ProductsComp }</text>
+
+      <rect x="230" y="150" width="175" height="52" rx="8" fill="#ffe0b2" stroke="#e65100"/>
+      <text x="318" y="170" text-anchor="middle" font-size="11" font-family="Nunito" fill="#bf360c" font-weight="700">{ path: ':id',</text>
+      <text x="318" y="186" text-anchor="middle" font-size="11" font-family="Nunito" fill="#bf360c">children: [...] }</text>
+
+      <rect x="50" y="216" width="355" height="34" rx="8" fill="#ffb74d" stroke="#e65100"/>
+      <text x="228" y="238" text-anchor="middle" font-size="12" font-family="Nunito" font-weight="700" fill="#bf360c">canActivate: [AuthGuard] 🛡️</text>
+
+      <rect x="50" y="264" width="160" height="34" rx="8" fill="#fff3e0" stroke="#e65100"/>
+      <text x="130" y="286" text-anchor="middle" font-size="11" font-family="Nunito" fill="#e65100">loadChildren: () =&gt;</text>
+
+      <rect x="230" y="264" width="175" height="34" rx="8" fill="#fff3e0" stroke="#e65100"/>
+      <text x="318" y="286" text-anchor="middle" font-size="11" font-family="Nunito" fill="#e65100">Lazy loaded module 💤</text>
+
+      <rect x="50" y="312" width="355" height="34" rx="8" fill="#fff8e1" stroke="#e65100"/>
+      <text x="228" y="334" text-anchor="middle" font-size="12" font-family="Nunito" fill="#795548">&lt;router-outlet&gt;&lt;/router-outlet&gt;</text>
+
+      <text x="228" y="372" text-anchor="middle" font-size="11" font-family="Nunito" fill="#37474f">Named outlets | Auxiliary routes | Resolvers</text>
+
+      <!-- React side -->
+      <rect x="485" y="65" width="415" height="340" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+      <text x="693" y="92" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="16" fill="#2e7d32">⚛️ React Router v6/v7</text>
+
+      <rect x="515" y="104" width="355" height="34" rx="8" fill="#a5d6a7" stroke="#2e7d32"/>
+      <text x="693" y="126" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="#1b5e20">createBrowserRouter(routes)</text>
+
+      <rect x="515" y="150" width="160" height="52" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="595" y="170" text-anchor="middle" font-size="11" font-family="Nunito" fill="#1b5e20" font-weight="700">{ path: '/products',</text>
+      <text x="595" y="186" text-anchor="middle" font-size="11" font-family="Nunito" fill="#1b5e20">element: &lt;Products/&gt; }</text>
+
+      <rect x="695" y="150" width="155" height="52" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="773" y="170" text-anchor="middle" font-size="11" font-family="Nunito" fill="#1b5e20" font-weight="700">{ path: ':id',</text>
+      <text x="773" y="186" text-anchor="middle" font-size="11" font-family="Nunito" fill="#1b5e20">children: [...] }</text>
+
+      <rect x="515" y="216" width="355" height="34" rx="8" fill="#66bb6a" stroke="#2e7d32"/>
+      <text x="693" y="238" text-anchor="middle" font-size="12" font-family="Nunito" font-weight="700" fill="#fff">loader: authLoader 🛡️ (runs before render)</text>
+
+      <rect x="515" y="264" width="160" height="34" rx="8" fill="#e8f5e9" stroke="#2e7d32"/>
+      <text x="595" y="286" text-anchor="middle" font-size="11" font-family="Nunito" fill="#2e7d32">lazy: () =&gt; import()</text>
+
+      <rect x="695" y="264" width="155" height="34" rx="8" fill="#e8f5e9" stroke="#2e7d32"/>
+      <text x="773" y="286" text-anchor="middle" font-size="11" font-family="Nunito" fill="#2e7d32">Code-split route 💤</text>
+
+      <rect x="515" y="312" width="355" height="34" rx="8" fill="#f1f8e9" stroke="#2e7d32"/>
+      <text x="693" y="334" text-anchor="middle" font-size="12" font-family="Nunito" fill="#37474f">&lt;Outlet /&gt; renders matched child</text>
+
+      <text x="693" y="372" text-anchor="middle" font-size="11" font-family="Nunito" fill="#37474f">Loaders | Actions | Error boundaries</text>
+
+      <!-- VS -->
+      <circle cx="453" cy="235" r="27" fill="#ff6f00"/>
+      <text x="453" y="241" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="20" fill="white">VS</text>
+    </svg>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="comparison-table-wrapper">
+    <h3>🗺️ Routing Code — Side by Side</h3>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular Router</th>
+          <th class="react-col">⚛️ React Router v6</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">Angular — Route Definitions</div>
+              <pre><code><span class="cmt">// app.routes.ts</span>
+<span class="kw">import</span> { <span class="fn">Routes</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+
+<span class="kw">export const</span> routes: <span class="fn">Routes</span> = [
+  {
+    path: <span class="str">''</span>,
+    component: <span class="fn">HomeComponent</span>
+  },
+  {
+    path: <span class="str">'products'</span>,
+    <span class="cmt">// Lazy-load feature module</span>
+    loadComponent: () =&gt;
+      <span class="kw">import</span>(<span class="str">'./products/products.component'</span>)
+        .then(m =&gt; m.<span class="fn">ProductsComponent</span>),
+    canActivate: [<span class="fn">authGuard</span>],
+    children: [
+      {
+        path: <span class="str">':id'</span>,
+        component: <span class="fn">ProductDetailComponent</span>,
+        resolve: { product: <span class="fn">productResolver</span> }
+      }
+    ]
+  },
+  {
+    path: <span class="str">'**'</span>,
+    component: <span class="fn">NotFoundComponent</span>
+  }
+];
+
+<span class="cmt">// Functional guard (Angular 15+)</span>
+<span class="kw">export const</span> <span class="fn">authGuard</span> = () =&gt; {
+  <span class="kw">const</span> auth = inject(<span class="fn">AuthService</span>);
+  <span class="kw">return</span> auth.isLoggedIn()
+    ? <span class="kw">true</span>
+    : router.<span class="fn">navigate</span>([<span class="str">'/login'</span>]);
+};</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">React Router v6 — createBrowserRouter</div>
+              <pre><code><span class="cmt">// router.tsx</span>
+<span class="kw">import</span> {
+  createBrowserRouter, lazy
+} <span class="kw">from</span> <span class="str">'react-router-dom'</span>;
+
+<span class="kw">const</span> Products = lazy(
+  () =&gt; <span class="kw">import</span>(<span class="str">'./Products'</span>)
+);
+
+<span class="kw">export const</span> router = <span class="fn">createBrowserRouter</span>([
+  {
+    path: <span class="str">'/'</span>,
+    element: &lt;<span class="fn">Home</span> /&gt;
+  },
+  {
+    path: <span class="str">'/products'</span>,
+    element: &lt;<span class="fn">Products</span> /&gt;,
+    <span class="cmt">// Loader runs BEFORE component renders</span>
+    loader: <span class="kw">async</span> () =&gt; {
+      <span class="kw">if</span> (!<span class="fn">isLoggedIn</span>()) {
+        <span class="kw">throw</span> <span class="fn">redirect</span>(<span class="str">'/login'</span>);
+      }
+      <span class="kw">return</span> <span class="kw">await</span> <span class="fn">fetchProducts</span>();
+    },
+    children: [
+      {
+        path: <span class="str">':id'</span>,
+        element: &lt;<span class="fn">ProductDetail</span> /&gt;,
+        loader: ({ params }) =&gt;
+          <span class="fn">fetchProduct</span>(params.id)
+      }
+    ],
+    errorElement: &lt;<span class="fn">ErrorPage</span> /&gt;
+  },
+  { path: <span class="str">'*'</span>, element: &lt;<span class="fn">NotFound</span> /&gt; }
+]);</code></pre>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">Angular — Navigation &amp; Params</div>
+              <pre><code><span class="kw">@Component</span>({ ... })
+<span class="kw">export class</span> <span class="fn">ProductDetailComponent</span>
+  <span class="kw">implements</span> OnInit {
+
+  product: <span class="fn">Product</span>;
+
+  <span class="fn">constructor</span>(
+    <span class="kw">private</span> route: <span class="fn">ActivatedRoute</span>,
+    <span class="kw">private</span> router: <span class="fn">Router</span>,
+    <span class="kw">private</span> data: <span class="fn">ActivatedRouteData</span>
+  ) {}
+
+  ngOnInit() {
+    <span class="cmt">// Get route param</span>
+    <span class="kw">this</span>.route.params.<span class="fn">subscribe</span>(p =&gt; {
+      <span class="kw">this</span>.productId = p[<span class="str">'id'</span>];
+    });
+
+    <span class="cmt">// Get resolved data</span>
+    <span class="kw">this</span>.product =
+      <span class="kw">this</span>.route.snapshot.data[<span class="str">'product'</span>];
+  }
+
+  <span class="fn">goToList</span>() {
+    <span class="kw">this</span>.router.<span class="fn">navigate</span>([<span class="str">'/products'</span>]);
+  }
+}</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">React Router — Hooks &amp; useLoaderData</div>
+              <pre><code><span class="kw">import</span> {
+  useParams, useNavigate,
+  useLoaderData, Link
+} <span class="kw">from</span> <span class="str">'react-router-dom'</span>;
+
+<span class="kw">export function</span> <span class="fn">ProductDetail</span>() {
+  <span class="cmt">// Route param: /products/:id</span>
+  <span class="kw">const</span> { id } = <span class="fn">useParams</span>();
+
+  <span class="cmt">// Data fetched by loader (above)</span>
+  <span class="kw">const</span> product = <span class="fn">useLoaderData</span>();
+
+  <span class="kw">const</span> navigate = <span class="fn">useNavigate</span>();
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">h1</span>&gt;{product.name}&lt;/<span class="kw">h1</span>&gt;
+      &lt;<span class="fn">Link</span> to=<span class="str">"/products"</span>&gt;
+        ← Back to list
+      &lt;/<span class="fn">Link</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt;
+        <span class="fn">navigate</span>(<span class="str">'/products'</span>)}&gt;
+        Go Home
+      &lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">Angular — Template Navigation</div>
+              <pre><code><span class="cmt">&lt;!-- routerLink directive --&gt;</span>
+&lt;<span class="kw">nav</span>&gt;
+  &lt;<span class="kw">a</span> routerLink=<span class="str">"/"</span>
+     routerLinkActive=<span class="str">"active"</span>&gt;
+    Home
+  &lt;/<span class="kw">a</span>&gt;
+  &lt;<span class="kw">a</span> [routerLink]=<span class="str">"['/products', product.id]"</span>
+     routerLinkActive=<span class="str">"active"</span>
+     [routerLinkActiveOptions]=<span class="str">"{ exact: true }"</span>&gt;
+    {{ product.name }}
+  &lt;/<span class="kw">a</span>&gt;
+&lt;/<span class="kw">nav</span>&gt;
+
+<span class="cmt">&lt;!-- Where matched route renders --&gt;</span>
+&lt;<span class="kw">router-outlet</span>&gt;&lt;/<span class="kw">router-outlet</span>&gt;</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">React Router — NavLink</div>
+              <pre><code><span class="kw">import</span> { NavLink, Outlet } <span class="kw">from</span> <span class="str">'react-router-dom'</span>;
+
+<span class="kw">function</span> <span class="fn">Layout</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">nav</span>&gt;
+        &lt;<span class="fn">NavLink</span>
+          to=<span class="str">"/"</span>
+          className={({ isActive }) =&gt;
+            isActive ? <span class="str">'active'</span> : <span class="str">''</span>
+          }
+        &gt;
+          Home
+        &lt;/<span class="fn">NavLink</span>&gt;
+        &lt;<span class="fn">NavLink</span> to=<span class="str">"/products"</span>&gt;
+          Products
+        &lt;/<span class="fn">NavLink</span>&gt;
+      &lt;/<span class="kw">nav</span>&gt;
+
+      <span class="cmt">{/* Child route renders here */}</span>
+      &lt;<span class="fn">Outlet</span> /&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Kid Explains It -->
+  <div class="callout kid-note">
+    <span class="callout-icon">🧒</span>
+    <div class="callout-body">
+      <h4>Kid Explains It! 🎮</h4>
+      <p>A web app is like a TV with many channels. The <strong>router</strong> is the remote control —
+      when you type a URL like <code>/movies</code>, it's like pressing channel 5. The TV doesn't turn
+      off and back on (no page reload!) — it just smoothly switches to channel 5's content.
+      <strong>Angular</strong> has a built-in remote that came with the TV. <strong>React</strong>
+      uses a cool universal remote you add yourself — works the same way, but you pick which one you
+      like best! 📺🎮</p>
+    </div>
+  </div>
+
+  <!-- Pro Deep Dive -->
+  <div class="callout pro-tip">
+    <span class="callout-icon">🔬</span>
+    <div class="callout-body">
+      <h4>Pro Deep Dive 🧠</h4>
+      <p><strong>Angular Route Resolvers vs React Router Loaders:</strong> Both pre-fetch data before
+      rendering a route. Angular resolvers return Observables/Promises resolved before component init.
+      React Router loaders run in parallel before the route renders and can throw <code>redirect()</code>
+      or <code>Response</code> objects — inspired by Remix's data loading model. Loaders compose with
+      Suspense naturally in React Router v7+.</p>
+
+      <p><strong>Angular Named Outlets:</strong> Angular supports multiple
+      <code>&lt;router-outlet name="sidebar"&gt;</code> in a single template — powerful for master-detail
+      layouts, modal dialogs, or sidebar navigation. React Router achieves this with Outlet contexts
+      or parallel route segments (similar to Next.js App Router layouts).</p>
+
+      <p><strong>Preloading Strategies (Angular):</strong> <code>PreloadAllModules</code> preloads lazy
+      modules after initial load. <code>QuicklinkStrategy</code> (third-party) preloads only routes
+      visible in viewport. React Router uses <code>link.prefetch="intent"</code> in v7 to prefetch
+      on hover/focus.</p>
+
+      <p><strong>React Router v7 = Remix:</strong> React Router v7 merged with Remix. It now supports
+      SSR, server actions, streaming, and file-based routing — essentially a full meta-framework. If you
+      use <code>framework mode</code>, you get Remix-style conventions. If you use
+      <code>library mode</code>, it's the classic client-side router.</p>
+    </div>
+  </div>
+
+  <!-- Real-world Scenario -->
+  <div class="callout real-world">
+    <span class="callout-icon">🌍</span>
+    <div class="callout-body">
+      <h4>Real-World Scenario: Admin Dashboard 🏢</h4>
+      <p>An admin panel with 20+ sections: Users, Products, Orders, Reports, Settings — each with sub-pages.</p>
+      <ul>
+        <li><strong>Lazy Loading:</strong> Both frameworks split each section into a separate chunk.
+        Initial load only downloads the dashboard shell. Clicking "Users" downloads the Users module on demand.</li>
+        <li><strong>Guards/Loaders:</strong> Angular's <code>canActivate</code> guard checks auth
+        before entering any admin route. React Router's loader throws <code>redirect('/login')</code>
+        if the user isn't authenticated.</li>
+        <li><strong>Breadcrumbs:</strong> Both provide route data/params for building
+        breadcrumb trails. Angular uses route <code>data: { breadcrumb: 'Products' }</code>.
+        React Router uses <code>useMatches()</code> to collect crumbs from matched routes.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- When to Use -->
+  <div class="when-to-use-grid">
+    <div class="when-angular">
+      <h4>🅰️ Use Angular Router When…</h4>
+      <ul>
+        <li>Your app has complex named outlets and auxiliary routes</li>
+        <li>You need built-in route resolvers that integrate with RxJS</li>
+        <li>You want <code>RouterTestingModule</code> for comprehensive route testing</li>
+        <li>Your team prefers a configuration-driven route definition (array of objects)</li>
+      </ul>
+    </div>
+    <div class="when-react">
+      <h4>⚛️ Use React Router When…</h4>
+      <ul>
+        <li>You want loader/action data-loading patterns (Remix-style)</li>
+        <li>You need SSR with streaming and server actions (v7 framework mode)</li>
+        <li>Your app is React-based — React Router is the de-facto standard</li>
+        <li>You prefer declaring routes as JSX elements alongside components</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Cheatsheet -->
+  <div class="cheatsheet-card">
+    <h3>📋 Chapter 15 Cheatsheet — Routing</h3>
+    <div class="cheatsheet-grid">
+      <div class="cheat-item"><code>RouterModule.forRoot(routes)</code> — Angular: set up root routes</div>
+      <div class="cheat-item"><code>loadComponent</code> — Angular: lazy-load a standalone component</div>
+      <div class="cheat-item"><code>canActivate: [guard]</code> — Angular: protect route with guard function</div>
+      <div class="cheat-item"><code>routerLink / routerLinkActive</code> — Angular template navigation directives</div>
+      <div class="cheat-item"><code>ActivatedRoute.params</code> — Angular: read URL params as Observable</div>
+      <div class="cheat-item"><code>createBrowserRouter()</code> — React Router v6: create router</div>
+      <div class="cheat-item"><code>loader: async () =&gt; {...}</code> — React Router: pre-fetch before render</div>
+      <div class="cheat-item"><code>useParams()</code> — React Router: read URL params hook</div>
+      <div class="cheat-item"><code>useLoaderData()</code> — React Router: access loader return value</div>
+      <div class="cheat-item"><code>&lt;Outlet /&gt;</code> — React Router: render matched child route</div>
+      <div class="cheat-item"><code>useNavigate()</code> — React Router: programmatic navigation hook</div>
+      <div class="cheat-item"><code>&lt;NavLink&gt;</code> — React Router: Link with active class support</div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="callout quiz-box">
+    <span class="callout-icon">🧠</span>
+    <div class="callout-body">
+      <h4>Quiz Time! 🎯</h4>
+      <ol>
+        <li>What is a route guard in Angular and what does it prevent?
+          <details><summary>Answer</summary>A route guard (e.g., canActivate) is a function that runs before a route is activated. It can prevent navigation if a condition isn't met (like the user not being logged in) and redirect to another route.</details>
+        </li>
+        <li>How does React Router's <code>loader</code> differ from fetching data inside <code>useEffect</code>?
+          <details><summary>Answer</summary>A loader runs BEFORE the component renders, so the component always has data available immediately. useEffect runs AFTER rendering, causing a loading flicker (render → empty state → data fetched → render again).</details>
+        </li>
+        <li>What is <code>&lt;router-outlet&gt;</code> in Angular and <code>&lt;Outlet /&gt;</code> in React Router?
+          <details><summary>Answer</summary>Both are placeholder elements that tell the router WHERE to render the matched child route's component. Without them, navigation works but nothing appears on screen.</details>
+        </li>
+        <li>What is <code>loadComponent</code> in Angular used for?
+          <details><summary>Answer</summary>It lazy-loads a standalone Angular component only when that route is first navigated to, reducing the initial bundle size. The component's code is downloaded on demand.</details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>

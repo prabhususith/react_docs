@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capstone Projects — React 19 &amp; Angular</title>
+<style>
+  :root {
+    --primary: #1a237e;
+    --accent: #ff6f00;
+    --react: #0288d1;
+    --angular: #dd0031;
+    --bg: #f8fafc;
+    --paper: #ffffff;
+    --text: #0f172a;
+    --muted: #475569;
+    --border: #e2e8f0;
+    --code-bg: #0f172a;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 30px 20px;
+    line-height: 1.6;
+  }
+  .projects-container {
+    max-width: 1040px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 44px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  .section-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #e0f2fe;
+    color: var(--react);
+    font-weight: 700;
+    font-size: 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .section-badge.enterprise {
+    background: #fef2f2;
+    color: var(--angular);
+  }
+  h1.project-main-title {
+    font-size: 34px;
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-weight: 800;
+  }
+  p.project-lead {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 30px;
+  }
+  .project-card {
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 50px;
+    background: #ffffff;
+  }
+  .project-header {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+  }
+  .project-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .step-list {
+    list-style: none;
+    counter-reset: step-counter;
+    margin: 24px 0;
+  }
+  .step-item {
+    counter-increment: step-counter;
+    position: relative;
+    padding-left: 54px;
+    margin-bottom: 24px;
+  }
+  .step-item::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--react);
+    color: #fff;
+    font-weight: 800;
+    font-size: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+  .step-desc {
+    font-size: 14px;
+    color: #334155;
+  }
+  pre, code.block {
+    background: var(--code-bg);
+    color: #e2e8f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    display: block;
+    margin: 14px 0;
+    line-height: 1.5;
+  }
+  .kw { color: #7dd3fc; }
+  .fn { color: #86efac; }
+  .str { color: #fca5a5; }
+  .cmt { color: #64748b; font-style: italic; }
+  .typ { color: #f9a8d4; }
+  .num { color: #fdba74; }
+  .prop { color: #fef08a; }
+
+  .comparison-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  @media (max-width: 800px) {
+    .comparison-columns { grid-template-columns: 1fr; }
+  }
+  .comp-pane {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 18px;
+    border-top: 4px solid var(--react);
+  }
+  .comp-pane.angular {
+    border-top-color: var(--angular);
+  }
+  .pane-title {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .feature-box {
+    background: #ecfdf5;
+    border-left: 4px solid #059669;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+  .feature-box h4 {
+    color: #065f46;
+    margin-bottom: 6px;
+  }
+  .feature-box ul {
+    padding-left: 20px;
+    color: #047857;
+    font-size: 14px;
+  }
+  .svg-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 24px 0;
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="projects-container">
+  <h1 class="project-main-title">🛠️ Capstone Projects &amp; Implementation Blueprints</h1>
+  <p class="project-lead">Take your knowledge from theoretical concepts into production reality with two end-to-end engineered projects.</p>
+
+  <!-- ============================================================
+       PROJECT 1: KID-FRIENDLY REACT 19 MOVIE REVIEW APP
+       ============================================================ -->
+  <div class="project-card">
+    <div class="section-badge">Project 1 · Kid-Friendly · React 19</div>
+    <div class="project-header">
+      <div class="project-title">🍿 "My Movie Review &amp; Popcorn Rating App"</div>
+      <p style="color:var(--muted); margin-top:6px;">Build an interactive, animated movie review journal powered by React 19 Actions and optimistic star ratings.</p>
+    </div>
+
+    <h3>🎯 What You Will Build</h3>
+    <p>A fun cinema diary where kids and movie buffs can add movies, pick a mood (🍿 Classic, 🚀 Sci-Fi, 👻 Spooky), award 1 to 5 glowing popcorn buckets, and see instant optimistic updates without annoying screen flickers!</p>
+
+    <!-- 10 Steps -->
+    <ol class="step-list">
+      <li class="step-item">
+        <div class="step-title">Initialize the Vite + React 19 Project</div>
+        <div class="step-desc">Open your terminal and run <code>npm create vite@latest movie-reviews -- --template react</code>. Install React 19 via <code>npm install react@rc react-dom@rc</code>.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Design Your Movie Review Data Shape</div>
+        <div class="step-desc">Define what a review looks like: an ID, movie title, popcorn rating (1-5), genre tag, and personal review notes.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Create the Popcorn Rating Component</div>
+        <div class="step-desc">Craft an interactive 5-star bucket selector with cute hover states and click events.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Form Architecture with React 19 Actions</div>
+        <div class="step-desc">Instead of messy <code>onSubmit</code> handlers with <code>e.preventDefault()</code>, use standard HTML form actions!</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Instant Feedback with useOptimistic</div>
+        <div class="step-desc">When a user clicks "Publish Review", show the movie card instantly while simulating a half-second network delay in the background.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Filter by Genre Buttons</div>
+        <div class="step-desc">Add button pills (All, 🍿 Comedy, 🚀 Sci-Fi, 🦖 Adventure) to filter the list instantly.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Persist to localStorage</div>
+        <div class="step-desc">Save your reviews in your browser's local storage so you don't lose your reviews when you refresh the page!</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Delete &amp; Favorite Functionality</div>
+        <div class="step-desc">Add a red trashcan button to remove reviews and a golden heart button to pin favorites at the top.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Fun Confetti Victory Animation</div>
+        <div class="step-desc">Whenever someone awards 5 popcorn buckets, shoot colorful confetti across the screen!</div>
+      </li>
+      <li class="step-item">
+        <div class="step-title">Deploy Free to the Web</div>
+        <div class="step-desc">Run <code>npm run build</code> and drag your <code>dist</code> folder into Netlify Drop or Vercel to share the link with friends!</div>
+      </li>
+    </ol>
+
+    <!-- Code Block -->
+    <h3 style="margin-top:28px;">💻 Complete Working React 19 Component</h3>
+    <pre><code class="block"><span class="kw">import</span> <span class="typ">React</span>, { <span class="fn">useState</span>, <span class="fn">useOptimistic</span>, <span class="fn">useTransition</span> } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">interface</span> <span class="typ">Review</span> {
+  <span class="prop">id</span>: <span class="typ">string</span>;
+  <span class="prop">title</span>: <span class="typ">string</span>;
+  <span class="prop">rating</span>: <span class="typ">number</span>;
+  <span class="prop">genre</span>: <span class="typ">string</span>;
+  <span class="prop">pending</span>?: <span class="typ">boolean</span>;
+}
+
+<span class="kw">export default function</span> <span class="fn">MovieReviewApp</span>() {
+  <span class="kw">const</span> [<span class="var">reviews</span>, <span class="fn">setReviews</span>] = <span class="fn">useState</span>&lt;<span class="typ">Review[]</span>&gt;([
+    { <span class="prop">id</span>: <span class="str">'1'</span>, <span class="prop">title</span>: <span class="str">'Spider-Man: Across the Spider-Verse'</span>, <span class="prop">rating</span>: <span class="num">5</span>, <span class="prop">genre</span>: <span class="str">'🚀 Sci-Fi'</span> },
+    { <span class="prop">id</span>: <span class="str">'2'</span>, <span class="prop">title</span>: <span class="str">'Paddington 2'</span>, <span class="prop">rating</span>: <span class="num">5</span>, <span class="prop">genre</span>: <span class="str">'🍿 Comedy'</span> }
+  ]);
+
+  <span class="cmt">// React 19 Optimistic UI hook</span>
+  <span class="kw">const</span> [<span class="var">optReviews</span>, <span class="fn">addOptimisticReview</span>] = <span class="fn">useOptimistic</span>(
+    <span class="var">reviews</span>,
+    (<span class="var">state</span>, <span class="var">newReview</span>: <span class="typ">Review</span>) =&gt; [<span class="var">newReview</span>, ...<span class="var">state</span>]
+  );
+
+  <span class="kw">const</span> [<span class="var">isPending</span>, <span class="fn">startTransition</span>] = <span class="fn">useTransition</span>();
+
+  <span class="cmt">// React 19 Form Action</span>
+  <span class="kw">async function</span> <span class="fn">handleCreateReview</span>(<span class="var">formData</span>: <span class="typ">FormData</span>) {
+    <span class="kw">const</span> <span class="var">title</span> = <span class="var">formData</span>.<span class="fn">get</span>(<span class="str">'title'</span>) <span class="kw">as string</span>;
+    <span class="kw">const</span> <span class="var">rating</span> = <span class="fn">Number</span>(<span class="var">formData</span>.<span class="fn">get</span>(<span class="str">'rating'</span>));
+    <span class="kw">const</span> <span class="var">genre</span> = <span class="var">formData</span>.<span class="fn">get</span>(<span class="str">'genre'</span>) <span class="kw">as string</span>;
+
+    <span class="kw">const</span> <span class="var">tempReview</span>: <span class="typ">Review</span> = {
+      <span class="prop">id</span>: <span class="typ">Date</span>.<span class="fn">now</span>().<span class="fn">toString</span>(),
+      <span class="prop">title</span>,
+      <span class="prop">rating</span>,
+      <span class="prop">genre</span>,
+      <span class="prop">pending</span>: <span class="kw">true</span>
+    };
+
+    <span class="cmt">// Immediately update screen before server finishes!</span>
+    <span class="fn">startTransition</span>(<span class="kw">async</span> () =&gt; {
+      <span class="fn">addOptimisticReview</span>(<span class="var">tempReview</span>);
+      <span class="cmt">// Simulate network request</span>
+      <span class="kw">await new</span> <span class="typ">Promise</span>(<span class="var">r</span> =&gt; <span class="fn">setTimeout</span>(<span class="var">r</span>, <span class="num">800</span>));
+      <span class="fn">setReviews</span>(<span class="var">prev</span> =&gt; [{ ...<span class="var">tempReview</span>, <span class="prop">pending</span>: <span class="kw">false</span> }, ...<span class="var">prev</span>]);
+    });
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="typ">div</span> <span class="prop">style</span>={{ <span class="prop">padding</span>: <span class="str">'20px'</span>, <span class="prop">maxWidth</span>: <span class="str">'600px'</span>, <span class="prop">margin</span>: <span class="str">'auto'</span> }}&gt;
+      &lt;<span class="typ">h2</span>&gt;🍿 My Movie Review Hub&lt;/<span class="typ">h2</span>&gt;
+      
+      &lt;<span class="typ">form</span> <span class="prop">action</span>={<span class="var">handleCreateReview</span>} <span class="prop">style</span>={{ <span class="prop">display</span>: <span class="str">'flex'</span>, <span class="prop">flexDirection</span>: <span class="str">'column'</span>, <span class="prop">gap</span>: <span class="num">10</span>, <span class="prop">marginBottom</span>: <span class="num">20</span> }}&gt;
+        &lt;<span class="typ">input</span> <span class="prop">name</span>=<span class="str">"title"</span> <span class="prop">placeholder</span>=<span class="str">"Movie Title..."</span> <span class="prop">required</span> /&gt;
+        &lt;<span class="typ">select</span> <span class="prop">name</span>=<span class="str">"genre"</span>&gt;
+          &lt;<span class="typ">option</span>&gt;🍿 Comedy&lt;/<span class="typ">option</span>&gt;
+          &lt;<span class="typ">option</span>&gt;🚀 Sci-Fi&lt;/<span class="typ">option</span>&gt;
+          &lt;<span class="typ">option</span>&gt;🦖 Adventure&lt;/<span class="typ">option</span>&gt;
+        &lt;/<span class="typ">select</span>&gt;
+        &lt;<span class="typ">select</span> <span class="prop">name</span>=<span class="str">"rating"</span>&gt;
+          &lt;<span class="typ">option</span> <span class="prop">value</span>=<span class="str">"5"</span>&gt;⭐️⭐️⭐️⭐️⭐️ (Must Watch!)&lt;/<span class="typ">option</span>&gt;
+          &lt;<span class="typ">option</span> <span class="prop">value</span>=<span class="str">"4"</span>&gt;⭐️⭐️⭐️⭐️ (Super Good)&lt;/<span class="typ">option</span>&gt;
+          &lt;<span class="typ">option</span> <span class="prop">value</span>=<span class="str">"3"</span>&gt;⭐️⭐️⭐️ (Pretty Okay)&lt;/<span class="typ">option</span>&gt;
+        &lt;/<span class="typ">select</span>&gt;
+        &lt;<span class="typ">button</span> <span class="prop">type</span>=<span class="str">"submit"</span> <span class="prop">disabled</span>={<span class="var">isPending</span>}&gt;
+          {<span class="var">isPending</span> ? <span class="str">'Saving Review...'</span> : <span class="str">'Add Review 🎬'</span>}
+        &lt;/<span class="typ">button</span>&gt;
+      &lt;/<span class="typ">form</span>&gt;
+
+      &lt;<span class="typ">div</span>&gt;
+        {<span class="var">optReviews</span>.<span class="fn">map</span>(<span class="var">item</span> =&gt; (
+          &lt;<span class="typ">div</span> <span class="prop">key</span>={<span class="var">item</span>.<span class="prop">id</span>} <span class="prop">style</span>={{ <span class="prop">opacity</span>: <span class="var">item</span>.<span class="prop">pending</span> ? <span class="num">0.5</span> : <span class="num">1</span>, <span class="prop">border</span>: <span class="str">'1px solid #ccc'</span>, <span class="prop">padding</span>: <span class="num">12</span>, <span class="prop">marginBottom</span>: <span class="num">8</span> }}&gt;
+            &lt;<span class="typ">h4</span>&gt;{<span class="var">item</span>.<span class="prop">title</span>} {<span class="var">item</span>.<span class="prop">pending</span> &amp;&amp; <span class="str">'⏳'</span>}&lt;/<span class="typ">h4</span>&gt;
+            &lt;<span class="typ">p</span>&gt;{<span class="var">item</span>.<span class="prop">genre</span>} · {<span class="str">'🍿'</span>.<span class="fn">repeat</span>(<span class="var">item</span>.<span class="prop">rating</span>)}&lt;/<span class="typ">p</span>&gt;
+          &lt;/<span class="typ">div</span>&gt;
+        ))}
+      &lt;/<span class="typ">div</span>&gt;
+    &lt;/<span class="typ">div</span>&gt;
+  );
+}</code></pre>
+
+    <div class="feature-box">
+      <h4>🚀 Ideas to Add More Features:</h4>
+      <ul>
+        <li><strong>Poster Image Search:</strong> Connect the free OMDb API so when you type a title, the official movie poster pops up!</li>
+        <li><strong>Voice Reviews:</strong> Use the Web Speech Recognition API so kids can record audio reviews by speaking into the microphone!</li>
+        <li><strong>Popcorn Counter:</strong> Show total popcorn buckets awarded across all movies on a giant glowing trophy badge.</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       PROJECT 2: ENTERPRISE DASHBOARD (REACT 19 VS ANGULAR)
+       ============================================================ -->
+  <div class="project-card">
+    <div class="section-badge enterprise">Project 2 · Professional Enterprise · Rosetta Stone</div>
+    <div class="project-header">
+      <div class="project-title">🏢 "Enterprise Analytics &amp; Telemetry Dashboard"</div>
+      <p style="color:var(--muted); margin-top:6px;">Comparing a multi-tenant metrics portal built side-by-side in React 19 (Hooks/Context) and Angular 18 (Signals/Injectable Services).</p>
+    </div>
+
+    <h3>🏗️ Architecture Overview</h3>
+    <p>A production dashboard monitoring real-time server cluster loads, memory pressure, and revenue streams with auto-polling, error resilience, and role-based access.</p>
+
+    <!-- SVG Architecture Diagram -->
+    <div class="svg-wrap">
+      <svg width="680" height="240" viewBox="0 0 680 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="680" height="240" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+        
+        <!-- Clients -->
+        <rect x="30" y="30" width="160" height="80" rx="8" fill="#e0f2fe" stroke="#0288d1" stroke-width="2"/>
+        <text x="110" y="65" text-anchor="middle" font-weight="bold" fill="#0369a1" font-size="13">React 19 Frontend</text>
+        <text x="110" y="85" text-anchor="middle" fill="#0288d1" font-size="11">TanStack Query + Signals</text>
+
+        <rect x="30" y="130" width="160" height="80" rx="8" fill="#ffe4e6" stroke="#dd0031" stroke-width="2"/>
+        <text x="110" y="165" text-anchor="middle" font-weight="bold" fill="#9f1239" font-size="13">Angular 18 Frontend</text>
+        <text x="110" y="185" text-anchor="middle" fill="#dd0031" font-size="11">RxJS + Signals DI</text>
+
+        <!-- Arrows -->
+        <path d="M190 70 L270 100" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M190 170 L270 140" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- Gateway / Service Layer -->
+        <rect x="270" y="80" width="160" height="80" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+        <text x="350" y="115" text-anchor="middle" font-weight="bold" fill="#1e293b" font-size="13">Telemetry Service</text>
+        <text x="350" y="135" text-anchor="middle" fill="#64748b" font-size="11">Aggregator / WebSocket</text>
+
+        <!-- Arrows to Backend -->
+        <path d="M430 120 L500 120" stroke="#64748b" stroke-width="2"/>
+
+        <!-- Backend Storage -->
+        <rect x="500" y="60" width="150" height="120" rx="8" fill="#f3e8ff" stroke="#7c3aed" stroke-width="2"/>
+        <text x="575" y="105" text-anchor="middle" font-weight="bold" fill="#5b21b6" font-size="13">Cluster Metrics</text>
+        <text x="575" y="125" text-anchor="middle" fill="#7c3aed" font-size="11">PostgreSQL &amp; Redis</text>
+        <text x="575" y="145" text-anchor="middle" fill="#7c3aed" font-size="10">Timeseries DB</text>
+      </svg>
+    </div>
+
+    <!-- Side by Side Implementations -->
+    <div class="comparison-columns">
+      <!-- React Pane -->
+      <div class="comp-pane">
+        <div class="pane-title" style="color:var(--react);">
+          <span>⚛️ React 19 Enterprise Implementation</span>
+        </div>
+        <p style="font-size:12.5px; color:var(--muted); margin-bottom:10px;">Using custom hooks, memoized metrics cards, and TanStack caching.</p>
+        <pre><code class="block"><span class="cmt">// MetricsDashboard.tsx</span>
+<span class="kw">import</span> { <span class="fn">useQuery</span> } <span class="kw">from</span> <span class="str">'@tanstack/react-query'</span>;
+<span class="kw">import</span> { <span class="fn">useMemo</span> } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">export function</span> <span class="fn">MetricsDashboard</span>() {
+  <span class="kw">const</span> { <span class="var">data</span>, <span class="var">isLoading</span>, <span class="var">error</span> } = <span class="fn">useQuery</span>({
+    <span class="prop">queryKey</span>: [<span class="str">'cluster-telemetry'</span>],
+    <span class="prop">queryFn</span>: <span class="fn">fetchMetrics</span>,
+    <span class="prop">refetchInterval</span>: <span class="num">5000</span>, <span class="cmt">// 5s poll</span>
+  });
+
+  <span class="kw">const</span> <span class="var">healthRatio</span> = <span class="fn">useMemo</span>(() =&gt; {
+    <span class="kw">if</span> (!<span class="var">data</span>) <span class="kw">return</span> <span class="num">100</span>;
+    <span class="kw">return</span> (<span class="var">data</span>.<span class="prop">healthy</span> / <span class="var">data</span>.<span class="prop">total</span>) * <span class="num">100</span>;
+  }, [<span class="var">data</span>]);
+
+  <span class="kw">if</span> (<span class="var">isLoading</span>) <span class="kw">return</span> &lt;<span class="typ">SkeletonLoader</span> /&gt;;
+  <span class="kw">if</span> (<span class="var">error</span>) <span class="kw">return</span> &lt;<span class="typ">AlertError</span> <span class="prop">err</span>={<span class="var">error</span>} /&gt;;
+
+  <span class="kw">return</span> (
+    &lt;<span class="typ">section</span> <span class="prop">className</span>=<span class="str">"dashboard-grid"</span>&gt;
+      &lt;<span class="typ">MetricCard</span>
+        <span class="prop">title</span>=<span class="str">"Active Nodes"</span>
+        <span class="prop">value</span>={<span class="var">data</span>.<span class="prop">nodes</span>}
+        <span class="prop">status</span>={<span class="var">healthRatio</span> &gt; <span class="num">90</span> ? <span class="str">'ok'</span> : <span class="str">'warn'</span>}
+      /&gt;
+      &lt;<span class="typ">CpuSparkline</span> <span class="prop">series</span>={<span class="var">data</span>.<span class="prop">cpuHistory</span>} /&gt;
+    &lt;/<span class="typ">section</span>&gt;
+  );
+}</code></pre>
+      </div>
+
+      <!-- Angular Pane -->
+      <div class="comp-pane angular">
+        <div class="pane-title" style="color:var(--angular);">
+          <span>🅰️ Angular 18 Enterprise Equivalent</span>
+        </div>
+        <p style="font-size:12.5px; color:var(--muted); margin-bottom:10px;">Using standalone components, Signals, and reactive Dependency Injection.</p>
+        <pre><code class="block"><span class="cmt">// metrics-dashboard.component.ts</span>
+<span class="fn">@Component</span>({
+  <span class="prop">selector</span>: <span class="str">'app-metrics-dashboard'</span>,
+  <span class="prop">standalone</span>: <span class="kw">true</span>,
+  <span class="prop">imports</span>: [<span class="typ">MetricCardComponent</span>, <span class="typ">CpuSparklineComponent</span>],
+  <span class="prop">template</span>: <span class="str">`
+    @if (metricsSvc.loading()) {
+      &lt;app-skeleton /&gt;
+    } @else {
+      &lt;section class="dashboard-grid"&gt;
+        &lt;app-metric-card
+          title="Active Nodes"
+          [value]="metricsSvc.data()?.nodes"
+          [status]="healthStatus()" /&gt;
+        &lt;app-cpu-sparkline
+          [series]="metricsSvc.data()?.cpuHistory" /&gt;
+      &lt;/section&gt;
+    }
+  `</span>
+})
+<span class="kw">export class</span> <span class="typ">MetricsDashboardComponent</span> {
+  <span class="kw">protected</span> <span class="var">metricsSvc</span> = <span class="fn">inject</span>(<span class="typ">MetricsService</span>);
+
+  <span class="cmt">// Angular computed Signal</span>
+  <span class="kw">protected</span> <span class="var">healthStatus</span> = <span class="fn">computed</span>(() =&gt; {
+    <span class="kw">const</span> <span class="var">d</span> = <span class="kw">this</span>.<span class="var">metricsSvc</span>.<span class="fn">data</span>();
+    <span class="kw">if</span> (!<span class="var">d</span>) <span class="kw">return</span> <span class="str">'ok'</span>;
+    <span class="kw">return</span> (<span class="var">d</span>.<span class="prop">healthy</span> / <span class="var">d</span>.<span class="prop">total</span>) &gt; <span class="num">0.9</span> ? <span class="str">'ok'</span> : <span class="str">'warn'</span>;
+  });
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Takeaways -->
+    <div style="margin-top:28px; padding:18px; background:#f8fafc; border-radius:8px; border:1px solid var(--border);">
+      <h4 style="margin-bottom:8px; color:var(--primary);">🎯 Key Enterprise Takeaways:</h4>
+      <p style="font-size:13.5px; color:#334155;">
+        <strong>React 19</strong> empowers teams with extreme compositional flexibility, leveraging lightweight custom hooks and fine-grained concurrent transitions. In contrast, <strong>Angular 18</strong> delivers a standardized out-of-the-box battery with built-in dependency injection, signals, and CLI scaffolds that make cross-team maintenance effortless in massive enterprise codebases.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

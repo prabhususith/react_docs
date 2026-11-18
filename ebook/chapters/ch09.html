@@ -1,0 +1,540 @@
+<!-- ============================================================
+     CHAPTER 9: React 19 New Powers
+     ============================================================ -->
+<div class="page chapter-header" id="chapter-9">
+  <div class="chapter-number-badge">9</div>
+  <div class="chapter-header-content">
+    <div class="unit-label">UNIT 2 · React 19 — The Modern Way</div>
+    <h1 class="chapter-title">React 19 New Powers</h1>
+    <p class="chapter-subtitle">Actions, useActionState, useOptimistic, and the revolutionary use() API</p>
+    <div class="learning-objectives">
+      <h3>🎯 Learning Objectives</h3>
+      <ul>
+        <li>Understand the philosophy of React 19 Actions and async transitions</li>
+        <li>Master <code>useActionState</code> for streamlined form submissions</li>
+        <li>Implement instant optimistic UI updates with <code>useOptimistic</code></li>
+        <li>Read promises and contexts dynamically using the new <code>use()</code> API</li>
+        <li>Leverage <code>useFormStatus</code> to control pending states from child buttons</li>
+        <li>Discover native document metadata, stylesheet precedence, and resource preloading</li>
+      </ul>
+    </div>
+  </div>
+  <div class="chapter-header-illustration">
+    <!-- Superhero Cape & React 19 Emblem SVG -->
+    <svg viewBox="0 0 340 220" width="340" height="220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="capeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff1744"/>
+          <stop offset="100%" stop-color="#b71c1c"/>
+        </linearGradient>
+        <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffd54f"/>
+          <stop offset="100%" stop-color="#ff6f00"/>
+        </linearGradient>
+        <radialGradient id="powerGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#61dafb" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#1a237e" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Glow circle behind -->
+      <circle cx="170" cy="110" r="85" fill="url(#powerGlow)"/>
+
+      <!-- Flowing Cape -->
+      <path d="M120 70 C80 110, 60 170, 75 205 C100 190, 130 180, 150 185 C140 145, 135 100, 135 75 Z" fill="url(#capeGrad)" opacity="0.9"/>
+      <path d="M220 70 C260 110, 280 170, 265 205 C240 190, 210 180, 190 185 C200 145, 205 100, 205 75 Z" fill="url(#capeGrad)" opacity="0.9"/>
+
+      <!-- Superhero Chest Shield -->
+      <polygon points="170,45 225,75 205,155 170,185 135,155 115,75" fill="url(#shieldGrad)" stroke="#ff6f00" stroke-width="3"/>
+      
+      <!-- Atomic Logo Center -->
+      <ellipse cx="170" cy="115" rx="35" ry="14" fill="none" stroke="#1a237e" stroke-width="2.5" transform="rotate(30 170 115)"/>
+      <ellipse cx="170" cy="115" rx="35" ry="14" fill="none" stroke="#1a237e" stroke-width="2.5" transform="rotate(-30 170 115)"/>
+      <ellipse cx="170" cy="115" rx="35" ry="14" fill="none" stroke="#1a237e" stroke-width="2.5"/>
+      <circle cx="170" cy="115" r="7" fill="#0288d1"/>
+
+      <!-- 19 Badge -->
+      <rect x="150" y="145" width="40" height="20" rx="10" fill="#1a237e"/>
+      <text x="170" y="159" font-family="'Nunito', sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle">v19</text>
+
+      <!-- Sparkles -->
+      <text x="70" y="65" font-size="20">✨</text>
+      <text x="255" y="70" font-size="20">⚡</text>
+      <text x="170" y="212" font-family="'Nunito', sans-serif" font-size="11" fill="#757575" text-anchor="middle">Supercharged Async Actions &amp; React Compiler Ready</text>
+    </svg>
+  </div>
+</div>
+
+<div class="page" id="ch9-story">
+  <div class="real-world">
+    <h2>🦸 A Real-World Story: The Superhero Academy Upgrade</h2>
+    <p>
+      Picture a squad of young superheroes in training 🦸‍♂️. In the past, whenever they faced a mission,
+      they had to carry huge backpacks loaded with heavy walkie-talkies, tangled cables, and thick binders
+      of emergency checklists. If they wanted to send a message to headquarters, they had to manually flip
+      four switches: <code>setIsLoading(true)</code>, check for errors with <code>setError(null)</code>,
+      wait for headquarters to respond, and finally remember to flip <code>setIsLoading(false)</code>. If
+      they forgot even one step, their gadget got stuck on a spinning wheel! 🌀
+    </p>
+    <p>
+      In React 19, the Superhero High Council gave all components a brand-new super-suit equipped with
+      <strong>Actions</strong>! Now, whenever you perform a task—like saving a game score or sending a chat
+      message—the suit handles the loading spinner, catches the errors, and updates your screen
+      <em>instantaneously</em> before the signal even finishes travelling across the globe.
+    </p>
+    <p>
+      Even cooler, components gained a telepathic superpower called <code>use()</code>. Instead of sitting
+      in endless meetings waiting for data promises, they can simply tap into the promise whenever they need it,
+      right inside their thoughts. Welcome to the modern age of web superpowers! ⚡✨
+    </p>
+  </div>
+
+  <h2>The Core Problem React 19 Solves</h2>
+  <p>
+    For years, handling asynchronous interactions in React required writing repetitive boilerplate code.
+    Every form submission needed three separate pieces of state: the data, the pending state, and the error state.
+    React 19 elevates asynchronous functions to first-class citizens called <strong>Actions</strong>.
+  </p>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 520 180" width="500" height="180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Old Way -->
+      <rect x="20" y="30" width="220" height="120" rx="8" fill="#ffebee" stroke="#ef5350" stroke-width="2"/>
+      <text x="130" y="55" font-family="'Nunito', sans-serif" font-size="14" font-weight="800" fill="#c62828" text-anchor="middle">React 18: Manual Async</text>
+      <text x="35" y="80" font-family="monospace" font-size="10" fill="#b71c1c">❌ const [isPending, setPending]</text>
+      <text x="35" y="100" font-family="monospace" font-size="10" fill="#b71c1c">❌ const [error, setError]</text>
+      <text x="35" y="120" font-family="monospace" font-size="10" fill="#b71c1c">❌ try { ... } finally { setPending }</text>
+      <text x="35" y="138" font-family="monospace" font-size="10" fill="#b71c1c">❌ Manual optimistic rollbacks</text>
+
+      <!-- Versus Lightning -->
+      <circle cx="260" cy="90" r="18" fill="#ffb300"/>
+      <text x="260" y="96" font-family="'Nunito', sans-serif" font-size="12" font-weight="900" fill="#212121" text-anchor="middle">VS</text>
+
+      <!-- New Way -->
+      <rect x="280" y="30" width="220" height="120" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+      <text x="390" y="55" font-family="'Nunito', sans-serif" font-size="14" font-weight="800" fill="#2e7d32" text-anchor="middle">React 19: Actions</text>
+      <text x="295" y="80" font-family="monospace" font-size="10" fill="#1b5e20">✅ [state, formAction, isPending]</text>
+      <text x="295" y="100" font-family="monospace" font-size="10" fill="#1b5e20">✅ Native &lt;form action={...}&gt;</text>
+      <text x="295" y="120" font-family="monospace" font-size="10" fill="#1b5e20">✅ useOptimistic instant preview</text>
+      <text x="295" y="138" font-family="monospace" font-size="10" fill="#1b5e20">✅ use() reads Promises &amp; Context</text>
+    </svg>
+  </div>
+
+  <div class="callout definition">
+    <span class="callout-icon">📖</span>
+    <div>
+      <strong>Definition — React Action:</strong> An async function passed to a React 19 transition,
+      <code>&lt;form action={...}&gt;</code>, or <code>useActionState</code>. Actions automatically manage
+      pending states, error boundaries, optimistic UI rollback, and form resets in a single coherent lifecycle.
+    </div>
+  </div>
+</div>
+
+<div class="page" id="ch9-kids">
+  <div class="kid-note">
+    <h2>🎮 For Kids — The Flash's Instant Message Trick</h2>
+    <p>
+      Have you ever hit the "Send" button on a game message or a "Like" button on a cool video? ❤️
+      Normally, you'd have to wait for the computer to send the message into space 🛰️, talk to the server,
+      and wait for the server to reply: <em>"Okay, I saved your like!"</em>
+    </p>
+    <p>
+      That waiting time feels boring! But what if your superhero friend <strong>The Flash</strong> ⚡
+      was inside your screen? The instant you tap the heart, The Flash paints the heart red <strong>immediately</strong>,
+      while running in the background at lightspeed to deliver the letter to the server!
+    </p>
+    <ul>
+      <li>❤️ <strong>Instant Heart!</strong> You see your like instantly (Optimistic UI)</li>
+      <li>⚡ <strong>No Lag!</strong> You don't have to wait for slow internet</li>
+      <li>🛡️ <strong>Safety Net:</strong> If the internet is unplugged, The Flash gently undoes the heart and says: <em>"Oops! Let's try again!"</em></li>
+    </ul>
+    <p>
+      In React 19, that superpower is called <code>useOptimistic()</code>! Let's see how our code becomes
+      as fast as a comic-book hero! 💥
+    </p>
+  </div>
+
+  <h2>🎮 Kid-Friendly Example: The Superhero Vote Box</h2>
+  <div class="code-block">
+    <div class="code-label">React 19 · SuperHeroVote.jsx</div>
+    <pre><span class="kw">import</span> { useOptimistic, useState, useTransition } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">SuperHeroVote</span>() {
+  <span class="kw">const</span> [<span class="var">votes</span>, <span class="fn">setVotes</span>] = <span class="fn">useState</span>(<span class="str">10</span>);
+  <span class="kw">const</span> [<span class="var">isPending</span>, <span class="fn">startTransition</span>] = <span class="fn">useTransition</span>();
+
+  <span class="cmt">// Instant preview: show the updated count before the server answers!</span>
+  <span class="kw">const</span> [<span class="var">optimisticVotes</span>, <span class="fn">setOptimisticVotes</span>] = <span class="fn">useOptimistic</span>(
+    <span class="var">votes</span>,
+    (<span class="var">current</span>, <span class="var">amount</span>) =&gt; <span class="var">current</span> + <span class="var">amount</span>
+  );
+
+  <span class="kw">async function</span> <span class="fn">handleCheer</span>() {
+    <span class="fn">startTransition</span>(<span class="kw">async</span> () =&gt; {
+      <span class="cmt">// 1. Show optimistic +1 right away! 🚀</span>
+      <span class="fn">setOptimisticVotes</span>(<span class="str">1</span>);
+      
+      <span class="cmt">// 2. Pretend to send to cloud headquarters (takes 1 second)</span>
+      <span class="kw">await</span> <span class="kw">new</span> <span class="fn">Promise</span>(<span class="var">resolve</span> =&gt; <span class="fn">setTimeout</span>(<span class="var">resolve</span>, <span class="str">1000</span>));
+      
+      <span class="cmt">// 3. Update the real state</span>
+      <span class="fn">setVotes</span>(<span class="var">v</span> =&gt; <span class="var">v</span> + <span class="str">1</span>);
+    });
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> className=<span class="str">"hero-box"</span>&gt;
+      &lt;<span class="kw">h3</span>&gt;🦸 Spider-Hero Fan Club&lt;/<span class="kw">h3</span>&gt;
+      &lt;<span class="kw">p</span>&gt;Cheer Count: &lt;<span class="kw">strong</span>&gt;{<span class="var">optimisticVotes</span>}&lt;/<span class="kw">strong</span>&gt;&lt;/<span class="kw">p</span>&gt;
+      &lt;<span class="kw">button</span> onClick={<span class="fn">handleCheer</span>} disabled={<span class="var">isPending</span>}&gt;
+        {<span class="var">isPending</span> ? <span class="str">"Sending cheer... ⚡"</span> : <span class="str">"Cheer! 🎉"</span>}
+      &lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <strong>Kid Tip:</strong> The button updates the number instantly on your screen, so clicking feels
+    snappy and fun, even if the real server takes a whole second to reply!
+  </div>
+</div>
+
+<div class="page" id="ch9-dev">
+  <div class="pro-tip">
+    <h2>💻 For Developers — Deep Dive into React 19 Hooks</h2>
+  </div>
+
+  <h3>1. <code>useActionState</code>: The Ultimate Form Engine</h3>
+  <p>
+    Previously known in experimental builds as <code>useFormState</code>, React 19 standardises
+    <code>useActionState</code>. It accepts an async action function, an initial state, and an optional permalink.
+    It returns the current action state, a wrapped action dispatcher, and a pending boolean.
+  </p>
+
+  <div class="code-block">
+    <div class="code-label">React 19 · ProfileUpdateForm.jsx</div>
+    <pre><span class="kw">import</span> { useActionState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="cmt">// Server or client async action function</span>
+<span class="kw">async function</span> <span class="fn">updateUsernameAction</span>(<span class="var">previousState</span>, <span class="var">formData</span>) {
+  <span class="kw">const</span> <span class="var">newUsername</span> = <span class="var">formData</span>.<span class="fn">get</span>(<span class="str">'username'</span>);
+
+  <span class="kw">try</span> {
+    <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/profile/username'</span>, {
+      method: <span class="str">'POST'</span>,
+      headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+      body: <span class="fn">JSON</span>.<span class="fn">stringify</span>({ username: <span class="var">newUsername</span> }),
+    });
+
+    <span class="kw">if</span> (!<span class="var">res</span>.<span class="var">ok</span>) {
+      <span class="kw">const</span> <span class="var">err</span> = <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+      <span class="kw">return</span> { success: <span class="kw">false</span>, error: <span class="var">err</span>.<span class="var">message</span>, username: <span class="var">newUsername</span> };
+    }
+
+    <span class="kw">return</span> { success: <span class="kw">true</span>, error: <span class="kw">null</span>, username: <span class="var">newUsername</span> };
+  } <span class="kw">catch</span> (<span class="var">e</span>) {
+    <span class="kw">return</span> { success: <span class="kw">false</span>, error: <span class="str">'Network connection lost'</span>, username: <span class="var">newUsername</span> };
+  }
+}
+
+<span class="kw">export function</span> <span class="fn">ProfileSettings</span>() {
+  <span class="kw">const</span> [<span class="var">state</span>, <span class="var">formAction</span>, <span class="var">isPending</span>] = <span class="fn">useActionState</span>(
+    <span class="fn">updateUsernameAction</span>,
+    { success: <span class="kw">null</span>, error: <span class="kw">null</span>, username: <span class="str">'GuestUser'</span> }
+  );
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">form</span> action={<span class="var">formAction</span>} className=<span class="str">"settings-form"</span>&gt;
+      &lt;<span class="kw">label</span> htmlFor=<span class="str">"username"</span>&gt;Change Handle:&lt;/<span class="kw">label</span>&gt;
+      &lt;<span class="kw">input</span>
+        id=<span class="str">"username"</span>
+        name=<span class="str">"username"</span>
+        defaultValue={<span class="var">state</span>.<span class="var">username</span>}
+        required
+        disabled={<span class="var">isPending</span>}
+      /&gt;
+      
+      &lt;<span class="kw">button</span> type=<span class="str">"submit"</span> disabled={<span class="var">isPending</span>}&gt;
+        {<span class="var">isPending</span> ? <span class="str">'Saving changes...'</span> : <span class="str">'Update Username'</span>}
+      &lt;/<span class="kw">button</span>&gt;
+
+      {<span class="var">state</span>.<span class="var">error</span> &amp;&amp; &lt;<span class="kw">p</span> className=<span class="str">"error-banner"</span>&gt;⚠️ {<span class="var">state</span>.<span class="var">error</span>}&lt;/<span class="kw">p</span>&gt;}
+      {<span class="var">state</span>.<span class="var">success</span> &amp;&amp; &lt;<span class="kw">p</span> className=<span class="str">"success-banner"</span>&gt;✅ Username updated successfully!&lt;/<span class="kw">p</span>&gt;}
+    &lt;/<span class="kw">form</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <div class="callout fun-fact">
+    <span class="callout-icon">🤩</span>
+    <strong>Fun Fact:</strong> React 19's <code>&lt;form action={formAction}&gt;</code> works with native HTML
+    progressive enhancement! If JavaScript is still downloading or disabled, standard browser form POST
+    can still execute if linked to an endpoint!
+  </div>
+</div>
+
+<div class="page" id="ch9-use-api">
+  <h2>2. The Revolutionary <code>use()</code> API</h2>
+  <p>
+    The new <code>use()</code> function is not technically a hook—it is a runtime operator that can be called
+    <em>conditionally</em> inside render! You can pass it a Promise or a React Context.
+  </p>
+
+  <div class="code-block">
+    <div class="code-label">React 19 · Conditional use() with Promise and Context</div>
+    <pre><span class="kw">import</span> { use, Suspense } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { ThemeContext } <span class="kw">from</span> <span class="str">'./ThemeContext'</span>;
+
+<span class="cmt">// Reading a Promise directly inside render without useEffect</span>
+<span class="kw">function</span> <span class="fn">HeroBio</span>({ <span class="var">heroPromise</span>, <span class="var">showDetails</span> }) {
+  <span class="cmt">// Condition 1: Can call use() conditionally! (Violates old Hook rules, but allowed with use!)</span>
+  <span class="kw">if</span> (!<span class="var">showDetails</span>) {
+    <span class="kw">return</span> &lt;<span class="kw">p</span>&gt;Click to expand hero confidential files.&lt;/<span class="kw">p</span>&gt;;
+  }
+
+  <span class="cmt">// Reads the promise: if pending, suspends component; if resolved, unwraps data!</span>
+  <span class="kw">const</span> <span class="var">hero</span> = <span class="fn">use</span>(<span class="var">heroPromise</span>);
+  <span class="cmt">// Reads context without useContext!</span>
+  <span class="kw">const</span> <span class="var">theme</span> = <span class="fn">use</span>(<span class="var">ThemeContext</span>);
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> className={<span class="str">`bio-card theme-${<span class="var">theme</span>}`</span>}&gt;
+      &lt;<span class="kw">h3</span>&gt;{<span class="var">hero</span>.<span class="var">name</span>}&lt;/<span class="kw">h3</span>&gt;
+      &lt;<span class="kw">p</span>&gt;&lt;<span class="kw">strong</span>&gt;Superpower:&lt;/<span class="kw">strong</span>&gt; {<span class="var">hero</span>.<span class="var">power</span>}&lt;/<span class="kw">p</span>&gt;
+      &lt;<span class="kw">p</span>&gt;&lt;<span class="kw">strong</span>&gt;Nemesis:&lt;/<span class="kw">strong</span>&gt; {<span class="var">hero</span>.<span class="var">nemesis</span>}&lt;/<span class="kw">p</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}
+
+<span class="kw">export function</span> <span class="fn">HeroDashboard</span>() {
+  <span class="kw">const</span> <span class="var">heroPromise</span> = <span class="fn">fetch</span>(<span class="str">'/api/hero/batman'</span>).<span class="fn">then</span>(<span class="var">r</span> =&gt; <span class="var">r</span>.<span class="fn">json</span>());
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">section</span>&gt;
+      &lt;<span class="kw">h2</span>&gt;Classified Hero File&lt;/<span class="kw">h2</span>&gt;
+      &lt;<span class="fn">Suspense</span> fallback={&lt;<span class="kw">div</span> className=<span class="str">"scanner"</span>&gt;Decrypting files... 📡&lt;/<span class="kw">div</span>&gt;}&gt;
+        &lt;<span class="fn">HeroBio</span> heroPromise={<span class="var">heroPromise</span>} showDetails={<span class="kw">true</span>} /&gt;
+      &lt;/<span class="fn">Suspense</span>&gt;
+    &lt;/<span class="kw">section</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <h3>3. <code>useFormStatus</code>: Deep Child Form Awareness</h3>
+  <p>
+    When you build reusable nested components (like a <code>&lt;SubmitButton /&gt;</code>), you no longer
+    need to drill <code>isPending</code> down ten levels of props!
+  </p>
+
+  <div class="code-block">
+    <div class="code-label">React 19 · SubmitButton.jsx with useFormStatus</div>
+    <pre><span class="kw">import</span> { useFormStatus } <span class="kw">from</span> <span class="str">'react-dom'</span>;
+
+<span class="kw">export function</span> <span class="fn">SubmitButton</span>({ <span class="var">children</span> = <span class="str">'Save'</span> }) {
+  <span class="cmt">// Reads parent &lt;form&gt; status automatically through React DOM context</span>
+  <span class="kw">const</span> { <span class="var">pending</span>, <span class="var">data</span>, <span class="var">method</span>, <span class="var">action</span> } = <span class="fn">useFormStatus</span>();
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">button</span>
+      type=<span class="str">"submit"</span>
+      disabled={<span class="var">pending</span>}
+      className={<span class="var">pending</span> ? <span class="str">'btn-pending'</span> : <span class="str">'btn-ready'</span>}
+    &gt;
+      {<span class="var">pending</span> ? (
+        &lt;<span class="kw">span</span> className=<span class="str">"spinner"</span>&gt;Saving {<span class="var">data</span>?.<span class="fn">get</span>(<span class="str">'username'</span>)}... ⏳&lt;/<span class="kw">span</span>&gt;
+      ) : (
+        <span class="var">children</span>
+      )}
+    &lt;/<span class="kw">button</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <strong>Crucial Rule for useFormStatus:</strong> <code>useFormStatus</code> must be called from a
+    component that is rendered <em>inside</em> the <code>&lt;form&gt;</code> element, not in the same
+    component that renders the <code>&lt;form&gt;</code> tag itself.
+  </div>
+</div>
+
+<div class="page" id="ch9-features">
+  <h2>Additional Native Superpowers in React 19</h2>
+  <div class="real-world">
+    <h3>1. Native Document Metadata Support</h3>
+    <p>
+      Forget external libraries like <code>react-helmet</code>! React 19 natively hoists
+      <code>&lt;title&gt;</code>, <code>&lt;meta&gt;</code>, and <code>&lt;link rel="icon"&gt;</code>
+      tags from any component directly into the document <code>&lt;head&gt;</code>.
+    </p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-label">React 19 · Native Document Metadata</div>
+    <pre><span class="kw">function</span> <span class="fn">ComicArticlePage</span>({ <span class="var">issue</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">article</span>&gt;
+      &lt;<span class="kw">title</span>&gt;{<span class="var">issue</span>.<span class="var">title</span>} — Hero Comics&lt;/<span class="kw">title</span>&gt;
+      &lt;<span class="kw">meta</span> name=<span class="str">"description"</span> content={<span class="var">issue</span>.<span class="var">summary</span>} /&gt;
+      &lt;<span class="kw">meta</span> name=<span class="str">"author"</span> content=<span class="str">"Alex Rivera"</span> /&gt;
+      &lt;<span class="kw">link</span> rel=<span class="str">"canonical"</span> href={<span class="str">`https://comics.org/issues/${<span class="var">issue</span>.<span class="var">id</span>}`</span>} /&gt;
+      &lt;<span class="kw">h1</span>&gt;{<span class="var">issue</span>.<span class="var">title</span>}&lt;/<span class="kw">h1</span>&gt;
+      &lt;<span class="kw">p</span>&gt;{<span class="var">issue</span>.<span class="var">content</span>}&lt;/<span class="kw">p</span>&gt;
+    &lt;/<span class="kw">article</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <h3>2. Native Stylesheet &amp; Script Precedence</h3>
+  <p>
+    React 19 manages stylesheet loading order using a built-in <code>precedence</code> attribute,
+    ensuring critical CSS rules load without flash of unstyled content (FOUC).
+  </p>
+  <div class="code-block">
+    <div class="code-label">React 19 · Precedence &amp; Resource Preloading</div>
+    <pre><span class="kw">import</span> { preload, preinit } <span class="kw">from</span> <span class="str">'react-dom'</span>;
+
+<span class="kw">function</span> <span class="fn">SuperApp</span>() {
+  <span class="cmt">// Tell the browser to preload key assets before they are requested!</span>
+  <span class="fn">preload</span>(<span class="str">'/fonts/comic-font.woff2'</span>, { as: <span class="str">'font'</span>, type: <span class="str">'font/woff2'</span> });
+  <span class="fn">preinit</span>(<span class="str">'/scripts/analytics.js'</span>, { as: <span class="str">'script'</span> });
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">main</span>&gt;
+      &lt;<span class="kw">link</span> rel=<span class="str">"stylesheet"</span> href=<span class="str">"/styles/theme.css"</span> precedence=<span class="str">"high"</span> /&gt;
+      &lt;<span class="kw">h1</span>&gt;Superhero HQ Portal&lt;/<span class="kw">h1</span>&gt;
+    &lt;/<span class="kw">main</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Capability</th>
+        <th>React 18 &amp; Earlier</th>
+        <th>React 19</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Form Submissions</td>
+        <td>Manual onSubmit, e.preventDefault(), manual spinners</td>
+        <td>Native &lt;form action={action}&gt; with useActionState</td>
+      </tr>
+      <tr>
+        <td>Optimistic UI</td>
+        <td>Complex custom reducer with manual rollbacks</td>
+        <td>Declarative <code>useOptimistic()</code> with auto-rollback</td>
+      </tr>
+      <tr>
+        <td>Promise Reading</td>
+        <td>useEffect + setState + loading booleans</td>
+        <td>Direct unwrapping via <code>use(promise)</code> + Suspense</td>
+      </tr>
+      <tr>
+        <td>Document Head</td>
+        <td>react-helmet external library required</td>
+        <td>Built-in native hoisting of title, meta, &amp; link</td>
+      </tr>
+      <tr>
+        <td>Asset Loading</td>
+        <td>Manual &lt;link rel="preload"&gt; in index.html</td>
+        <td>Preload/preinit functions + precedence attribute</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="page" id="ch9-tryyourself">
+  <h2>🛠️ Try It Yourself!</h2>
+  <div class="quiz-box" style="border-left-color:#ff6f00; background:#fff8e1;">
+    <h3>Mission Challenge: The Live Quest Acceptor</h3>
+    <p>Construct a mission acceptance card using React 19's brand-new actions:</p>
+    <ul>
+      <li>Use <code>useOptimistic</code> to show "Status: En Route 🚀" instantly when clicked.</li>
+      <li>Use <code>useActionState</code> to handle an async function simulating a 1.5-second dispatch call.</li>
+      <li>Render a child <code>&lt;MissionStatusButton /&gt;</code> that reads <code>useFormStatus</code>.</li>
+      <li>Include an error fallback if mission dispatch fails (e.g., fuel depleted).</li>
+    </ul>
+  </div>
+
+  <div class="code-block">
+    <div class="code-label">Starter blueprint for mission acceptor</div>
+    <pre><span class="kw">import</span> { useActionState, useOptimistic } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { useFormStatus } <span class="kw">from</span> <span class="str">'react-dom'</span>;
+
+<span class="kw">async function</span> <span class="fn">dispatchHeroMission</span>(<span class="var">prevState</span>, <span class="var">formData</span>) {
+  <span class="cmt">// Simulating async API call</span>
+  <span class="kw">await</span> <span class="kw">new</span> <span class="fn">Promise</span>(<span class="var">r</span> =&gt; <span class="fn">setTimeout</span>(<span class="var">r</span>, <span class="str">1500</span>));
+  <span class="kw">const</span> <span class="var">missionId</span> = <span class="var">formData</span>.<span class="fn">get</span>(<span class="str">'missionId'</span>);
+  <span class="kw">return</span> { status: <span class="str">'ACCEPTED'</span>, missionId };
+}
+
+<span class="kw">export function</span> <span class="fn">MissionCard</span>({ <span class="var">missionId</span>, <span class="var">title</span> }) {
+  <span class="cmt">// TODO: Wire up useActionState, useOptimistic, and a nested Submit button!</span>
+}</pre>
+  </div>
+
+  <h2>Chapter 9 Summary</h2>
+  <ul class="summary-list">
+    <li>✅ <strong>Actions</strong> elevate async transitions into first-class citizens in React 19</li>
+    <li>✅ <code>useActionState</code> handles action state, pending status, and form dispatchers seamlessly</li>
+    <li>✅ <code>useOptimistic</code> provides immediate UI feedback while server requests are underway</li>
+    <li>✅ <code>use()</code> can read promises and contexts dynamically and even conditionally inside render</li>
+    <li>✅ <code>useFormStatus</code> lets nested child elements read parent form pending states without prop drilling</li>
+    <li>✅ Native document metadata (<code>&lt;title&gt;</code>, <code>&lt;meta&gt;</code>) is hoisted to the head automatically</li>
+    <li>✅ Native asset preloading and stylesheet precedence prevent styling glitches and improve performance</li>
+  </ul>
+</div>
+
+<div class="page" id="ch9-quiz">
+  <div class="quiz-box">
+    <h2>🧠 Chapter 9 Quiz</h2>
+
+    <div class="quiz-question">
+      <p><strong>Q1.</strong> What happens if an action passed to <code>useOptimistic</code> throws an error?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ React automatically rolls back the optimistic state to the actual current state stored
+        on the client/server, preventing inconsistent and broken user interfaces.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q2.</strong> Can the new <code>use()</code> API be called inside an <code>if</code> condition?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ Yes! Unlike traditional hooks like <code>useState</code> or <code>useEffect</code>,
+        <code>use()</code> can be called conditionally inside loops or if-statements.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q3.</strong> Why would you use <code>useFormStatus</code> instead of prop drilling <code>isPending</code>?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ It allows deeply nested reusable form controls (like custom submit buttons or spinners)
+        to independently discover if their containing parent form is pending submission, completely eliminating
+        prop drilling.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q4.</strong> How does React 19 handle <code>&lt;title&gt;</code> tags rendered inside child components?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ React 19 hoists document metadata tags (like <code>&lt;title&gt;</code>, <code>&lt;meta&gt;</code>,
+        and <code>&lt;link rel="canonical"&gt;</code>) directly into the document <code>&lt;head&gt;</code>
+        without requiring third-party libraries.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q5.</strong> What three elements are returned by the tuple from <code>useActionState(fn, initial)</code>?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ <code>[state, formAction, isPending]</code>: the current resolved state, the action dispatcher
+        suitable for <code>&lt;form action={formAction}&gt;</code> or direct calls, and a boolean indicating
+        whether the transition is currently pending.</p>
+      </details>
+    </div>
+  </div>
+  <div class="page-number">Chapter 9 · React 19 New Powers</div>
+</div>

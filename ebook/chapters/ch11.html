@@ -1,0 +1,418 @@
+<!-- ============================================================
+     CHAPTER 11: Angular Templates vs JSX
+     ============================================================ -->
+<div class="page chapter-header" id="chapter-11">
+  <div class="chapter-number-badge">11</div>
+  <div class="chapter-header-content">
+    <div class="unit-label">UNIT 3 · Angular — The Enterprise Giant</div>
+    <h1 class="chapter-title">Angular Templates vs JSX</h1>
+    <p class="chapter-subtitle">The two philosophies of expressing user interfaces on the web</p>
+    <div class="learning-objectives">
+      <h3>🎯 Learning Objectives</h3>
+      <ul>
+        <li>Contrast Angular's declarative HTML templates with React's JavaScript-first JSX</li>
+        <li>Master Angular's modern built-in control flow (<code>@if</code>, <code>@for</code>, <code>@switch</code>)</li>
+        <li>Learn the "Banana in a Box" syntax (<code>[(ngModel)]</code>) and event bindings</li>
+        <li>Understand Pipes in Angular vs helper functions in React</li>
+        <li>Compare compile-time HTML template analysis with JSX compiler optimizations</li>
+        <li>Translate real-world UI patterns seamlessly between both paradigms</li>
+      </ul>
+    </div>
+  </div>
+  <div class="chapter-header-illustration">
+    <!-- Newspaper Printing Press SVG -->
+    <svg viewBox="0 0 340 220" width="340" height="220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#455a64"/>
+          <stop offset="100%" stop-color="#263238"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Printing Press Roller -->
+      <rect x="30" y="40" width="130" height="120" rx="6" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+      <rect x="35" y="45" width="120" height="18" fill="#dd0031"/>
+      <text x="95" y="58" font-family="'Nunito', sans-serif" font-weight="900" font-size="9" fill="#ffffff" text-anchor="middle">ANGULAR GAZETTE</text>
+      <!-- Newspaper text lines -->
+      <line x1="42" y1="72" x2="90" y2="72" stroke="#37474f" stroke-width="2"/>
+      <line x1="42" y1="80" x2="148" y2="80" stroke="#b0bec5" stroke-width="1.5"/>
+      <line x1="42" y1="88" x2="148" y2="88" stroke="#b0bec5" stroke-width="1.5"/>
+      <rect x="42" y="96" width="45" height="30" fill="#e0e0e0"/>
+      <line x1="95" y1="102" x2="148" y2="102" stroke="#b0bec5" stroke-width="1.5"/>
+      <line x1="95" y1="110" x2="148" y2="110" stroke="#b0bec5" stroke-width="1.5"/>
+      <text x="95" y="145" font-family="monospace" font-size="8" fill="#dd0031" text-anchor="middle">Template: Enhanced HTML</text>
+
+      <!-- VS dividing gear -->
+      <circle cx="175" cy="100" r="16" fill="#ffb300"/>
+      <text x="175" y="105" font-family="'Nunito', sans-serif" font-weight="900" font-size="11" fill="#212121" text-anchor="middle">VS</text>
+
+      <!-- JSX Code Tablet -->
+      <rect x="195" y="40" width="120" height="120" rx="6" fill="#1e1e1e" stroke="#61dafb" stroke-width="2"/>
+      <rect x="200" y="45" width="110" height="15" rx="3" fill="#2d2d2d"/>
+      <circle cx="208" cy="52" r="3" fill="#ff5f56"/>
+      <circle cx="216" cy="52" r="3" fill="#ffbd2e"/>
+      <circle cx="224" cy="52" r="3" fill="#27c93f"/>
+      <text x="210" y="75" font-family="monospace" font-size="8" fill="#61dafb">&lt;Headline&gt;</text>
+      <text x="220" y="88" font-family="monospace" font-size="8" fill="#ce9178">{title}</text>
+      <text x="210" y="102" font-family="monospace" font-size="8" fill="#61dafb">&lt;/Headline&gt;</text>
+      <text x="210" y="116" font-family="monospace" font-size="8" fill="#c586c0">items.map()</text>
+      <text x="255" y="145" font-family="monospace" font-size="8" fill="#61dafb" text-anchor="middle">JSX: Pure JavaScript</text>
+
+      <!-- Bottom label -->
+      <text x="175" y="195" font-family="'Nunito', sans-serif" font-size="11" fill="#757575" text-anchor="middle">Two Different Paths to Dynamic Screen Rendering</text>
+    </svg>
+  </div>
+</div>
+
+<div class="page" id="ch11-story">
+  <div class="real-world">
+    <h2>📰 A Real-World Story: The Newspaper Printing Press</h2>
+    <p>
+      Back in the days before internet news feeds, every morning's newspaper 🗞️ was produced using
+      heavy mechanical printing presses. The printers prepared a <strong>metal template plate</strong>
+      with blank slots left open for today's headlines, weather forecasts, and stock prices. The layout
+      itself was strictly defined by the plate; all the press did was pour fresh ink and variable text into
+      those pre-carved slots.
+    </p>
+    <p>
+      <strong>Angular Templates</strong> work just like those traditional printing plates! They take standard,
+      clean HTML markup that web browsers have understood for thirty years, and cut out special "slots"
+      using curly braces <code>{{ title }}</code> or special stamps like <code>@if</code> and <code>@for</code>.
+      A web designer can look at an Angular template and immediately recognize it as a real webpage.
+    </p>
+    <p>
+      <strong>React JSX</strong>, on the other hand, is like a magical digital paintbrush 🖌️ operated by a
+      coder. Instead of filling out a pre-made paper plate, the painter writes pure JavaScript code that
+      <em>generates</em> the shapes and colors dynamically on every stroke. If you know JavaScript, you know JSX!
+      Let's explore how these two contrasting philosophies solve the exact same challenges! 🎨📐
+    </p>
+  </div>
+
+  <h2>The Fundamental Philosophical Divide</h2>
+  <div class="svg-container">
+    <svg viewBox="0 0 520 160" width="500" height="160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Angular side -->
+      <rect x="20" y="25" width="220" height="110" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+      <text x="130" y="50" font-family="'Nunito', sans-serif" font-size="13" font-weight="800" fill="#c62828" text-anchor="middle">Angular: HTML + Superpowers</text>
+      <text x="35" y="75" font-family="sans-serif" font-size="10" fill="#333">1. Starts with genuine HTML</text>
+      <text x="35" y="93" font-family="sans-serif" font-size="10" fill="#333">2. Adds custom directives &amp; pipes</text>
+      <text x="35" y="111" font-family="sans-serif" font-size="10" fill="#333">3. Strict compiler type-checks markup</text>
+
+      <!-- React side -->
+      <rect x="280" y="25" width="220" height="110" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+      <text x="390" y="50" font-family="'Nunito', sans-serif" font-size="13" font-weight="800" fill="#1565c0" text-anchor="middle">React: JavaScript + HTML Tags</text>
+      <text x="295" y="75" font-family="sans-serif" font-size="10" fill="#333">1. Starts inside JavaScript code</text>
+      <text x="295" y="93" font-family="sans-serif" font-size="10" fill="#333">2. Full power of JS loops &amp; math</text>
+      <text x="295" y="111" font-family="sans-serif" font-size="10" fill="#333">3. Compiles down to React.createElement</text>
+    </svg>
+  </div>
+
+  <div class="callout definition">
+    <span class="callout-icon">📖</span>
+    <div>
+      <strong>Definition — Template vs JSX:</strong> An <em>Angular Template</em> is a declarative domain-specific
+      extension of standard HTML parsed by the Angular template compiler. <em>JSX</em> is a syntax extension
+      for JavaScript that allows you to write HTML-like element tags directly inside JavaScript files.
+    </div>
+  </div>
+</div>
+
+<div class="page" id="ch11-kids">
+  <div class="kid-note">
+    <h2>🎮 For Kids — Coloring Book vs. Blank Canvas</h2>
+    <p>
+      Imagine you're in art class at school 🎨:
+    </p>
+    <ul>
+      <li>🖍️ <strong>The Angular Template is a Coloring Book:</strong> The outline of the cartoon dragon is
+      already neatly printed on the page. You have numbered spaces: color section #1 green, color section #2 orange.
+      It's super easy to stay inside the lines, and the final picture looks neat and organized every time!</li>
+      <li>✨ <strong>React JSX is a Blank Sketchpad:</strong> You get a blank white sheet and a set of magic
+      markers. You can draw dragons, flying cars, or dinosaurs however you want using code! You have total freedom,
+      but you have to remember how to draw the hands and feet yourself.</li>
+    </ul>
+    <p>
+      Both ways create awesome artwork! Neither is "better"—builders who love structure pick the coloring book,
+      and free-form artists pick the sketchpad! 🐲🖍️
+    </p>
+  </div>
+
+  <h2>The "Banana in a Box" Secret 🍌📦</h2>
+  <p>
+    One of the funniest and most famous memory tricks in web development is Angular's <strong>Banana in a Box</strong>
+    syntax: <code>[(ngModel)]</code>.
+  </p>
+  <div class="code-block angular">
+    <div class="code-label">The Banana in a Box trick</div>
+    <pre><span class="cmt">&lt;!-- Notice the brackets [] look like a cardboard box, and the parentheses () look like a banana! --&gt;</span>
+&lt;<span class="kw">input</span> [(ngModel)]=<span class="str">"favoriteGame"</span> /&gt;
+
+<span class="cmt">&lt;!-- 
+  Box = Property Binding [in] (data flows IN to the input)
+  Banana = Event Binding (out) (events flow OUT when you type)
+  Together = Two-way data binding!
+--&gt;</span></pre>
+  </div>
+  <div class="callout fun-fact">
+    <span class="callout-icon">🍌</span>
+    <strong>Why Banana in a Box?</strong> Square brackets <code>[...]</code> mean "data going into component".
+    Round parentheses <code>(...)</code> mean "events coming out of component". When you put the banana inside
+    the box <code>[()]</code>, data travels in BOTH directions at once!
+  </div>
+</div>
+
+<div class="page" id="ch11-dev">
+  <div class="pro-tip">
+    <h2>💻 For Developers — Side-by-Side Rosetta Stone</h2>
+  </div>
+
+  <h3>1. Conditional Rendering</h3>
+  <div class="code-block angular">
+    <div class="code-label">Angular (Modern @if Control Flow)</div>
+    <pre><span class="cmt">&lt;!-- Modern Angular 17+ Built-in Control Flow --&gt;</span>
+@if (isLoggedIn()) {
+  &lt;<span class="kw">div</span> class=<span class="str">"dashboard"</span>&gt;
+    &lt;<span class="kw">h2</span>&gt;Welcome back, {{ user().name }}!&lt;/<span class="kw">h2</span>&gt;
+    &lt;<span class="kw">button</span> (click)=<span class="str">"logout()"</span>&gt;Log Out&lt;/<span class="kw">button</span>&gt;
+  &lt;/<span class="kw">div</span>&gt;
+} @else if (isGuest()) {
+  &lt;<span class="kw">p</span>&gt;Browsing as Guest. &lt;<span class="kw">a</span> routerLink=<span class="str">"/signup"</span>&gt;Sign Up&lt;/<span class="kw">a</span>&gt;&lt;/<span class="kw">p</span>&gt;
+} @else {
+  &lt;<span class="kw">app-login-form</span> (loginSuccess)=<span class="str">"onLogin($event)"</span> /&gt;
+}</pre>
+  </div>
+
+  <div class="code-block react">
+    <div class="code-label">React 19 JSX Equivalent</div>
+    <pre><span class="cmt">// React JSX: JavaScript ternary or conditional logic</span>
+<span class="kw">function</span> <span class="fn">AuthDisplay</span>({ <span class="var">isLoggedIn</span>, <span class="var">isGuest</span>, <span class="var">user</span>, <span class="var">onLogout</span>, <span class="var">onLogin</span> }) {
+  <span class="kw">if</span> (<span class="var">isLoggedIn</span>) {
+    <span class="kw">return</span> (
+      &lt;<span class="kw">div</span> className=<span class="str">"dashboard"</span>&gt;
+        &lt;<span class="kw">h2</span>&gt;Welcome back, {<span class="var">user</span>.<span class="var">name</span>}!&lt;/<span class="kw">h2</span>&gt;
+        &lt;<span class="kw">button</span> onClick={<span class="var">onLogout</span>}&gt;Log Out&lt;/<span class="kw">button</span>&gt;
+      &lt;/<span class="kw">div</span>&gt;
+    );
+  }
+
+  <span class="kw">if</span> (<span class="var">isGuest</span>) {
+    <span class="kw">return</span> &lt;<span class="kw">p</span>&gt;Browsing as Guest. &lt;<span class="kw">a</span> href=<span class="str">"/signup"</span>&gt;Sign Up&lt;/<span class="kw">a</span>&gt;&lt;/<span class="kw">p</span>&gt;;
+  }
+
+  <span class="kw">return</span> &lt;<span class="fn">LoginForm</span> onLoginSuccess={<span class="var">onLogin</span>} /&gt;;
+}</pre>
+  </div>
+
+  <h3>2. Looping over Collections</h3>
+  <div class="code-block angular">
+    <div class="code-label">Angular (Modern @for with mandatory tracking)</div>
+    <pre><span class="cmt">&lt;!-- Mandatory track prevents invisible reconciliation performance bugs! --&gt;</span>
+&lt;<span class="kw">ul</span> class=<span class="str">"item-list"</span>&gt;
+  @for (item of items(); track item.id; let idx = $index, count = $count) {
+    &lt;<span class="kw">li</span> [class.even]=<span class="str">"idx % 2 === 0"</span>&gt;
+      #{{ idx + 1 }}/{{ count }}: {{ item.title }} - ${{ item.price }}
+    &lt;/<span class="kw">li</span>&gt;
+  } @empty {
+    &lt;<span class="kw">li</span> class=<span class="str">"empty-state"</span>&gt;No products found in warehouse!&lt;/<span class="kw">li</span>&gt;
+  }
+&lt;/<span class="kw">ul</span>&gt;</pre>
+  </div>
+
+  <div class="code-block react">
+    <div class="code-label">React 19 JSX Equivalent</div>
+    <pre><span class="cmt">// React JSX: Array.prototype.map() with key prop</span>
+&lt;<span class="kw">ul</span> className=<span class="str">"item-list"</span>&gt;
+  {<span class="var">items</span>.<span class="var">length</span> === <span class="str">0</span> ? (
+    &lt;<span class="kw">li</span> className=<span class="str">"empty-state"</span>&gt;No products found in warehouse!&lt;/<span class="kw">li</span>&gt;
+  ) : (
+    <span class="var">items</span>.<span class="fn">map</span>((<span class="var">item</span>, <span class="var">idx</span>) =&gt; (
+      &lt;<span class="kw">li</span> key={<span class="var">item</span>.<span class="var">id</span>} className={<span class="var">idx</span> % <span class="str">2</span> === <span class="str">0</span> ? <span class="str">'even'</span> : <span class="str">''</span>}&gt;
+        #{<span class="var">idx</span> + <span class="str">1</span>}/{<span class="var">items</span>.<span class="var">length</span>}: {<span class="var">item</span>.<span class="var">title</span>} - ${<span class="var">item</span>.<span class="var">price</span>}
+      &lt;/<span class="kw">li</span>&gt;
+    ))
+  )}
+&lt;/<span class="kw">ul</span>&gt;</pre>
+  </div>
+</div>
+
+<div class="page" id="ch11-pipes">
+  <h2>Angular Pipes vs. React Helper Functions</h2>
+  <p>
+    In Angular templates, you transform data display using the <code>|</code> pipe character.
+    Pipes can format dates, currencies, strings, or even unwrap async observables!
+  </p>
+
+  <div class="code-block angular">
+    <div class="code-label">Angular · Built-in and Custom Pipes</div>
+    <pre><span class="cmt">&lt;!-- Built-in Currency and Date Pipes --&gt;</span>
+&lt;<span class="kw">p</span>&gt;Price: {{ product.price | currency:'GBP':'symbol':'1.2-2' }}&lt;/<span class="kw">p</span>&gt;
+&lt;<span class="kw">p</span>&gt;Released: {{ product.releaseDate | date:'fullDate' }}&lt;/<span class="kw">p</span>&gt;
+&lt;<span class="kw">p</span>&gt;JSON Debug: {{ product | json }}&lt;/<span class="kw">p</span>&gt;
+
+<span class="cmt">&lt;!-- Async Pipe automatically subscribes and unsubscribes from RxJS streams! --&gt;</span>
+&lt;<span class="kw">p</span>&gt;Live Stock: {{ stockObservable$ | async }}&lt;/<span class="kw">p</span>&gt;</pre>
+  </div>
+
+  <div class="code-block react">
+    <div class="code-label">React 19 JSX Equivalent (Standard JS utilities)</div>
+    <pre><span class="cmt">// In React, you use standard Intl formatters or pure helper functions</span>
+<span class="kw">const</span> <span class="var">gbpFormatter</span> = <span class="kw">new</span> <span class="fn">Intl</span>.<span class="fn">NumberFormat</span>(<span class="str">'en-GB'</span>, { style: <span class="str">'currency'</span>, currency: <span class="str">'GBP'</span> });
+<span class="kw">const</span> <span class="var">dateFormatter</span> = <span class="kw">new</span> <span class="fn">Intl</span>.<span class="fn">DateTimeFormat</span>(<span class="str">'en-GB'</span>, { dateStyle: <span class="str">'full'</span> });
+
+<span class="kw">function</span> <span class="fn">ProductView</span>({ <span class="var">product</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">p</span>&gt;Price: {<span class="var">gbpFormatter</span>.<span class="fn">format</span>(<span class="var">product</span>.<span class="var">price</span>)}&lt;/<span class="kw">p</span>&gt;
+      &lt;<span class="kw">p</span>&gt;Released: {<span class="var">dateFormatter</span>.<span class="fn">format</span>(<span class="var">product</span>.<span class="var">releaseDate</span>)}&lt;/<span class="kw">p</span>&gt;
+      &lt;<span class="kw">pre</span>&gt;{<span class="fn">JSON</span>.<span class="fn">stringify</span>(<span class="var">product</span>, <span class="kw">null</span>, <span class="str">2</span>)}&lt;/<span class="kw">pre</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Operation</th>
+        <th>Angular Template Syntax</th>
+        <th>React JSX Syntax</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Text Interpolation</td>
+        <td><code>{{ user.name }}</code></td>
+        <td><code>{user.name}</code></td>
+      </tr>
+      <tr>
+        <td>Property Binding</td>
+        <td><code>[src]="user.avatarUrl"</code></td>
+        <td><code>src={user.avatarUrl}</code></td>
+      </tr>
+      <tr>
+        <td>Class Binding</td>
+        <td><code>[class.highlight]="isActive"</code></td>
+        <td><code>className={isActive ? 'highlight' : ''}</code></td>
+      </tr>
+      <tr>
+        <td>Event Handling</td>
+        <td><code>(click)="handleClick($event)"</code></td>
+        <td><code>onClick={handleClick}</code></td>
+      </tr>
+      <tr>
+        <td>Two-Way Binding</td>
+        <td><code>[(ngModel)]="searchTerm"</code></td>
+        <td><code>value={search} onChange={e =&gt; setSearch(e.target.value)}</code></td>
+      </tr>
+      <tr>
+        <td>Empty List Fallback</td>
+        <td>Built-in <code>@empty { ... }</code></td>
+        <td>Ternary <code>list.length === 0 ? &lt;Empty /&gt; : list.map(...)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <strong>Compiler Catch:</strong> In Angular, <code>(click)="save()"</code> executes the method on the class
+    instance (with <code>this</code> bound automatically). In React, passing <code>onClick={this.save}</code> in old
+    classes lost its <code>this</code> context, which is why modern React uses arrow functions or top-level function components!
+  </div>
+</div>
+
+<div class="page" id="ch11-tryyourself">
+  <h2>🛠️ Try It Yourself!</h2>
+  <div class="quiz-box" style="border-left-color:#2e7d32; background:#f1f8e9;">
+    <h3>Translation Challenge: The Rosetta Stone Converter</h3>
+    <p>Convert this Angular template fragment into clean React 19 JSX:</p>
+  </div>
+
+  <div class="code-block angular">
+    <div class="code-label">Translate this Angular code to React:</div>
+    <pre>&lt;<span class="kw">div</span> class=<span class="str">"notifications"</span>&gt;
+  @if (unreadCount() &gt; 0) {
+    &lt;<span class="kw">span</span> class=<span class="str">"badge"</span> [class.urgent]=<span class="str">"unreadCount() &gt; 10"</span>&gt;
+      {{ unreadCount() }} New Messages
+    &lt;/<span class="kw">span</span>&gt;
+  }
+  &lt;<span class="kw">button</span> (click)=<span class="str">"markAllRead()"</span> [disabled]=<span class="str">"unreadCount() === 0"</span>&gt;
+    Clear All
+  &lt;/<span class="kw">button</span>&gt;
+&lt;/<span class="kw">div</span>&gt;</pre>
+  </div>
+
+  <div class="code-block react">
+    <div class="code-label">Solution in React 19 JSX:</div>
+    <pre><span class="kw">function</span> <span class="fn">NotificationBadge</span>({ <span class="var">unreadCount</span>, <span class="var">onMarkAllRead</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> className=<span class="str">"notifications"</span>&gt;
+      {<span class="var">unreadCount</span> &gt; <span class="str">0</span> &amp;&amp; (
+        &lt;<span class="kw">span</span> className={<span class="str">`badge ${<span class="var">unreadCount</span> &gt; <span class="str">10</span> ? <span class="str">'urgent'</span> : <span class="str">''</span>}`</span>}&gt;
+          {<span class="var">unreadCount</span>} New Messages
+        &lt;/<span class="kw">span</span>&gt;
+      )}
+      &lt;<span class="kw">button</span> onClick={<span class="var">onMarkAllRead</span>} disabled={<span class="var">unreadCount</span> === <span class="str">0</span>}&gt;
+        Clear All
+      &lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <h2>Chapter 11 Summary</h2>
+  <ul class="summary-list">
+    <li>✅ Angular templates build on genuine HTML augmented with directives and control flow</li>
+    <li>✅ React JSX is a JavaScript syntax extension compiling to pure function calls</li>
+    <li>✅ Angular 17+ introduced modern native control blocks: <code>@if</code>, <code>@for</code>, and <code>@switch</code></li>
+    <li>✅ Angular's <code>@for</code> requires an explicit <code>track</code> expression for performance</li>
+    <li>✅ Property bindings use brackets <code>[prop]</code>, while event listeners use parentheses <code>(event)</code></li>
+    <li>✅ Angular pipes (<code>|</code>) format values declaratively, matching JavaScript's standard utility functions</li>
+  </ul>
+</div>
+
+<div class="page" id="ch11-quiz">
+  <div class="quiz-box">
+    <h2>🧠 Chapter 11 Quiz</h2>
+
+    <div class="quiz-question">
+      <p><strong>Q1.</strong> What happens if you forget to add a <code>track</code> expression in an Angular <code>@for</code> loop?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ The Angular template compiler will throw a compile-time build error. Unlike React where a missing
+        <code>key</code> only triggers a console runtime warning, Angular enforces tracking at build time.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q2.</strong> What is the meaning of the <code>@empty</code> block in Angular templates?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ It provides an automatic fallback view that renders if the collection passed to the <code>@for</code>
+        loop has zero items or is null, avoiding complex ternary logic.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q3.</strong> Why does Angular use <code>(click)</code> with parentheses while React uses <code>onClick</code> with camelCase?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ In Angular, parentheses indicate event binding (outward communication). In React, JSX attributes
+        mirror DOM object property conventions in camelCase.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q4.</strong> How does the Angular <code>async</code> pipe prevent memory leaks?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ The <code>async</code> pipe automatically subscribes to an Observable or Promise when the component
+        mounts and automatically unsubscribes when the component is destroyed, eliminating manual cleanup.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q5.</strong> What is the JSX equivalent of Angular's two-way binding <code>[(ngModel)]="name"</code>?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ A controlled input: passing both the current state as <code>value={name}</code> and an event handler
+        <code>onChange={e =&gt; setName(e.target.value)}</code>.</p>
+      </details>
+    </div>
+  </div>
+  <div class="page-number">Chapter 11 · Angular Templates vs JSX</div>
+</div>

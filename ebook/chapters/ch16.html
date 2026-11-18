@@ -1,0 +1,499 @@
+<!-- ============================================================
+     CHAPTER 16: State Management — NgRx vs Zustand/Redux
+     Warehouse / Filing Cabinet Analogy 🏭🗄️
+     ============================================================ -->
+<div class="page chapter-page" id="chapter-16">
+
+  <!-- Chapter Header -->
+  <div class="chapter-header" style="background: linear-gradient(135deg, #4a148c 0%, #1565c0 100%);">
+    <div class="chapter-badge">16</div>
+    <div class="chapter-header-content">
+      <div class="chapter-unit-label">UNIT 4 · THE ROSETTA STONE</div>
+      <h1 class="chapter-title">State Management</h1>
+      <h2 class="chapter-subtitle">🏭 NgRx vs Zustand &amp; Redux Toolkit — The Global Warehouse</h2>
+      <div class="learning-objectives">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Understand local vs global application state and when a central store is actually needed</li>
+          <li>Master the Redux/NgRx unidirectional data flow pattern (Actions, Reducers, Selectors, Effects)</li>
+          <li>Compare NgRx's enterprise event bus with modern lightweight alternatives like Zustand</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opening Story -->
+  <div class="chapter-opening">
+    <div class="callout fun-fact">
+      <span class="callout-icon">📦</span>
+      <div class="callout-body">
+        <h4>The Tale of Two Grand Warehouses 🏭</h4>
+        <p>Imagine running the busiest toy factory on Earth. If every elf keeps their own private stash of teddy bear stuffing, wooden wheels, and wrapping paper in their pocket, nobody knows how many toys can be shipped before Christmas Eve. Confusion reigns! To save the holidays, the factory builds a <strong>Central Warehouse</strong> (Global State Store). Every single toy, bolt, and battery is tracked in one official registry ledger.</p>
+
+        <p>🅰️ <strong>NgRx Logistics Corp</strong> operates like an automated Fortune 500 mega-depot. If an elf wants three wheels, they cannot simply walk in and grab them! They must fill out an official dispatch order form (<strong>Action</strong>), pass it to the inventory manager (<strong>Reducer</strong>), let the conveyor belts fetch supplies asynchronously from external suppliers (<strong>Effects</strong>), and review stock monitors on live TV displays (<strong>Selectors with RxJS Observables</strong>). It is rigid, bulletproof, perfectly auditable, and impossible to cheat. 📜💼</p>
+
+        <p>⚛️ <strong>Zustand Express Depot</strong> operates like a friendly neighborhood workshop with modern smart lockers. A worker walks up to a designated cubby, calls <code>useBearStore()</code>, and immediately takes what they need or drops in new supplies with a simple one-line note. There is no endless paperwork or five-tier requisition bureaucracy unless you specifically demand it. Need heavy machinery with flight recorders? React teams bring in <strong>Redux Toolkit (RTK)</strong>. Need quick, clean simplicity? <strong>Zustand</strong> gets you back to building toys in ten seconds flat! 🚀⚡</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Picture SVG -->
+  <div class="svg-container">
+    <h3>🗺️ The Big Picture — State Management Data Flow</h3>
+    <svg viewBox="0 0 940 460" width="100%" style="max-width:940px; border:2px solid #e0e0e0; border-radius:12px; background:#fafafa;">
+      <defs>
+        <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#6a1b9a"/>
+        </marker>
+        <marker id="arrow-blue-16" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#0277bd"/>
+        </marker>
+        <marker id="arrow-green-16" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#2e7d32"/>
+        </marker>
+      </defs>
+
+      <!-- NgRx Column (Left) -->
+      <rect x="25" y="20" width="425" height="420" rx="14" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+      <text x="237" y="52" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="17" fill="#6a1b9a">🅰️ NgRx (Redux + RxJS Pattern)</text>
+
+      <!-- NgRx Step 1: Component & Dispatch -->
+      <rect x="60" y="75" width="355" height="45" rx="8" fill="#e1bee7" stroke="#8e24aa" stroke-width="1.5"/>
+      <text x="237" y="102" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#4a148c">1. Component: store.dispatch(addItem({ item }))</text>
+
+      <line x1="237" y1="120" x2="237" y2="150" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+      <!-- NgRx Step 2: Actions & Effects split -->
+      <rect x="60" y="152" width="170" height="52" rx="8" fill="#ce93d8" stroke="#8e24aa"/>
+      <text x="145" y="174" text-anchor="middle" font-size="12" font-family="Nunito" font-weight="700" fill="#4a148c">2a. Reducer</text>
+      <text x="145" y="192" text-anchor="middle" font-size="11" font-family="Nunito" fill="#4a148c">Pure function (S, A) =&gt; S</text>
+
+      <rect x="245" y="152" width="170" height="52" rx="8" fill="#ce93d8" stroke="#8e24aa"/>
+      <text x="330" y="174" text-anchor="middle" font-size="12" font-family="Nunito" font-weight="700" fill="#4a148c">2b. Effects (RxJS)</text>
+      <text x="330" y="192" text-anchor="middle" font-size="11" font-family="Nunito" fill="#4a148c">HTTP / Async API side-effects</text>
+
+      <line x1="145" y1="204" x2="145" y2="240" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrow-purple)"/>
+      <path d="M 330 204 L 330 220 L 220 220 L 220 238" fill="none" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+      <!-- NgRx Step 3: Central Store State -->
+      <rect x="60" y="242" width="355" height="50" rx="8" fill="#ba68c8" stroke="#6a1b9a"/>
+      <text x="237" y="266" text-anchor="middle" font-size="14" font-family="Nunito" font-weight="800" fill="#ffffff">3. Immutable Store State 🗄️</text>
+      <text x="237" y="283" text-anchor="middle" font-size="11" font-family="Nunito" fill="#f3e5f5">Single source of truth (Read-only)</text>
+
+      <line x1="237" y1="292" x2="237" y2="328" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+      <!-- NgRx Step 4: Selectors -->
+      <rect x="60" y="330" width="355" height="48" rx="8" fill="#e1bee7" stroke="#8e24aa"/>
+      <text x="237" y="352" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#4a148c">4. createSelector() Memoized Queries</text>
+      <text x="237" y="370" text-anchor="middle" font-size="11" font-family="Nunito" fill="#4a148c">Streams Observable&lt;T&gt; to Component via async pipe</text>
+
+      <text x="237" y="420" text-anchor="middle" font-size="11" font-family="Nunito" fill="#6a1b9a">Strict Unidirectional Flow · RxJS Ecosystem</text>
+
+      <!-- React Column (Right) -->
+      <rect x="490" y="20" width="425" height="420" rx="14" fill="#e1f5fe" stroke="#0288d1" stroke-width="2"/>
+      <text x="702" y="52" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="17" fill="#0277bd">⚛️ Zustand / Redux Toolkit</text>
+
+      <!-- Zustand Hook -->
+      <rect x="525" y="75" width="355" height="45" rx="8" fill="#b3e5fc" stroke="#039be5" stroke-width="1.5"/>
+      <text x="702" y="102" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#01579b">1. Component: const cart = useCartStore()</text>
+
+      <line x1="702" y1="120" x2="702" y2="152" stroke="#0288d1" stroke-width="2" marker-end="url(#arrow-blue-16)"/>
+
+      <!-- Zustand Direct Store -->
+      <rect x="525" y="154" width="355" height="70" rx="8" fill="#81d4fa" stroke="#0288d1"/>
+      <text x="702" y="180" text-anchor="middle" font-size="14" font-family="Nunito" font-weight="800" fill="#01579b">2. Zustand create() Store</text>
+      <text x="702" y="200" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="#0277bd">set((state) =&gt; ({ count: state.count + 1 }))</text>
+      <text x="702" y="216" text-anchor="middle" font-size="11" font-family="Nunito" fill="#01579b">Actions live directly inside the store object!</text>
+
+      <line x1="702" y1="224" x2="702" y2="258" stroke="#0288d1" stroke-width="2" marker-end="url(#arrow-blue-16)"/>
+
+      <!-- RTK Alternative & Selectors -->
+      <rect x="525" y="260" width="355" height="60" rx="8" fill="#b3e5fc" stroke="#039be5"/>
+      <text x="702" y="284" text-anchor="middle" font-size="13" font-family="Nunito" font-weight="700" fill="#01579b">3. Atomic Subscriptions</text>
+      <text x="702" y="304" text-anchor="middle" font-size="12" font-family="Nunito" fill="#01579b">useCartStore(s =&gt; s.items) — only re-renders when slice changes</text>
+
+      <line x1="702" y1="320" x2="702" y2="352" stroke="#0288d1" stroke-width="2" marker-end="url(#arrow-blue-16)"/>
+
+      <!-- RTK Option -->
+      <rect x="525" y="354" width="355" height="42" rx="8" fill="#e1f5fe" stroke="#0288d1"/>
+      <text x="702" y="380" text-anchor="middle" font-size="12" font-family="Nunito" fill="#0277bd">Or Redux Toolkit (RTK): createSlice() + useDispatch()</text>
+
+      <text x="702" y="420" text-anchor="middle" font-size="11" font-family="Nunito" fill="#01579b">Zero Boilerplate · Plain JavaScript · Fast Re-renders</text>
+    </svg>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="comparison-table-wrapper">
+    <h3>⚔️ Global State Implementation — Side-by-Side Code</h3>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular: NgRx Store (Actions, Reducers, Selectors)</th>
+          <th class="react-col">⚛️ React: Zustand Store (Modern &amp; Lightweight)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">cart.actions.ts</div>
+              <pre><code><span class="kw">import</span> { createAction, props } <span class="kw">from</span> <span class="str">'@ngrx/store'</span>;
+
+<span class="kw">export interface</span> <span class="fn">CartItem</span> {
+  id: <span class="var">string</span>;
+  name: <span class="var">string</span>;
+  price: <span class="var">number</span>;
+}
+
+<span class="kw">export const</span> addItem = <span class="fn">createAction</span>(
+  <span class="str">'[Cart] Add Item'</span>,
+  <span class="fn">props</span>&lt;{ item: <span class="fn">CartItem</span> }&gt;()
+);
+
+<span class="kw">export const</span> removeItem = <span class="fn">createAction</span>(
+  <span class="str">'[Cart] Remove Item'</span>,
+  <span class="fn">props</span>&lt;{ id: <span class="var">string</span> }&gt;()
+);
+
+<span class="kw">export const</span> clearCart = <span class="fn">createAction</span>(
+  <span class="str">'[Cart] Clear All Items'</span>
+);</code></pre>
+            </div>
+            <div class="code-block angular">
+              <div class="code-label">cart.reducer.ts</div>
+              <pre><code><span class="kw">import</span> { createReducer, on } <span class="kw">from</span> <span class="str">'@ngrx/store'</span>;
+<span class="kw">import</span> { addItem, removeItem, clearCart, CartItem } <span class="kw">from</span> <span class="str">'./cart.actions'</span>;
+
+<span class="kw">export interface</span> <span class="fn">CartState</span> {
+  items: <span class="fn">CartItem</span>[];
+  total: <span class="var">number</span>;
+}
+
+<span class="kw">export const</span> initialState: <span class="fn">CartState</span> = {
+  items: [],
+  total: <span class="num">0</span>
+};
+
+<span class="kw">export const</span> cartReducer = <span class="fn">createReducer</span>(
+  initialState,
+  <span class="fn">on</span>(addItem, (state, { item }) =&gt; ({
+    ...state,
+    items: [...state.items, item],
+    total: state.total + item.price
+  })),
+  <span class="fn">on</span>(removeItem, (state, { id }) =&gt; ({
+    ...state,
+    items: state.items.<span class="fn">filter</span>(i =&gt; i.id !== id),
+    total: state.items
+      .<span class="fn">filter</span>(i =&gt; i.id !== id)
+      .<span class="fn">reduce</span>((sum, i) =&gt; sum + i.price, <span class="num">0</span>)
+  })),
+  <span class="fn">on</span>(clearCart, () =&gt; initialState)
+);</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">useCartStore.ts (Zustand)</div>
+              <pre><code><span class="kw">import</span> { create } <span class="kw">from</span> <span class="str">'zustand'</span>;
+<span class="kw">import</span> { devtools, persist } <span class="kw">from</span> <span class="str">'zustand/middleware'</span>;
+
+<span class="kw">export interface</span> <span class="fn">CartItem</span> {
+  id: <span class="var">string</span>;
+  name: <span class="var">string</span>;
+  price: <span class="var">number</span>;
+}
+
+<span class="kw">interface</span> <span class="fn">CartState</span> {
+  items: <span class="fn">CartItem</span>[];
+  addItem: (item: <span class="fn">CartItem</span>) =&gt; <span class="var">void</span>;
+  removeItem: (id: <span class="var">string</span>) =&gt; <span class="var">void</span>;
+  clearCart: () =&gt; <span class="var">void</span>;
+  total: () =&gt; <span class="var">number</span>;
+}
+
+<span class="kw">export const</span> useCartStore = <span class="fn">create</span>&lt;<span class="fn">CartState</span>&gt;()(
+  <span class="fn">devtools</span>(
+    <span class="fn">persist</span>(
+      (set, get) =&gt; ({
+        items: [],
+        addItem: (item) =&gt;
+          <span class="fn">set</span>(state =&gt; ({ items: [...state.items, item] })),
+        removeItem: (id) =&gt;
+          <span class="fn">set</span>(state =&gt; ({
+            items: state.items.<span class="fn">filter</span>(i =&gt; i.id !== id)
+          })),
+        clearCart: () =&gt; <span class="fn">set</span>({ items: [] }),
+        total: () =&gt;
+          <span class="fn">get</span>().items.<span class="fn">reduce</span>((acc, cur) =&gt; acc + cur.price, <span class="num">0</span>)
+      }),
+      { name: <span class="str">'cart-storage'</span> }
+    )
+  )
+);</code></pre>
+            </div>
+            <div class="code-block react">
+              <div class="code-label">Alternative: Redux Toolkit (RTK) Slice</div>
+              <pre><code><span class="kw">import</span> { createSlice, PayloadAction } <span class="kw">from</span> <span class="str">'@reduxjs/toolkit'</span>;
+
+<span class="kw">const</span> cartSlice = <span class="fn">createSlice</span>({
+  name: <span class="str">'cart'</span>,
+  initialState: { items: [] <span class="kw">as</span> <span class="fn">CartItem</span>[] },
+  reducers: {
+    addItem: (state, action: PayloadAction&lt;<span class="fn">CartItem</span>&gt;) =&gt; {
+      state.items.<span class="fn">push</span>(action.payload); <span class="cmt">// Immer handles immutability!</span>
+    },
+    removeItem: (state, action: PayloadAction&lt;<span class="var">string</span>&gt;) =&gt; {
+      state.items = state.items.<span class="fn">filter</span>(i =&gt; i.id !== action.payload);
+    }
+  }
+});
+<span class="kw">export const</span> { addItem, removeItem } = cartSlice.actions;
+<span class="kw">export default</span> cartSlice.reducer;</code></pre>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">CartComponent (TypeScript &amp; Template)</div>
+              <pre><code><span class="kw">import</span> { Component } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { Store } <span class="kw">from</span> <span class="str">'@ngrx/store'</span>;
+<span class="kw">import</span> { Observable } <span class="kw">from</span> <span class="str">'rxjs'</span>;
+<span class="kw">import</span> { addItem, removeItem } <span class="kw">from</span> <span class="str">'./cart.actions'</span>;
+<span class="kw">import</span> { selectCartItems, selectCartTotal } <span class="kw">from</span> <span class="str">'./cart.selectors'</span>;
+
+<span class="kw">@Component</span>({
+  selector: <span class="str">'app-cart'</span>,
+  template: <span class="str">`
+    &lt;div class="cart-box"&gt;
+      &lt;h3&gt;Cart Items ({{ (items$ | async)?.length }})&lt;/h3&gt;
+      &lt;ul&gt;
+        &lt;li *ngFor="let item of items$ | async"&gt;
+          {{ item.name }} - \${{ item.price }}
+          &lt;button (click)="onRemove(item.id)"&gt;✕&lt;/button&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+      &lt;p&gt;Total: \${{ total$ | async }}&lt;/p&gt;
+    &lt;/div&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="fn">CartComponent</span> {
+  items$: <span class="fn">Observable</span>&lt;<span class="fn">CartItem</span>[]&gt; = <span class="kw">this</span>.store.<span class="fn">select</span>(selectCartItems);
+  total$: <span class="fn">Observable</span>&lt;<span class="var">number</span>&gt; = <span class="kw">this</span>.store.<span class="fn">select</span>(selectCartTotal);
+
+  <span class="fn">constructor</span>(<span class="kw">private</span> store: <span class="fn">Store</span>) {}
+
+  <span class="fn">onRemove</span>(id: <span class="var">string</span>) {
+    <span class="kw">this</span>.store.<span class="fn">dispatch</span>(<span class="fn">removeItem</span>({ id }));
+  }
+}</code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">Cart.tsx Component (React)</div>
+              <pre><code><span class="kw">import</span> React <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { useCartStore } <span class="kw">from</span> <span class="str">'./useCartStore'</span>;
+
+<span class="kw">export function</span> <span class="fn">Cart</span>() {
+  <span class="cmt">// Subscribing ONLY to items and removeItem prevents total recalculations from re-rendering</span>
+  <span class="kw">const</span> items = <span class="fn">useCartStore</span>(state =&gt; state.items);
+  <span class="kw">const</span> removeItem = <span class="fn">useCartStore</span>(state =&gt; state.removeItem);
+  <span class="kw">const</span> total = <span class="fn">useCartStore</span>(state =&gt; state.<span class="fn">total</span>());
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> className=<span class="str">"cart-box"</span>&gt;
+      &lt;<span class="kw">h3</span>&gt;Cart Items ({items.length})&lt;/<span class="kw">h3</span>&gt;
+      &lt;<span class="kw">ul</span>&gt;
+        {items.<span class="fn">map</span>(item =&gt; (
+          &lt;<span class="kw">li</span> key={item.id}&gt;
+            {item.name} - ${item.price}
+            &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">removeItem</span>(item.id)}&gt;✕&lt;/<span class="kw">button</span>&gt;
+          &lt;/<span class="kw">li</span>&gt;
+        ))}
+      &lt;/<span class="kw">ul</span>&gt;
+      &lt;<span class="kw">p</span>&gt;Total: ${total}&lt;/<span class="kw">p</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Kid Explains It -->
+  <div class="callout kid-note">
+    <span class="callout-icon">🧒</span>
+    <div class="callout-body">
+      <h4>Kid Explains It! 🎮</h4>
+      <p>Think of your video game score. If each screen has its own counter, player 1's coins might get lost when moving to the lava dungeon! <strong>NgRx</strong> is like sending a formal written petition to the castle king every time you grab a gold coin — the royal scribe updates the stone ledger, and messengers blow horns across the kingdom. <strong>Zustand</strong> is like a shared magic chalkboard in your clubhouse — you tap it with your chalk, write <code>+1 Coin</code>, and every player instantly sees the new score without waiting in line! 🏰✨</p>
+    </div>
+  </div>
+
+  <!-- Pro Deep Dive -->
+  <div class="callout pro-tip">
+    <span class="callout-icon">🔬</span>
+    <div class="callout-body">
+      <h4>Pro Deep Dive 🧠</h4>
+      <p><strong>The Mental Shift: Server State vs Client State:</strong> Before adopting NgRx or Redux, ask: <em>"Is this truly client state, or is it merely a cache of backend data?"</em> Over 80% of data traditionally stored in Redux/NgRx stores (user profiles, product catalogs, paginated lists) is <strong>Server State</strong>. Modern best practice favors using specialized caching engines (Angular's TanStack Query or HTTP interceptor caches; React's TanStack Query) for network resources, reserving NgRx/Zustand purely for true <strong>Client UI State</strong> (drawer open state, active filter chips, multi-step unsaved wizard data).</p>
+
+      <p><strong>Memoized Selectors and Tree-shaking:</strong> NgRx's <code>createSelector()</code> calculates derivations only when its specific input selectors emit new object references. However, because RxJS pipelines use closures, improper destruction without the <code>async</code> pipe or <code>takeUntilDestroyed()</code> causes memory leaks. Zustand bypasses RxJS completely: it utilizes <code>useSyncExternalStore</code> under the hood to guarantee tear-free concurrent renders in React 18 &amp; 19 without wrapper Context providers.</p>
+
+      <p><strong>NgRx ComponentStore &amp; SignalStore (Angular 16+):</strong> For features where global NgRx is overkill, the Angular team released <code>@ngrx/signals</code>. The <code>signalStore</code> allows writing reactive stores with signals, offering a lightweight developer experience remarkably similar to Zustand while retaining Angular's DI capabilities.</p>
+    </div>
+  </div>
+
+  <!-- Real-world Scenario -->
+  <div class="callout real-world">
+    <span class="callout-icon">🌍</span>
+    <div class="callout-body">
+      <h4>Real-World Scenario: Complex B2B SaaS Flight Booking Engine ✈️</h4>
+      <p>A corporate travel app allows booking flights with multiple layovers, traveler seat assignments, luggage add-ons, and dynamic currency conversions.</p>
+      <ul>
+        <li><strong>With NgRx:</strong> Every step (selecting outbound flight, adding hotel combo, applying company discount voucher) dispatches an action. NgRx Effects intercept voucher application, call credit check APIs, and emit <code>applyVoucherSuccess</code>. The entire booking history is replayable in Redux DevTools, allowing customer support engineers to export the exact JSON action sequence to reproduce ticket purchase bugs. ✈️📑</li>
+        <li><strong>With Zustand:</strong> A lightweight store <code>useBookingFlow()</code> holds active flight selections with local storage persistence enabled via middleware. Transient UI states (seat hover previews, currency toggles) execute with 0ms overhead and zero boilerplate files.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- When to Use Guide -->
+  <div class="when-to-use-grid">
+    <div class="when-angular">
+      <h4>🅰️ When to Choose NgRx</h4>
+      <ul>
+        <li>You manage massive, multi-team enterprise apps requiring rigid architectural rules</li>
+        <li>Auditability, time-travel debugging, and strict action logging are legal or SLA requirements</li>
+        <li>Your team is already deeply proficient in RxJS operators (<code>switchMap</code>, <code>exhaustMap</code>)</li>
+        <li>You require complex state orchestration across dozens of disconnected micro-frontends</li>
+      </ul>
+    </div>
+    <div class="when-react">
+      <h4>⚛️ When to Choose Zustand / Redux Toolkit</h4>
+      <ul>
+        <li>You want to ship fast with minimal boilerplate and maximum readability</li>
+        <li>Your app needs state access outside React components (inside utility functions or websockets)</li>
+        <li>You prioritize atomic rendering performance without context re-render cascades</li>
+        <li>You prefer simple vanilla JS objects over complex class hierarchies and actions</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Cheatsheet -->
+  <div class="cheatsheet-card">
+    <h3>📋 Chapter 16 Cheatsheet — State Management</h3>
+    <div class="cheatsheet-grid">
+      <div class="cheat-item"><code>createAction()</code> — NgRx: Declare an action intent with typed payload</div>
+      <div class="cheat-item"><code>createReducer()</code> — NgRx: Pure function responding to actions</div>
+      <div class="cheat-item"><code>createSelector()</code> — NgRx: Memoized selector calculation</div>
+      <div class="cheat-item"><code>createEffect()</code> — NgRx: Listen to action streams for async side-effects</div>
+      <div class="cheat-item"><code>create()</code> — Zustand: Build a reactive custom hook store</div>
+      <div class="cheat-item"><code>set() / get()</code> — Zustand: Mutate state or inspect snapshot</div>
+      <div class="cheat-item"><code>createSlice()</code> — RTK: Auto-generates actions &amp; reducers with Immer</div>
+      <div class="cheat-item"><code>useSyncExternalStore</code> — React core primitive powering tear-free external stores</div>
+    </div>
+  </div>
+
+  <!-- Modern Evolution: NgRx SignalStore vs Zustand Atomic Slices -->
+  <div class="callout definition">
+    <span class="callout-icon">⚡</span>
+    <div class="callout-body">
+      <h4>Modern Evolution: @ngrx/signals (SignalStore) vs Zustand Atomic Slices</h4>
+      <p>Angular 16+ introduced <code>signalStore</code>, blending the simplicity of Zustand with Angular's Dependency Injection system!</p>
+    </div>
+  </div>
+
+  <div class="comparison-table-wrapper">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th class="angular-col">🅰️ Angular: @ngrx/signals (SignalStore)</th>
+          <th class="react-col">⚛️ React: Zustand Atomic Selector Slices</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="angular-col">
+            <div class="code-block angular">
+              <div class="code-label">cart.store.ts (@ngrx/signals)</div>
+              <pre><code><span class="kw">import</span> { signalStore, withState, withMethods, withComputed, patchState } <span class="kw">from</span> <span class="str">'@ngrx/signals'</span>;
+<span class="kw">import</span> { computed } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+<span class="kw">export const</span> CartStore = <span class="fn">signalStore</span>(
+  { providedIn: <span class="str">'root'</span> },
+  <span class="fn">withState</span>({
+    items: [] <span class="kw">as</span> { id: <span class="var">string</span>; name: <span class="var">string</span>; price: <span class="var">number</span> }[],
+    isLoading: <span class="kw">false</span>
+  }),
+  <span class="fn">withComputed</span>(({ items }) =&gt; ({
+    totalCount: <span class="fn">computed</span>(() =&gt; items().length),
+    totalPrice: <span class="fn">computed</span>(() =&gt; items().<span class="fn">reduce</span>((acc, i) =&gt; acc + i.price, <span class="num">0</span>))
+  })),
+  <span class="fn">withMethods</span>((store) =&gt; ({
+    <span class="fn">addItem</span>(item: { id: <span class="var">string</span>; name: <span class="var">string</span>; price: <span class="var">number</span> }) {
+      <span class="fn">patchState</span>(store, (state) =&gt; ({ items: [...state.items, item] }));
+    },
+    <span class="fn">clear</span>() {
+      <span class="fn">patchState</span>(store, { items: [] });
+    }
+  }))
+);
+
+<span class="cmt">// In Component: inject(CartStore).items() — pure signals!</span></code></pre>
+            </div>
+          </td>
+          <td class="react-col">
+            <div class="code-block react">
+              <div class="code-label">cartSlice.ts (Zustand Slices Pattern)</div>
+              <pre><code><span class="kw">import</span> { StateCreator } <span class="kw">from</span> <span class="str">'zustand'</span>;
+
+<span class="kw">export interface</span> <span class="fn">CartSlice</span> {
+  items: { id: <span class="var">string</span>; name: <span class="var">string</span>; price: <span class="var">number</span> }[];
+  addItem: (item: { id: <span class="var">string</span>; name: <span class="var">string</span>; price: <span class="var">number</span> }) =&gt; <span class="var">void</span>;
+  clear: () =&gt; <span class="var">void</span>;
+}
+
+<span class="kw">export const</span> createCartSlice: <span class="fn">StateCreator</span>&lt;<span class="fn">CartSlice</span>&gt; = (set) =&gt; ({
+  items: [],
+  addItem: (item) =&gt;
+    <span class="fn">set</span>((state) =&gt; ({ items: [...state.items, item] })),
+  clear: () =&gt; <span class="fn">set</span>({ items: [] })
+});
+
+<span class="cmt">// Combined Store:</span>
+<span class="kw">import</span> { create } <span class="kw">from</span> <span class="str">'zustand'</span>;
+<span class="kw">export const</span> useAppStore = <span class="fn">create</span>&lt;<span class="fn">CartSlice</span>&gt;()((...a) =&gt; ({
+  ...<span class="fn">createCartSlice</span>(...a)
+}));</code></pre>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quiz -->
+  <div class="callout quiz-box">
+    <span class="callout-icon">🧠</span>
+    <div class="callout-body">
+      <h4>Quiz Time! 🎯</h4>
+      <ol>
+        <li>What is the fundamental difference between an Action and a Reducer in NgRx?
+          <details><summary>Answer</summary>An Action describes <em>what happened</em> (the intent/event), while a Reducer is a pure function that calculates <em>how the state changes</em> in response to that action.</details>
+        </li>
+        <li>Why does Zustand not require a &lt;Provider&gt; component wrapped around your React app?
+          <details><summary>Answer</summary>Zustand stores are external module-level closures. Components subscribe to them directly using React's <code>useSyncExternalStore</code> hook, bypassing the React Context tree completely.</details>
+        </li>
+        <li>What is an NgRx Effect used for?
+          <details><summary>Answer</summary>Effects handle asynchronous side effects (such as fetching data over HTTP, logging analytics, or reading browser storage) without polluting pure reducer functions.</details>
+        </li>
+        <li>When should you use Server Cache libraries (like TanStack Query) instead of NgRx/Redux?
+          <details><summary>Answer</summary>When data originates from an external server (REST/GraphQL endpoints) that needs caching, background revalidation, and loading/error states, TanStack Query is much better suited than hand-crafted global stores.</details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+</div>

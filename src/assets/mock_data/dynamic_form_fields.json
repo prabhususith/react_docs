@@ -1,0 +1,10 @@
+[
+  { "id": "f1", "name": "firstName", "label": "First Name", "type": "text", "required": true, "placeholder": "Enter your first name", "validation": { "minLength": 2, "maxLength": 50 } },
+  { "id": "f2", "name": "lastName", "label": "Last Name", "type": "text", "required": true, "placeholder": "Enter your last name", "validation": { "minLength": 2, "maxLength": 50 } },
+  { "id": "f3", "name": "email", "label": "Email Address", "type": "email", "required": true, "placeholder": "user@example.com", "validation": { "pattern": "email" } },
+  { "id": "f4", "name": "role", "label": "Role", "type": "select", "required": true, "options": ["Admin", "Manager", "Developer"], "validation": {} },
+  { "id": "f5", "name": "department", "label": "Department", "type": "select", "required": true, "options": ["Engineering", "Product", "Design", "Marketing", "Sales", "HR"], "validation": {} },
+  { "id": "f6", "name": "bio", "label": "Bio", "type": "textarea", "required": false, "placeholder": "Tell us about yourself...", "validation": { "maxLength": 500 } },
+  { "id": "f7", "name": "startDate", "label": "Start Date", "type": "date", "required": true, "validation": {} },
+  { "id": "f8", "name": "salary", "label": "Salary", "type": "number", "required": false, "placeholder": "Annual salary", "validation": { "min": 0, "max": 1000000 } }
+]

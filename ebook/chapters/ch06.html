@@ -1,0 +1,408 @@
+<!-- ============================================================
+     CHAPTER 6: Props — Passing Notes Between Components
+     ============================================================ -->
+<div class="page chapter-header" id="chapter-6">
+  <div class="chapter-number-badge">6</div>
+  <div class="chapter-header-content">
+    <div class="unit-label">UNIT 2 · React 19 — The Modern Way</div>
+    <h1 class="chapter-title">Props — Passing Notes Between Components</h1>
+    <p class="chapter-subtitle">How components talk to each other with data</p>
+    <div class="learning-objectives">
+      <h3>🎯 Learning Objectives</h3>
+      <ul>
+        <li>Understand what props are and why they exist</li>
+        <li>Pass strings, numbers, booleans, objects and functions as props</li>
+        <li>Use default props and prop destructuring</li>
+        <li>Understand the one-way data flow principle</li>
+        <li>Build reusable components with props</li>
+        <li>Distinguish props from state</li>
+      </ul>
+    </div>
+  </div>
+  <div class="chapter-header-illustration">
+    <!-- Envelope / Letter SVG -->
+    <svg viewBox="0 0 320 220" width="320" height="220" xmlns="http://www.w3.org/2000/svg">
+      <!-- envelope body -->
+      <rect x="20" y="60" width="200" height="130" rx="8" fill="#fff" stroke="#1a237e" stroke-width="2.5"/>
+      <!-- envelope flap open -->
+      <polygon points="20,60 120,130 220,60" fill="#e8eaf6" stroke="#1a237e" stroke-width="2"/>
+      <!-- letter peeking out -->
+      <rect x="50" y="30" width="140" height="90" rx="4" fill="#fff9c4" stroke="#ff6f00" stroke-width="2"/>
+      <line x1="65" y1="55" x2="175" y2="55" stroke="#bdbdbd" stroke-width="1.5"/>
+      <line x1="65" y1="68" x2="175" y2="68" stroke="#bdbdbd" stroke-width="1.5"/>
+      <line x1="65" y1="81" x2="140" y2="81" stroke="#bdbdbd" stroke-width="1.5"/>
+      <text x="68" y="47" font-family="monospace" font-size="9" fill="#1a237e">name="Alice"</text>
+      <!-- arrow -->
+      <path d="M250 125 L290 125" stroke="#ff6f00" stroke-width="3" marker-end="url(#arr6)"/>
+      <defs>
+        <marker id="arr6" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ff6f00"/>
+        </marker>
+      </defs>
+      <!-- receiving component -->
+      <rect x="295" y="100" width="22" height="50" rx="4" fill="#1a237e"/>
+      <text x="299" y="130" font-family="monospace" font-size="8" fill="white">C</text>
+      <text x="90" y="210" font-family="sans-serif" font-size="11" fill="#757575">Props flow parent → child</text>
+    </svg>
+  </div>
+</div>
+
+<div class="page" id="ch6-story">
+  <div class="real-world">
+    <h2>📬 A Real-World Story: The School Note System</h2>
+    <p>
+      Imagine you're at school 🏫 and you want to tell your friend across the classroom something
+      important. You can't just shout — the teacher would get upset! So you fold up a little note,
+      write your friend's name on the front, and pass it along. Your friend opens it, reads it,
+      and now they know exactly what you wanted to tell them.
+    </p>
+    <p>
+      In React, components are like students sitting in different rows. When a <strong>parent component</strong>
+      wants to send information to a <strong>child component</strong>, it writes that information into
+      something called <strong>props</strong> (short for "properties"). The child opens up those props
+      and uses whatever was sent — a name, a colour, a price, even a whole function!
+    </p>
+    <p>
+      The best part? Just like a note can say different things to different people, the same component
+      can receive different props and show completely different content. One <code>&lt;ProductCard&gt;</code>
+      component can show a PlayStation; give it different props and it shows a pizza. Same envelope,
+      different letter. 🎮🍕
+    </p>
+  </div>
+
+  <h2>What Are Props?</h2>
+  <p>
+    <strong>Props</strong> are the mechanism React uses to pass data from a parent component down to a
+    child component. They are <em>read-only</em> — the child component can read them but must never
+    modify them directly. This is called <strong>one-way data flow</strong>.
+  </p>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 500 200" width="480" height="200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Parent box -->
+      <rect x="10" y="40" width="150" height="80" rx="8" fill="#e8eaf6" stroke="#1a237e" stroke-width="2"/>
+      <text x="85" y="68" text-anchor="middle" font-family="Nunito,sans-serif" font-size="13" font-weight="700" fill="#1a237e">Parent</text>
+      <text x="85" y="85" text-anchor="middle" font-family="monospace" font-size="10" fill="#424242">name="Alice"</text>
+      <text x="85" y="100" text-anchor="middle" font-family="monospace" font-size="10" fill="#424242">age={10}</text>
+      <!-- Arrow -->
+      <path d="M165 80 L225 80" stroke="#ff6f00" stroke-width="3" stroke-dasharray="6,3" marker-end="url(#arrP6)"/>
+      <text x="195" y="72" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#ff6f00">props</text>
+      <defs>
+        <marker id="arrP6" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ff6f00"/>
+        </marker>
+      </defs>
+      <!-- Child box -->
+      <rect x="230" y="40" width="150" height="80" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+      <text x="305" y="68" text-anchor="middle" font-family="Nunito,sans-serif" font-size="13" font-weight="700" fill="#1565c0">Child</text>
+      <text x="305" y="85" text-anchor="middle" font-family="monospace" font-size="10" fill="#424242">props.name</text>
+      <text x="305" y="100" text-anchor="middle" font-family="monospace" font-size="10" fill="#424242">props.age</text>
+      <!-- Blocked arrow back -->
+      <path d="M230 110 L170 110" stroke="#c62828" stroke-width="2" stroke-dasharray="4,3"/>
+      <line x1="175" y1="104" x2="168" y2="117" stroke="#c62828" stroke-width="2.5"/>
+      <text x="200" y="128" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#c62828">❌ Cannot modify props!</text>
+      <!-- Label -->
+      <text x="250" y="185" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#757575">One-way data flow — props go DOWN only</text>
+    </svg>
+  </div>
+
+  <div class="callout definition">
+    <span class="callout-icon">📖</span>
+    <div>
+      <strong>Definition — Props:</strong> Short for "properties". An object passed to a React component
+      containing all the data attributes the parent wants to share. Inside a function component,
+      props arrive as the first argument. Inside JSX, they look like HTML attributes.
+    </div>
+  </div>
+</div>
+
+<div class="page" id="ch6-kids">
+  <div class="kid-note">
+    <h2>🎮 For Kids — The LEGO Instructions Analogy</h2>
+    <p>
+      Imagine you have a LEGO set for building a spaceship 🚀. The <strong>instructions booklet</strong>
+      tells you what colour pieces to use and how big to make each part. Without the instructions, you'd
+      have random bricks!
+    </p>
+    <p>
+      A React component is like a LEGO builder robot 🤖. On its own it doesn't know what to build.
+      But when you hand it <strong>props</strong> (the instructions), it knows exactly what to make:
+    </p>
+    <ul>
+      <li>🔵 <code>color="blue"</code> → build it blue!</li>
+      <li>🔢 <code>pieces={42}</code> → use 42 bricks!</li>
+      <li>📛 <code>name="Millennium Falcon"</code> → that's the name!</li>
+    </ul>
+    <p>
+      The robot reads the instructions <strong>but never writes on them</strong>. It just follows what's
+      written. That's exactly how props work — the child reads but doesn't change them.
+    </p>
+  </div>
+
+  <h2>🎮 Simple Example — Greeting Card</h2>
+  <div class="code-block">
+    <div class="code-label">JSX — Kid-friendly example</div>
+    <pre><span class="cmt">// This is our GreetingCard component (the LEGO builder robot)</span>
+<span class="kw">function</span> <span class="fn">GreetingCard</span>(<span class="var">props</span>) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> style={{ background: <span class="str">'#fff9c4'</span>, padding: <span class="str">'20px'</span>, borderRadius: <span class="str">'8px'</span> }}&gt;
+      &lt;<span class="kw">h2</span>&gt;Hello, {<span class="var">props</span>.<span class="var">name</span>}! 👋&lt;/<span class="kw">h2</span>&gt;
+      &lt;<span class="kw">p</span>&gt;You are {<span class="var">props</span>.<span class="var">age</span>} years old.&lt;/<span class="kw">p</span>&gt;
+      &lt;<span class="kw">p</span>&gt;Your favourite colour is {<span class="var">props</span>.<span class="var">color</span>}!&lt;/<span class="kw">p</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}
+
+<span class="cmt">// The PARENT sends the instructions (props)</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="fn">GreetingCard</span> name=<span class="str">"Alice"</span> age={<span class="str">10</span>} color=<span class="str">"purple"</span> /&gt;
+      &lt;<span class="fn">GreetingCard</span> name=<span class="str">"Bob"</span>   age={<span class="str">12</span>} color=<span class="str">"green"</span>  /&gt;
+      &lt;<span class="fn">GreetingCard</span> name=<span class="str">"Sara"</span>  age={<span class="str">9</span>}  color=<span class="str">"orange"</span> /&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <strong>Tip:</strong> Notice we use the <em>same</em> component three times with different props.
+    That's the power of reusability — write once, use everywhere with different data!
+  </div>
+</div>
+
+<div class="page" id="ch6-dev">
+  <div class="pro-tip">
+    <h2>💻 For Developers — Props in Depth</h2>
+  </div>
+
+  <h3>Destructuring Props (The Professional Way)</h3>
+  <p>Rather than writing <code>props.name</code> everywhere, destructure in the function signature:</p>
+  <div class="code-block">
+    <div class="code-label">React 19 · ProductCard.jsx</div>
+    <pre><span class="kw">import</span> React <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="cmt">// Destructure props directly in the parameter list</span>
+<span class="kw">function</span> <span class="fn">ProductCard</span>({ <span class="var">name</span>, <span class="var">price</span>, <span class="var">image</span>, <span class="var">rating</span> = <span class="str">5</span>, <span class="var">onAddToCart</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">article</span> className=<span class="str">"product-card"</span>&gt;
+      &lt;<span class="kw">img</span> src={<span class="var">image</span>} alt={<span class="var">name</span>} /&gt;
+      &lt;<span class="kw">h3</span>&gt;{<span class="var">name</span>}&lt;/<span class="kw">h3</span>&gt;
+      &lt;<span class="kw">p</span> className=<span class="str">"price"</span>&gt;${<span class="var">price</span>.<span class="fn">toFixed</span>(<span class="str">2</span>)}&lt;/<span class="kw">p</span>&gt;
+      &lt;<span class="kw">div</span> className=<span class="str">"rating"</span>&gt;
+        {<span class="fn">Array</span>.<span class="fn">from</span>({ length: <span class="var">rating</span> }, (<span class="var">_</span>, <span class="var">i</span>) =&gt; (
+          &lt;<span class="kw">span</span> key={<span class="var">i</span>}&gt;⭐&lt;/<span class="kw">span</span>&gt;
+        ))}
+      &lt;/<span class="kw">div</span>&gt;
+      &lt;<span class="kw">button</span> onClick={() =&gt; <span class="fn">onAddToCart</span>({ <span class="var">name</span>, <span class="var">price</span> })}&gt;
+        Add to Cart 🛒
+      &lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">article</span>&gt;
+  );
+}
+
+<span class="kw">export default</span> ProductCard;</pre>
+  </div>
+
+  <h3>Passing Functions as Props (Callbacks)</h3>
+  <div class="code-block">
+    <div class="code-label">React 19 · App.jsx</div>
+    <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> ProductCard <span class="kw">from</span> <span class="str">'./ProductCard'</span>;
+
+<span class="kw">const</span> <span class="var">products</span> = [
+  { id: <span class="str">1</span>, name: <span class="str">"PS5 Controller"</span>, price: <span class="str">69.99</span>, image: <span class="str">"/ps5.jpg"</span>, rating: <span class="str">5</span> },
+  { id: <span class="str">2</span>, name: <span class="str">"Keyboard"</span>,       price: <span class="str">129.00</span>, image: <span class="str">"/kb.jpg"</span>,  rating: <span class="str">4</span> },
+];
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [<span class="var">cart</span>, <span class="fn">setCart</span>] = <span class="fn">useState</span>([]);
+
+  <span class="kw">const</span> <span class="fn">handleAddToCart</span> = (<span class="var">item</span>) =&gt; {
+    <span class="fn">setCart</span>(<span class="var">prev</span> =&gt; [...<span class="var">prev</span>, <span class="var">item</span>]);
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">h1</span>&gt;Shop ({<span class="var">cart</span>.<span class="var">length</span>} items in cart)&lt;/<span class="kw">h1</span>&gt;
+      {<span class="var">products</span>.<span class="fn">map</span>(<span class="var">p</span> =&gt; (
+        &lt;<span class="fn">ProductCard</span>
+          key={<span class="var">p</span>.<span class="var">id</span>}
+          name={<span class="var">p</span>.<span class="var">name</span>}
+          price={<span class="var">p</span>.<span class="var">price</span>}
+          image={<span class="var">p</span>.<span class="var">image</span>}
+          rating={<span class="var">p</span>.<span class="var">rating</span>}
+          onAddToCart={<span class="fn">handleAddToCart</span>}
+        /&gt;
+      ))}
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <strong>Warning — Never Mutate Props:</strong>
+    <code>props.name = "new value"</code> is a React anti-pattern. Props are <em>immutable</em> from the
+    child's perspective. If you need mutable data, use <strong>state</strong> (covered in Chapter 7).
+  </div>
+</div>
+
+<div class="page" id="ch6-advanced">
+  <h2>Advanced Props Patterns</h2>
+
+  <h3>The <code>children</code> Prop</h3>
+  <p>The special <code>children</code> prop lets you nest content inside a component tag:</p>
+  <div class="code-block">
+    <div class="code-label">React 19 · Card.jsx</div>
+    <pre><span class="kw">function</span> <span class="fn">Card</span>({ <span class="var">title</span>, <span class="var">children</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> className=<span class="str">"card"</span>&gt;
+      &lt;<span class="kw">h2</span>&gt;{<span class="var">title</span>}&lt;/<span class="kw">h2</span>&gt;
+      &lt;<span class="kw">div</span> className=<span class="str">"card-body"</span>&gt;{<span class="var">children</span>}&lt;/<span class="kw">div</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}
+
+<span class="cmt">// Usage — anything between &lt;Card&gt; tags becomes children</span>
+&lt;<span class="fn">Card</span> title=<span class="str">"Welcome!"</span>&gt;
+  &lt;<span class="kw">p</span>&gt;This paragraph is a child!&lt;/<span class="kw">p</span>&gt;
+  &lt;<span class="kw">button</span>&gt;Click Me&lt;/<span class="kw">button</span>&gt;
+&lt;/<span class="fn">Card</span>&gt;</pre>
+  </div>
+
+  <h3>Spread Props Pattern</h3>
+  <div class="code-block">
+    <div class="code-label">React 19 · spread props</div>
+    <pre><span class="kw">const</span> <span class="var">userProps</span> = { name: <span class="str">"Alice"</span>, age: <span class="str">28</span>, role: <span class="str">"admin"</span> };
+
+<span class="cmt">// Spread the whole object as individual props</span>
+&lt;<span class="fn">UserProfile</span> {...<span class="var">userProps</span>} /&gt;
+
+<span class="cmt">// Equivalent to:</span>
+&lt;<span class="fn">UserProfile</span> name=<span class="str">"Alice"</span> age={<span class="str">28</span>} role=<span class="str">"admin"</span> /&gt;</pre>
+  </div>
+
+  <div class="callout fun-fact">
+    <span class="callout-icon">🤩</span>
+    <strong>Fun Fact:</strong> In React, <em>everything</em> you write as an attribute in JSX —
+    <code>className</code>, <code>onClick</code>, <code>style</code>, custom data — is technically a prop!
+    Even <code>key</code> is a special reserved prop React uses for reconciliation (but you can't read it
+    inside the component).
+  </div>
+
+  <h3>Prop Types Validation (TypeScript)</h3>
+  <div class="code-block">
+    <div class="code-label">TypeScript · PropTypes via interface</div>
+    <pre><span class="kw">interface</span> <span class="var">UserCardProps</span> {
+  name: <span class="kw">string</span>;
+  age: <span class="kw">number</span>;
+  avatar?: <span class="kw">string</span>;         <span class="cmt">// optional prop</span>
+  onFollow: () =&gt; <span class="kw">void</span>;   <span class="cmt">// function prop</span>
+}
+
+<span class="kw">function</span> <span class="fn">UserCard</span>({ <span class="var">name</span>, <span class="var">age</span>, <span class="var">avatar</span> = <span class="str">'/default.png'</span>, <span class="var">onFollow</span> }: <span class="var">UserCardProps</span>) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">img</span> src={<span class="var">avatar</span>} alt={<span class="var">name</span>} /&gt;
+      &lt;<span class="kw">h3</span>&gt;{<span class="var">name</span>}, {<span class="var">age</span>}&lt;/<span class="kw">h3</span>&gt;
+      &lt;<span class="kw">button</span> onClick={<span class="var">onFollow</span>}&gt;Follow&lt;/<span class="kw">button</span>&gt;
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <strong>Pro Tip:</strong> Always use TypeScript interfaces or PropTypes for production components.
+    It catches bugs at compile-time and auto-documents your API for teammates.
+  </div>
+</div>
+
+<div class="page" id="ch6-tryyourself">
+  <h2>🛠️ Try It Yourself!</h2>
+  <div class="quiz-box" style="border-left-color:#2e7d32; background:#f1f8e9;">
+    <h3>Challenge: Build a Social Media Profile Card</h3>
+    <p>Create a <code>ProfileCard</code> component that accepts these props:</p>
+    <ul>
+      <li><code>username</code> — string</li>
+      <li><code>handle</code> — string (like @alice)</li>
+      <li><code>bio</code> — string</li>
+      <li><code>followers</code> — number</li>
+      <li><code>isVerified</code> — boolean (show ✅ if true)</li>
+      <li><code>onMessage</code> — function called when "Message" button is clicked</li>
+    </ul>
+    <p>Then render 3 different profile cards in your App component.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-label">Starter code</div>
+    <pre><span class="kw">function</span> <span class="fn">ProfileCard</span>({ <span class="var">username</span>, <span class="var">handle</span>, <span class="var">bio</span>, <span class="var">followers</span>, <span class="var">isVerified</span>, <span class="var">onMessage</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span> className=<span class="str">"profile-card"</span>&gt;
+      <span class="cmt">{/* YOUR CODE HERE */}</span>
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</pre>
+  </div>
+
+  <h2>Chapter 6 Summary</h2>
+  <ul class="summary-list">
+    <li>✅ <strong>Props</strong> are how parent components send data to children</li>
+    <li>✅ Props are <strong>read-only</strong> — children never modify them</li>
+    <li>✅ Data flows <strong>one way</strong>: parent → child</li>
+    <li>✅ Destructure props in the function signature for cleaner code</li>
+    <li>✅ The <code>children</code> prop lets you nest JSX inside a component</li>
+    <li>✅ Pass functions as props to let children "talk back" to parents</li>
+    <li>✅ Use TypeScript interfaces to document and validate prop shapes</li>
+    <li>✅ Spread operator <code>{...obj}</code> passes all keys as individual props</li>
+  </ul>
+</div>
+
+<div class="page" id="ch6-quiz">
+  <div class="quiz-box">
+    <h2>🧠 Chapter 6 Quiz</h2>
+
+    <div class="quiz-question">
+      <p><strong>Q1.</strong> Can a child component modify the props it receives?</p>
+      <details><summary>Show Answer</summary>
+        <p>❌ No. Props are read-only (immutable) from the child's perspective. To have changeable
+        data, use <strong>state</strong> instead.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q2.</strong> What is the special prop name for content nested between component tags?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ <code>children</code>. Any JSX or text placed between opening and closing component tags
+        is accessible as <code>props.children</code>.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q3.</strong> What does <code>&lt;MyComp {...obj} /&gt;</code> do?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ Spreads all key-value pairs of <code>obj</code> as individual props on <code>MyComp</code>.
+        It's shorthand for passing each property manually.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q4.</strong> In <code>function Card({ title, rating = 5 })</code>, what happens if
+      <code>rating</code> is not passed by the parent?</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ The default value <code>5</code> is used. Default parameter values in destructuring act as
+        default props.</p>
+      </details>
+    </div>
+
+    <div class="quiz-question">
+      <p><strong>Q5.</strong> Name two benefits of passing a function as a prop.</p>
+      <details><summary>Show Answer</summary>
+        <p>✅ 1) The child can notify/communicate with the parent (lifting state up). 2) It keeps the
+        parent in control of logic while letting the child trigger actions.</p>
+      </details>
+    </div>
+  </div>
+  <div class="page-number">Chapter 6 · Props</div>
+</div>

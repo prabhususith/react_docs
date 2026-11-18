@@ -1,0 +1,17 @@
+[
+  { "id": "p1", "name": "React Pro Course", "category": "Education", "price": 149.99, "stock": 999, "rating": 4.9, "description": "Advanced React patterns and architecture", "sku": "EDU-001", "createdAt": "2024-01-10T00:00:00Z" },
+  { "id": "p2", "name": "TypeScript Masterclass", "category": "Education", "price": 129.99, "stock": 999, "rating": 4.8, "description": "Complete TypeScript from zero to hero", "sku": "EDU-002", "createdAt": "2024-01-15T00:00:00Z" },
+  { "id": "p3", "name": "Wireless Keyboard", "category": "Hardware", "price": 89.99, "stock": 45, "rating": 4.5, "description": "Mechanical wireless keyboard with RGB", "sku": "HW-001", "createdAt": "2024-02-01T00:00:00Z" },
+  { "id": "p4", "name": "4K Monitor", "category": "Hardware", "price": 599.99, "stock": 12, "rating": 4.7, "description": "32-inch 4K IPS monitor", "sku": "HW-002", "createdAt": "2024-02-10T00:00:00Z" },
+  { "id": "p5", "name": "Node.js Backend Guide", "category": "Education", "price": 99.99, "stock": 999, "rating": 4.6, "description": "Build scalable Node.js backends", "sku": "EDU-003", "createdAt": "2024-02-20T00:00:00Z" },
+  { "id": "p6", "name": "USB-C Hub", "category": "Hardware", "price": 49.99, "stock": 78, "rating": 4.3, "description": "7-in-1 USB-C hub with PD charging", "sku": "HW-003", "createdAt": "2024-03-01T00:00:00Z" },
+  { "id": "p7", "name": "Dev Standup Desk", "category": "Furniture", "price": 399.99, "stock": 8, "rating": 4.6, "description": "Height adjustable standing desk", "sku": "FUR-001", "createdAt": "2024-03-10T00:00:00Z" },
+  { "id": "p8", "name": "Noise-Canceling Headphones", "category": "Hardware", "price": 249.99, "stock": 23, "rating": 4.8, "description": "Over-ear ANC headphones for focus", "sku": "HW-004", "createdAt": "2024-03-20T00:00:00Z" },
+  { "id": "p9", "name": "Docker & K8s Bootcamp", "category": "Education", "price": 179.99, "stock": 999, "rating": 4.7, "description": "Container orchestration mastery", "sku": "EDU-004", "createdAt": "2024-04-01T00:00:00Z" },
+  { "id": "p10", "name": "Ergonomic Chair", "category": "Furniture", "price": 349.99, "stock": 5, "rating": 4.9, "description": "Lumbar support office chair", "sku": "FUR-002", "createdAt": "2024-04-10T00:00:00Z" },
+  { "id": "p11", "name": "Webcam 4K", "category": "Hardware", "price": 129.99, "stock": 34, "rating": 4.4, "description": "4K streaming webcam with auto-focus", "sku": "HW-005", "createdAt": "2024-04-20T00:00:00Z" },
+  { "id": "p12", "name": "GraphQL Complete Guide", "category": "Education", "price": 119.99, "stock": 999, "rating": 4.5, "description": "Schema design and resolvers", "sku": "EDU-005", "createdAt": "2024-05-01T00:00:00Z" },
+  { "id": "p13", "name": "Desk Lamp LED", "category": "Furniture", "price": 59.99, "stock": 67, "rating": 4.2, "description": "Color temperature adjustable LED lamp", "sku": "FUR-003", "createdAt": "2024-05-10T00:00:00Z" },
+  { "id": "p14", "name": "Streaming Mic", "category": "Hardware", "price": 149.99, "stock": 19, "rating": 4.6, "description": "USB condenser microphone for podcasts", "sku": "HW-006", "createdAt": "2024-05-20T00:00:00Z" },
+  { "id": "p15", "name": "AWS Solutions Architect", "category": "Education", "price": 199.99, "stock": 999, "rating": 4.8, "description": "Cloud architecture certification prep", "sku": "EDU-006", "createdAt": "2024-06-01T00:00:00Z" }
+]

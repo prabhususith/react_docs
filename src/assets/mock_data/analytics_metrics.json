@@ -1,0 +1,14 @@
+[
+  { "month": "Jan", "revenue": 42500, "orders": 120, "users": 890, "conversionRate": 3.2, "avgOrderValue": 354 },
+  { "month": "Feb", "revenue": 38200, "orders": 105, "users": 920, "conversionRate": 2.9, "avgOrderValue": 364 },
+  { "month": "Mar", "revenue": 51800, "orders": 148, "users": 1050, "conversionRate": 3.8, "avgOrderValue": 350 },
+  { "month": "Apr", "revenue": 59300, "orders": 162, "users": 1180, "conversionRate": 4.1, "avgOrderValue": 366 },
+  { "month": "May", "revenue": 63100, "orders": 175, "users": 1240, "conversionRate": 4.3, "avgOrderValue": 361 },
+  { "month": "Jun", "revenue": 71900, "orders": 194, "users": 1380, "conversionRate": 4.7, "avgOrderValue": 371 },
+  { "month": "Jul", "revenue": 68400, "orders": 188, "users": 1420, "conversionRate": 4.5, "avgOrderValue": 364 },
+  { "month": "Aug", "revenue": 74200, "orders": 201, "users": 1560, "conversionRate": 4.8, "avgOrderValue": 369 },
+  { "month": "Sep", "revenue": 82100, "orders": 224, "users": 1680, "conversionRate": 5.1, "avgOrderValue": 366 },
+  { "month": "Oct", "revenue": 89500, "orders": 241, "users": 1820, "conversionRate": 5.4, "avgOrderValue": 371 },
+  { "month": "Nov", "revenue": 95800, "orders": 268, "users": 1990, "conversionRate": 5.8, "avgOrderValue": 358 },
+  { "month": "Dec", "revenue": 112400, "orders": 312, "users": 2250, "conversionRate": 6.2, "avgOrderValue": 360 }
+]

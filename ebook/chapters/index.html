@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subject Index — React 19 &amp; Angular</title>
+<style>
+  :root {
+    --primary: #1a237e;
+    --react: #0288d1;
+    --angular: #dd0031;
+    --bg: #f8fafc;
+    --paper: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 30px 20px;
+    line-height: 1.45;
+  }
+  .index-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 48px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  .index-header {
+    text-align: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .index-header h1 {
+    font-size: 36px;
+    letter-spacing: -0.5px;
+    color: var(--primary);
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-weight: 900;
+  }
+  .index-header p {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 16px;
+    margin-top: 6px;
+  }
+  .index-columns {
+    column-count: 3;
+    column-gap: 32px;
+    column-rule: 1px solid #f1f5f9;
+  }
+  @media (max-width: 900px) {
+    .index-columns { column-count: 2; }
+  }
+  @media (max-width: 600px) {
+    .index-columns { column-count: 1; }
+  }
+  .index-group {
+    break-inside: avoid;
+    margin-bottom: 24px;
+  }
+  .index-letter {
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--primary);
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 8px;
+    padding-bottom: 2px;
+  }
+  .index-entry {
+    font-size: 13.5px;
+    margin-bottom: 4px;
+  }
+  .index-term {
+    font-weight: 600;
+    color: #1e293b;
+  }
+  .page-ref {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--react);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .page-ref.major {
+    font-weight: 800;
+    color: #0f172a;
+    text-decoration: underline;
+  }
+  .index-subentry {
+    padding-left: 16px;
+    font-size: 12.5px;
+    color: #334155;
+    margin-top: 2px;
+    position: relative;
+  }
+  .index-subentry::before {
+    content: "—";
+    position: absolute;
+    left: 2px;
+    color: #94a3b8;
+  }
+  .see-ref {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .see-ref a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="index-container">
+  <div class="index-header">
+    <h1>General Book Index</h1>
+    <p>Numbers refer to principal discussion pages; bold indicates definition or dedicated chapter.</p>
+  </div>
+
+  <div class="index-columns">
+
+    <!-- A -->
+    <div class="index-group">
+      <div class="index-letter">A</div>
+      <div class="index-entry"><span class="index-term">Action (React 19)</span>, <span class="page-ref major">74</span>, <span class="page-ref">75–78</span></div>
+      <div class="index-subentry">form binding, <span class="page-ref">76</span></div>
+      <div class="index-subentry">optimistic updates, <span class="page-ref">77</span></div>
+      <div class="index-subentry">error transitions, <span class="page-ref">79</span></div>
+      <div class="index-entry"><span class="index-term">ActionState</span>, <span class="page-ref">76</span></div>
+      <div class="index-entry"><span class="index-term">Ahead-of-Time (AOT)</span>, <span class="page-ref major">98</span>, <span class="page-ref">101</span></div>
+      <div class="index-entry"><span class="index-term">Angular CLI</span>, <span class="page-ref">85</span>, <span class="page-ref">92</span></div>
+      <div class="index-entry"><span class="index-term">Angular Signals</span>, <span class="page-ref major">112</span>, <span class="page-ref">114–119</span></div>
+      <div class="index-subentry">computed(), <span class="page-ref">115</span></div>
+      <div class="index-subentry">effect(), <span class="page-ref">116</span></div>
+      <div class="index-subentry">signal(), <span class="page-ref">114</span></div>
+      <div class="index-subentry">untracked(), <span class="page-ref">118</span></div>
+      <div class="index-entry"><span class="index-term">Animations</span></div>
+      <div class="index-subentry">Angular trigger/state, <span class="page-ref">184</span></div>
+      <div class="index-subentry">Framer Motion, <span class="page-ref">182</span></div>
+      <div class="index-entry"><span class="index-term">App Router</span>, <span class="page-ref">142</span></div>
+      <div class="index-entry"><span class="index-term">Async Pipe (<code>| async</code>)</span>, <span class="page-ref major">105</span>, <span class="page-ref">162</span></div>
+    </div>
+
+    <!-- B -->
+    <div class="index-group">
+      <div class="index-letter">B</div>
+      <div class="index-entry"><span class="index-term">BehaviorSubject</span>, <span class="page-ref major">158</span>, <span class="page-ref">164</span></div>
+      <div class="index-entry"><span class="index-term">Benchmarking</span>, <span class="page-ref">172–176</span></div>
+      <div class="index-entry"><span class="index-term">Binding</span></div>
+      <div class="index-subentry">class binding, <span class="page-ref">44</span>, <span class="page-ref">96</span></div>
+      <div class="index-subentry">event binding, <span class="page-ref">45</span>, <span class="page-ref">95</span></div>
+      <div class="index-subentry">property binding, <span class="page-ref">42</span>, <span class="page-ref">94</span></div>
+      <div class="index-subentry">two-way binding, <span class="page-ref">97</span></div>
+      <div class="index-entry"><span class="index-term">Bootstrap</span></div>
+      <div class="index-subentry">Angular bootstrapApplication, <span class="page-ref">87</span></div>
+      <div class="index-subentry">React createRoot, <span class="page-ref">34</span></div>
+      <div class="index-entry"><span class="index-term">Bundling</span>, <span class="page-ref">22</span>, <span class="page-ref">190</span></div>
+    </div>
+
+    <!-- C -->
+    <div class="index-group">
+      <div class="index-letter">C</div>
+      <div class="index-entry"><span class="index-term">Callback functions</span>, <span class="page-ref">52</span></div>
+      <div class="index-entry"><span class="index-term">Change Detection</span>, <span class="page-ref major">124–131</span></div>
+      <div class="index-subentry">ChangeDetectionStrategy.Default, <span class="page-ref">125</span></div>
+      <div class="index-subentry">ChangeDetectionStrategy.OnPush, <span class="page-ref">126</span></div>
+      <div class="index-subentry">Zoneless mode, <span class="page-ref">130</span></div>
+      <div class="index-entry"><span class="index-term">Compiler (React)</span>, <span class="page-ref major">81</span></div>
+      <div class="index-entry"><span class="index-term">Component</span>, <span class="page-ref major">31–38</span>, <span class="page-ref major">86–93</span></div>
+      <div class="index-subentry">class vs functional, <span class="page-ref">32</span></div>
+      <div class="index-subentry">lifecycle, <span class="page-ref">64</span>, <span class="page-ref">108</span></div>
+      <div class="index-subentry">nested components, <span class="page-ref">36</span></div>
+      <div class="index-subentry">standalone components, <span class="page-ref">88</span></div>
+      <div class="index-entry"><span class="index-term">Concurrent Mode</span>, <span class="page-ref">70</span></div>
+      <div class="index-entry"><span class="index-term">Context API</span>, <span class="page-ref major">66</span>, <span class="page-ref">151</span></div>
+      <div class="index-entry"><span class="index-term">Custom Hooks</span>, <span class="page-ref major">68</span>, <span class="page-ref">214</span></div>
+    </div>
+
+    <!-- D -->
+    <div class="index-group">
+      <div class="index-letter">D</div>
+      <div class="index-entry"><span class="index-term">Data fetching</span>, <span class="page-ref major">160–169</span></div>
+      <div class="index-subentry">HttpClient, <span class="page-ref">161</span></div>
+      <div class="index-subentry">TanStack Query, <span class="page-ref">165</span></div>
+      <div class="index-entry"><span class="index-term">Debouncing</span>, <span class="page-ref">163</span></div>
+      <div class="index-entry"><span class="index-term">Decorators</span>, <span class="page-ref major">89</span></div>
+      <div class="index-subentry">@Component, <span class="page-ref">90</span></div>
+      <div class="index-subentry">@Directive, <span class="page-ref">103</span></div>
+      <div class="index-subentry">@Injectable, <span class="page-ref">106</span></div>
+      <div class="index-subentry">@Pipe, <span class="page-ref">104</span></div>
+      <div class="index-entry"><span class="index-term">Dependency Injection</span>, <span class="page-ref major">106–111</span></div>
+      <div class="index-subentry">hierarchical injectors, <span class="page-ref">108</span></div>
+      <div class="index-subentry">inject() function, <span class="page-ref">107</span></div>
+      <div class="index-subentry">providedIn: 'root', <span class="page-ref">106</span></div>
+      <div class="index-entry"><span class="index-term">Directives</span>, <span class="page-ref major">102–104</span></div>
+      <div class="index-subentry">attribute directives, <span class="page-ref">103</span></div>
+      <div class="index-subentry">structural directives, <span class="page-ref">102</span></div>
+      <div class="index-entry"><span class="index-term">DOM (Document Object Model)</span>, <span class="page-ref">14</span></div>
+    </div>
+
+    <!-- E -->
+    <div class="index-group">
+      <div class="index-letter">E</div>
+      <div class="index-entry"><span class="index-term">Effects</span></div>
+      <div class="index-subentry">Angular effect(), <span class="page-ref">116</span></div>
+      <div class="index-subentry">React useEffect, <span class="page-ref">62</span></div>
+      <div class="index-entry"><span class="index-term">Enterprise Architecture</span>, <span class="page-ref major">218–226</span></div>
+      <div class="index-entry"><span class="index-term">Error Boundary</span>, <span class="page-ref major">72</span></div>
+      <div class="index-entry"><span class="index-term">ErrorHandler (Angular)</span>, <span class="page-ref">73</span></div>
+      <div class="index-entry"><span class="index-term">Event bubbling</span>, <span class="page-ref">18</span></div>
+      <div class="index-entry"><span class="index-term">Event emitter</span>, <span class="page-ref">91</span></div>
+    </div>
+
+    <!-- F -->
+    <div class="index-group">
+      <div class="index-letter">F</div>
+      <div class="index-entry"><span class="index-term">Fiber Architecture</span>, <span class="page-ref major">127–129</span></div>
+      <div class="index-subentry">commit phase, <span class="page-ref">128</span></div>
+      <div class="index-subentry">render phase, <span class="page-ref">127</span></div>
+      <div class="index-subentry">work loop, <span class="page-ref">129</span></div>
+      <div class="index-entry"><span class="index-term">Forms</span>, <span class="page-ref major">132–141</span></div>
+      <div class="index-subentry">Angular Reactive Forms, <span class="page-ref">133</span></div>
+      <div class="index-subentry">Angular Template Forms, <span class="page-ref">132</span></div>
+      <div class="index-subentry">Formik, <span class="page-ref">137</span></div>
+      <div class="index-subentry">React Hook Form, <span class="page-ref">135</span></div>
+      <div class="index-subentry">Zod validation, <span class="page-ref">139</span></div>
+      <div class="index-entry"><span class="index-term">Fragment</span>, <span class="page-ref">41</span></div>
+    </div>
+
+    <!-- G -->
+    <div class="index-group">
+      <div class="index-letter">G</div>
+      <div class="index-entry"><span class="index-term">Generics (TypeScript)</span>, <span class="page-ref">210</span></div>
+      <div class="index-entry"><span class="index-term">Guards (Angular Router)</span>, <span class="page-ref major">146</span></div>
+      <div class="index-subentry">canActivate, <span class="page-ref">146</span></div>
+      <div class="index-subentry">canDeactivate, <span class="page-ref">147</span></div>
+    </div>
+
+    <!-- H -->
+    <div class="index-group">
+      <div class="index-letter">H</div>
+      <div class="index-entry"><span class="index-term">Higher-Order Components</span>, <span class="page-ref">69</span></div>
+      <div class="index-entry"><span class="index-term">Hooks</span>, <span class="page-ref major">58–69</span></div>
+      <div class="index-subentry">rules of hooks, <span class="page-ref">60</span></div>
+      <div class="index-subentry">custom hooks, <span class="page-ref">68</span></div>
+      <div class="index-entry"><span class="index-term">HTML5 semantics</span>, <span class="page-ref">12</span></div>
+      <div class="index-entry"><span class="index-term">Hydration</span>, <span class="page-ref">192</span></div>
+      <div class="index-subentry">progressive hydration, <span class="page-ref">193</span></div>
+      <div class="index-subentry">selective hydration, <span class="page-ref">194</span></div>
+    </div>
+
+    <!-- I -->
+    <div class="index-group">
+      <div class="index-letter">I</div>
+      <div class="index-entry"><span class="index-term">Immutability</span>, <span class="page-ref">55</span>, <span class="page-ref">150</span></div>
+      <div class="index-entry"><span class="index-term">Injectable</span>, <span class="page-ref">106</span></div>
+      <div class="index-entry"><span class="index-term">Input Signal</span>, <span class="page-ref">91</span></div>
+      <div class="index-entry"><span class="index-term">Interceptors (HTTP)</span>, <span class="page-ref">164</span></div>
+      <div class="index-entry"><span class="index-term">Interpolation</span>, <span class="page-ref">40</span>, <span class="page-ref">94</span></div>
+      <div class="index-entry"><span class="index-term">Ivy Engine</span>, <span class="page-ref">99</span></div>
+    </div>
+
+    <!-- J -->
+    <div class="index-group">
+      <div class="index-letter">J</div>
+      <div class="index-entry"><span class="index-term">Jasmine</span>, <span class="page-ref">178</span></div>
+      <div class="index-entry"><span class="index-term">JavaScript fundamentals</span>, <span class="page-ref">16–21</span></div>
+      <div class="index-entry"><span class="index-term">JSX</span>, <span class="page-ref major">39–47</span></div>
+      <div class="index-subentry">conditional rendering, <span class="page-ref">43</span></div>
+      <div class="index-subentry">expression embedding, <span class="page-ref">40</span></div>
+      <div class="index-subentry">list rendering, <span class="page-ref">46</span></div>
+      <div class="index-subentry">vs HTML, <span class="page-ref">41</span></div>
+    </div>
+
+    <!-- K -->
+    <div class="index-group">
+      <div class="index-letter">K</div>
+      <div class="index-entry"><span class="index-term">Key prop</span>, <span class="page-ref major">46</span>, <span class="page-ref">129</span></div>
+      <div class="index-entry"><span class="index-term">Karma test runner</span>, <span class="page-ref">179</span></div>
+    </div>
+
+    <!-- L -->
+    <div class="index-group">
+      <div class="index-letter">L</div>
+      <div class="index-entry"><span class="index-term">Lazy Loading</span>, <span class="page-ref major">144</span>, <span class="page-ref">148</span></div>
+      <div class="index-subentry">@defer control flow, <span class="page-ref">149</span></div>
+      <div class="index-subentry">React.lazy, <span class="page-ref">144</span></div>
+      <div class="index-entry"><span class="index-term">Lifecycle Hooks</span>, <span class="page-ref major">108–110</span></div>
+      <div class="index-subentry">ngAfterViewInit, <span class="page-ref">109</span></div>
+      <div class="index-subentry">ngOnChanges, <span class="page-ref">108</span></div>
+      <div class="index-subentry">ngOnDestroy, <span class="page-ref">110</span></div>
+      <div class="index-subentry">ngOnInit, <span class="page-ref">108</span></div>
+    </div>
+
+    <!-- M -->
+    <div class="index-group">
+      <div class="index-letter">M</div>
+      <div class="index-entry"><span class="index-term">Memoization</span>, <span class="page-ref">65</span>, <span class="page-ref">174</span></div>
+      <div class="index-entry"><span class="index-term">Micro-frontends</span>, <span class="page-ref">228</span></div>
+      <div class="index-entry"><span class="index-term">Model Signal</span>, <span class="page-ref">92</span></div>
+      <div class="index-entry"><span class="index-term">Modules (ESM)</span>, <span class="page-ref">20</span></div>
+      <div class="index-entry"><span class="index-term">Movie Review Project</span>, <span class="page-ref major">202–215</span></div>
+    </div>
+
+    <!-- N -->
+    <div class="index-group">
+      <div class="index-letter">N</div>
+      <div class="index-entry"><span class="index-term">Next.js</span>, <span class="page-ref">195</span></div>
+      <div class="index-entry"><span class="index-term">NgModule</span>, <span class="page-ref">86</span>, <span class="page-ref">98</span></div>
+      <div class="index-entry"><span class="index-term">NgRx</span>, <span class="page-ref major">154–157</span></div>
+      <div class="index-subentry">Actions, <span class="page-ref">154</span></div>
+      <div class="index-subentry">Effects, <span class="page-ref">156</span></div>
+      <div class="index-subentry">Reducers, <span class="page-ref">155</span></div>
+      <div class="index-subentry">Selectors, <span class="page-ref">155</span></div>
+    </div>
+
+    <!-- O -->
+    <div class="index-group">
+      <div class="index-letter">O</div>
+      <div class="index-entry"><span class="index-term">Observables</span>, <span class="page-ref major">158–163</span></div>
+      <div class="index-subentry">cold vs hot, <span class="page-ref">159</span></div>
+      <div class="index-subentry">operators, <span class="page-ref">162</span></div>
+      <div class="index-subentry">unsubscribing, <span class="page-ref">161</span></div>
+      <div class="index-entry"><span class="index-term">OnPush</span>, <span class="page-ref">126</span></div>
+      <div class="index-entry"><span class="index-term">Optimistic UI</span>, <span class="page-ref major">77</span>, <span class="page-ref">167</span></div>
+      <div class="index-entry"><span class="index-term">Output Signal</span>, <span class="page-ref">92</span></div>
+    </div>
+
+    <!-- P -->
+    <div class="index-group">
+      <div class="index-letter">P</div>
+      <div class="index-entry"><span class="index-term">Package managers (npm, pnpm)</span>, <span class="page-ref">24</span></div>
+      <div class="index-entry"><span class="index-term">Pipes</span>, <span class="page-ref major">104</span></div>
+      <div class="index-entry"><span class="index-term">Portals</span>, <span class="page-ref">73</span></div>
+      <div class="index-entry"><span class="index-term">Props</span>, <span class="page-ref major">48–53</span></div>
+      <div class="index-subentry">children prop, <span class="page-ref">51</span></div>
+      <div class="index-subentry">default values, <span class="page-ref">50</span></div>
+      <div class="index-subentry">drilling, <span class="page-ref">53</span></div>
+      <div class="index-subentry">type validation, <span class="page-ref">49</span></div>
+    </div>
+
+    <!-- R -->
+    <div class="index-group">
+      <div class="index-letter">R</div>
+      <div class="index-entry"><span class="index-term">React 19 features</span>, <span class="page-ref major">74–84</span></div>
+      <div class="index-subentry">Actions, <span class="page-ref">74</span></div>
+      <div class="index-subentry">React Compiler, <span class="page-ref">81</span></div>
+      <div class="index-subentry">Server Components, <span class="page-ref">82</span></div>
+      <div class="index-subentry">use() hook, <span class="page-ref">80</span></div>
+      <div class="index-subentry">useActionState, <span class="page-ref">76</span></div>
+      <div class="index-subentry">useOptimistic, <span class="page-ref">77</span></div>
+      <div class="index-entry"><span class="index-term">React Testing Library</span>, <span class="page-ref">180</span></div>
+      <div class="index-entry"><span class="index-term">Reconciliation</span>, <span class="page-ref major">127</span></div>
+      <div class="index-entry"><span class="index-term">Redux Toolkit</span>, <span class="page-ref major">152–154</span></div>
+      <div class="index-entry"><span class="index-term">Routing</span>, <span class="page-ref major">142–149</span></div>
+      <div class="index-subentry">Angular Router, <span class="page-ref">145</span></div>
+      <div class="index-subentry">nested routes, <span class="page-ref">147</span></div>
+      <div class="index-subentry">React Router v7, <span class="page-ref">143</span></div>
+      <div class="index-entry"><span class="index-term">RxJS</span>, <span class="page-ref major">158–163</span></div>
+    </div>
+
+    <!-- S -->
+    <div class="index-group">
+      <div class="index-letter">S</div>
+      <div class="index-entry"><span class="index-term">Server Components (RSC)</span>, <span class="page-ref major">82</span>, <span class="page-ref">196</span></div>
+      <div class="index-entry"><span class="index-term">Server-Side Rendering (SSR)</span>, <span class="page-ref major">191–197</span></div>
+      <div class="index-entry"><span class="index-term">Signals</span>, <span class="page-ref major">112–120</span></div>
+      <div class="index-entry"><span class="index-term">Standalone Components</span>, <span class="page-ref major">88</span></div>
+      <div class="index-entry"><span class="index-term">State Management</span>, <span class="page-ref major">54–57</span>, <span class="page-ref major">150–157</span></div>
+      <div class="index-subentry">global state, <span class="page-ref">151</span></div>
+      <div class="index-subentry">local state, <span class="page-ref">54</span></div>
+      <div class="index-subentry">server state, <span class="page-ref">165</span></div>
+      <div class="index-entry"><span class="index-term">Suspense</span>, <span class="page-ref major">71</span>, <span class="page-ref">80</span></div>
+      <div class="index-entry"><span class="index-term">switchMap operator</span>, <span class="page-ref">162</span></div>
+    </div>
+
+    <!-- T -->
+    <div class="index-group">
+      <div class="index-letter">T</div>
+      <div class="index-entry"><span class="index-term">TanStack Query</span>, <span class="page-ref major">165–168</span></div>
+      <div class="index-entry"><span class="index-term">Testing</span>, <span class="page-ref major">177–183</span></div>
+      <div class="index-subentry">end-to-end (Playwright), <span class="page-ref">182</span></div>
+      <div class="index-subentry">integration, <span class="page-ref">181</span></div>
+      <div class="index-subentry">unit testing, <span class="page-ref">178</span></div>
+      <div class="index-entry"><span class="index-term">Tree Shaking</span>, <span class="page-ref">173</span></div>
+      <div class="index-entry"><span class="index-term">TypeScript</span>, <span class="page-ref major">206–212</span></div>
+      <div class="index-subentry">interfaces vs types, <span class="page-ref">207</span></div>
+      <div class="index-subentry">utility types, <span class="page-ref">209</span></div>
+    </div>
+
+    <!-- U -->
+    <div class="index-group">
+      <div class="index-letter">U</div>
+      <div class="index-entry"><span class="index-term">Universal (Angular SSR)</span>, <span class="page-ref">194</span></div>
+      <div class="index-entry"><span class="index-term">use() hook</span>, <span class="page-ref major">80</span></div>
+      <div class="index-entry"><span class="index-term">useActionState</span>, <span class="page-ref major">76</span></div>
+      <div class="index-entry"><span class="index-term">useCallback</span>, <span class="page-ref">65</span></div>
+      <div class="index-entry"><span class="index-term">useContext</span>, <span class="page-ref">66</span></div>
+      <div class="index-entry"><span class="index-term">useDeferredValue</span>, <span class="page-ref">70</span></div>
+      <div class="index-entry"><span class="index-term">useEffect</span>, <span class="page-ref major">62–64</span></div>
+      <div class="index-entry"><span class="index-term">useId</span>, <span class="page-ref">67</span></div>
+      <div class="index-entry"><span class="index-term">useMemo</span>, <span class="page-ref">65</span></div>
+      <div class="index-entry"><span class="index-term">useOptimistic</span>, <span class="page-ref major">77</span></div>
+      <div class="index-entry"><span class="index-term">useReducer</span>, <span class="page-ref">67</span></div>
+      <div class="index-entry"><span class="index-term">useRef</span>, <span class="page-ref">61</span></div>
+      <div class="index-entry"><span class="index-term">useState</span>, <span class="page-ref major">54–57</span></div>
+      <div class="index-entry"><span class="index-term">useTransition</span>, <span class="page-ref">70</span></div>
+    </div>
+
+    <!-- V -->
+    <div class="index-group">
+      <div class="index-letter">V</div>
+      <div class="index-entry"><span class="index-term">ViewChild / ViewChildren</span>, <span class="page-ref">93</span></div>
+      <div class="index-entry"><span class="index-term">Virtual DOM</span>, <span class="page-ref major">35</span>, <span class="page-ref">127</span></div>
+      <div class="index-entry"><span class="index-term">Vite</span>, <span class="page-ref">28</span></div>
+      <div class="index-entry"><span class="index-term">Vitest</span>, <span class="page-ref">180</span></div>
+    </div>
+
+    <!-- W -->
+    <div class="index-group">
+      <div class="index-letter">W</div>
+      <div class="index-entry"><span class="index-term">Web Workers</span>, <span class="page-ref">175</span></div>
+      <div class="index-entry"><span class="index-term">Webpack</span>, <span class="page-ref">23</span></div>
+    </div>
+
+    <!-- Z -->
+    <div class="index-group">
+      <div class="index-letter">Z</div>
+      <div class="index-entry"><span class="index-term">Zod</span>, <span class="page-ref">139</span></div>
+      <div class="index-entry"><span class="index-term">Zone.js</span>, <span class="page-ref major">124–126</span></div>
+      <div class="index-subentry">monkey patching, <span class="page-ref">125</span></div>
+      <div class="index-subentry">ngZone.runOutsideAngular, <span class="page-ref">126</span></div>
+      <div class="index-entry"><span class="index-term">Zustand</span>, <span class="page-ref major">152</span></div>
+    </div>
+
+  </div><!-- /index-columns -->
+</div>
+
+</body>
+</html>
